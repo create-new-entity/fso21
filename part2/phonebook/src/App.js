@@ -1,4 +1,5 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
+import axios from 'axios'
 
 import Search from './components/Search';
 import PersonForm from './components/PersonForm';
@@ -6,16 +7,18 @@ import Persons from './components/Persons';
 
 const App = () => {
 
-  const [ persons, setPersons ] = useState([
-    { name: 'Arto Hellas', number: '040-123456' },
-    { name: 'Ada Lovelace', number: '39-44-5323523' },
-    { name: 'Dan Abramov', number: '12-43-234345' },
-    { name: 'Mary Poppendieck', number: '39-23-6423122' }
-  ])
-
+  const [persons, setPersons] = useState([]);
   const [ newName, setNewName ] = useState('')
   const [ newNumber, setNewNumber ] = useState('')
   const [ srchStr, setsrchStr ] = useState('')
+
+  useEffect(() => {
+    axios
+      .get('http://localhost:3001/persons')
+      .then(res => {
+        setPersons(res.data);
+      });
+  }, []);
 
 
   const handleSubmit = (event) => {
@@ -29,7 +32,8 @@ const App = () => {
 
     let newPerson = {
       name: newName,
-      number: newNumber
+      number: newNumber,
+      id: persons.length + 2
     };
 
     setPersons(persons.concat(newPerson));
@@ -54,17 +58,16 @@ const App = () => {
   };
 
 
+  let renderedPersons;
 
-  const renderedPersons = persons.map((person) => {
-    if(srchStr.length) {
-      if(person.name.toLowerCase().includes(srchStr.toLowerCase())) {
-        return person;
-      }
-      return;
-    }
-    return person;
-  });
-
+  if(srchStr.length) {
+    renderedPersons = persons.filter(person => {
+      return person.name.toLowerCase().includes(srchStr.toLowerCase());
+    })
+  }
+  else {
+    renderedPersons = persons;
+  }
 
 
   return (
@@ -87,7 +90,7 @@ const App = () => {
 
       <h2>Numbers</h2>
       <Persons persons={renderedPersons}/>
-      
+
     </div>
   )
 }

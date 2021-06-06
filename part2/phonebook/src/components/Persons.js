@@ -3,10 +3,17 @@ import React from 'react';
 import Person from './Person';
 
 const Persons = ({ persons }) => {
-  return persons.map(person => {
-    if(!person) return;
-    return <Person name={person.name} number={person.number}/>
+  let renderedPersons = persons.map(person => {
+    return <Person key={person.id} name={person.name} number={person.number}/>
   });
+
+  return (
+    <>
+      {
+        renderedPersons
+      }
+    </>
+  );
 };
 
 export default Persons;
