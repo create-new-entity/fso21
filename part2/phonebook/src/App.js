@@ -1,5 +1,9 @@
 import React, { useState } from 'react'
 
+import Search from './components/Search';
+import PersonForm from './components/PersonForm';
+import Persons from './components/Persons';
+
 const App = () => {
 
   const [ persons, setPersons ] = useState([
@@ -51,42 +55,39 @@ const App = () => {
 
 
 
-  const renderedNumbers = persons.map((person) => {
+  const renderedPersons = persons.map((person) => {
     if(srchStr.length) {
       if(person.name.toLowerCase().includes(srchStr.toLowerCase())) {
-        return <p key={person.name}>{person.name}   {person.number}</p>;
+        return person;
       }
       return;
     }
-    return (
-      <p key={person.name}>{person.name}   {person.number}</p>
-    );
+    return person;
   });
 
 
 
   return (
     <div>
+
       <h2>Phonebook</h2>
-      <div>
-        <p>filter shown with <input value={srchStr} onChange={handleSrchStrChange}/></p>
-      </div>
+      <Search
+        srchStr={srchStr}
+        handleSrchStrChange={handleSrchStrChange}
+      />
+
       <h2>Add a new</h2>
-      <form onSubmit={handleSubmit}>
-        <div>
-          name: <input value={newName} onChange={handleNameInputChange}/>
-        </div>
-        <div>
-          number: <input value={newNumber} onChange={handleNumberInputChange}/>
-        </div>
-        <div>
-          <button type="submit">add</button>
-        </div>
-      </form>
+      <PersonForm
+        handleSubmit={handleSubmit}
+        newName={newName}
+        newNumber={newNumber}
+        handleNameInputChange={handleNameInputChange}
+        handleNumberInputChange={handleNumberInputChange}
+      />
+
       <h2>Numbers</h2>
-      {
-        renderedNumbers
-      }
+      <Persons persons={renderedPersons}/>
+      
     </div>
   )
 }
