@@ -8,6 +8,10 @@ const App = () => {
 
   const handleSubmit = (event) => {
     event.preventDefault();
+    if(persons.map(person => person.name.toLowerCase()).indexOf(newName) !== -1){
+      window.alert(`${newName} already exists in the phonebook.`);
+      return;
+    }
     let newPerson = {
       name: newName
     };
