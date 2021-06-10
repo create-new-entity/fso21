@@ -21,6 +21,7 @@ const App = () => {
       });
   }, []);
 
+
   const handleFindCountryInputChange = (event) => {
 
     let countryToFind = event.target.value;
@@ -31,20 +32,48 @@ const App = () => {
       return;
     }
 
-    let newFilteredCountries = allcountries.filter(country => {
-      return country.name.toLowerCase().includes(countryToFind.toLowerCase());
-    });
+
+    let newFilteredCountries = 
+      allcountries
+        .filter(country => {
+          return country.name.toLowerCase().includes(countryToFind.toLowerCase());
+        })
+        .map(country => {
+          country.show = false;
+          return country;
+        });
 
     setFilteredCountries(newFilteredCountries);
   };
 
 
+
+  const handleShowButtonClick = (countryName) => {
+
+    let newFilteredCountries = [...filteredCountries];
+    let index = newFilteredCountries.findIndex((country) => country.name.toLowerCase().localeCompare(countryName.toLowerCase()) === 0);
+
+    newFilteredCountries[index].show = !newFilteredCountries[index].show;
+
+    setFilteredCountries(newFilteredCountries);
+  };
+
+
+
   let contentUnderSearchBar;
   
   if(filteredCountries.length > 1 && filteredCountries.length <= 10) {
-    contentUnderSearchBar = <CountriesList countries={filteredCountries}/>;
+
+    contentUnderSearchBar =
+      <CountriesList
+        countries={filteredCountries}
+        handleShowButtonClick={handleShowButtonClick}
+      />;
+
   }
+
   else if(filteredCountries.length === 1) {
+
     contentUnderSearchBar = <Country
       name={filteredCountries[0].name}
       capital={filteredCountries[0].capital}
@@ -52,7 +81,9 @@ const App = () => {
       languages={filteredCountries[0].languages.map(language => language.name)}
       flag={filteredCountries[0].flag}
     />;
+
   }
+
   else if(filteredCountries.length > 10) {
     contentUnderSearchBar = <p>Too many matches, specify another filter</p>;
   }
