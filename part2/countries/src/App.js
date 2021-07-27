@@ -5,12 +5,15 @@ import Country from './components/Country';
 import CountriesList from './components/CountriesList';
 
 const baseURL = 'https://restcountries.eu/rest/v2/all';
+const weatherBaseURL = `http://api.weatherstack.com/current?access_key=${process.env.REACT_APP_WEATHER_API}&query=`;
+
 
 const App = () => {
 
   const [allcountries, setAllCountries] = useState([]);
   const [findCountry, setFindCountry] = useState('');
   const [filteredCountries, setFilteredCountries] = useState([]);
+  const [weatherData, setWeatherData] = useState(null);
 
 
   useEffect(() => {
@@ -20,6 +23,41 @@ const App = () => {
         setAllCountries(response.data);
       });
   }, []);
+
+  useEffect(() => {
+    let loadWeatherData = async () => {
+      let promises;
+
+      if(filteredCountries.length === 1) {
+        promises = [axios.get(weatherBaseURL+filteredCountries[0].capital)];
+      }
+      else if(filteredCountries.length > 1){
+        let countriesWithShowButtons = filteredCountries.filter(country => country.show);
+      
+        promises = countriesWithShowButtons.map(country => {
+          return axios.get(weatherBaseURL+country.capital);
+        });
+      }
+      else return;
+      
+      let responses = await Promise.all(promises);
+      
+      let newWeatherData = {};
+      responses.forEach((response) => {
+        let countryName = filteredCountries.find(country => country.capital.toLowerCase().localeCompare(response.data.location.name.toLowerCase()) === 0).name.toLowerCase();
+        if(!countryName) return;
+        newWeatherData[countryName] = {
+          location: response.data.location.name,
+          temperature: response.data.current.temperature,
+          wind: response.data.current.wind_speed,
+          wind_direction: response.data.current.wind_dir,
+          icon: response.data.current.weather_icons[0]
+        };
+      });
+      setWeatherData(newWeatherData);
+    };
+    loadWeatherData();
+  }, [filteredCountries]);
 
 
   const handleFindCountryInputChange = (event) => {
@@ -67,6 +105,7 @@ const App = () => {
     contentUnderSearchBar =
       <CountriesList
         countries={filteredCountries}
+        weatherData={weatherData}
         handleShowButtonClick={handleShowButtonClick}
       />;
 
@@ -74,12 +113,14 @@ const App = () => {
 
   else if(filteredCountries.length === 1) {
 
+
     contentUnderSearchBar = <Country
       name={filteredCountries[0].name}
       capital={filteredCountries[0].capital}
       population={filteredCountries[0].population}
       languages={filteredCountries[0].languages.map(language => language.name)}
       flag={filteredCountries[0].flag}
+      weatherData={weatherData[filteredCountries[0].name.toLowerCase()]}
     />;
 
   }
