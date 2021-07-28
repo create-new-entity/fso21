@@ -1,9 +1,10 @@
-import React, { useState, useEffect } from 'react'
-import axios from 'axios'
+import React, { useState, useEffect } from 'react';
 
 import Search from './components/Search';
 import PersonForm from './components/PersonForm';
 import Persons from './components/Persons';
+
+import backEndFns from './services/contacts';
 
 const App = () => {
 
@@ -13,10 +14,13 @@ const App = () => {
   const [ srchStr, setsrchStr ] = useState('')
 
   useEffect(() => {
-    axios
-      .get('http://localhost:3001/persons')
-      .then(res => {
-        setPersons(res.data);
+    backEndFns
+      .getAll()
+      .then(contacts => {
+        setPersons(contacts);
+      })
+      .catch( error => {
+        console.log(error.message);
       });
   }, []);
 
@@ -36,9 +40,17 @@ const App = () => {
       id: persons.length + 2
     };
 
-    setPersons(persons.concat(newPerson));
-    setNewName('');
-    setNewNumber('');
+    backEndFns.createNew(newPerson)
+      .then( savedContact => {
+        setPersons(persons.concat(savedContact));
+        setNewName('');
+        setNewNumber('');
+      })
+      .catch(error => {
+        console.log(error.message);
+        setNewName('');
+        setNewNumber('');
+      });
 
   };
 
