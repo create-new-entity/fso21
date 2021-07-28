@@ -8,7 +8,7 @@ import backEndFns from './services/contacts';
 
 const App = () => {
 
-  const [persons, setPersons] = useState([]);
+  const [ persons, setPersons ] = useState([]);
   const [ newName, setNewName ] = useState('')
   const [ newNumber, setNewNumber ] = useState('')
   const [ srchStr, setsrchStr ] = useState('')
@@ -69,6 +69,23 @@ const App = () => {
     setsrchStr(event.target.value);
   };
 
+  const getDeleteButtonHandler = (personName, id) => {
+    return () => {
+      let deleteConfirmation = window.confirm(`Delete ${personName}?`);
+      if(!deleteConfirmation) return;
+      backEndFns
+        .deleteContact(id)
+        .then( _ => {
+          let newPersons = [ ...persons ];
+          newPersons = newPersons.filter(person => person.id !== id);
+          setPersons(newPersons);
+      })
+      .catch(error => {
+        console.log(error.message);
+      });
+    };
+  };
+
 
   let renderedPersons;
 
@@ -101,7 +118,10 @@ const App = () => {
       />
 
       <h2>Numbers</h2>
-      <Persons persons={renderedPersons}/>
+      <Persons
+        persons={renderedPersons}
+        getDeleteButtonHandler={getDeleteButtonHandler}
+      />
 
     </div>
   )

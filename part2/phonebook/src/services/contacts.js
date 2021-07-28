@@ -31,9 +31,25 @@ const createNew = (contact) => {
     });
 };
 
+const deleteContact = (id) => {
+  const config = {
+    method: 'delete',
+    url: `${baseURL}/${id}`,
+    headers: {
+      'Content-Type': 'application/json'
+    }
+  };
+
+  return axios(config)
+    .then( response => {
+      if(response.status !== 200) throw new Error('Delete request failed.');
+    });
+};
+
 const backEndFns = {
   getAll,
-  createNew
+  createNew,
+  deleteContact
 }
 
 export default backEndFns;
