@@ -13,6 +13,17 @@ const getAll = () => {
     });
 };
 
+const nameAlreadyExists = (newName) => {
+  return getAll()
+    .then( currentContacts => {
+      return currentContacts
+        .some(contact => contact.name.toLowerCase().localeCompare(newName.toLowerCase()) === 0);
+    })
+    .catch( _ => {
+      throw new Error();
+    });
+};
+
 const createNew = (contact) => {
   const config = {
     method: 'post',
@@ -30,6 +41,25 @@ const createNew = (contact) => {
       throw new Error('Creating new contact failed.');
     });
 };
+
+const updateExisting = (person) => {
+  const config = {
+    method: 'put',
+    url: `${baseURL}/${person.id}`,
+    data: person,
+    headers: {
+      'Content-Type': 'application/json'
+    }
+  };
+
+  return axios(config)
+    .then(response => {
+      return response.data;
+    })
+    .catch( _ => {
+      throw new Error('Update failed.');
+    });
+}
 
 const deleteContact = (id) => {
   const config = {
@@ -49,7 +79,9 @@ const deleteContact = (id) => {
 const backEndFns = {
   getAll,
   createNew,
-  deleteContact
+  deleteContact,
+  nameAlreadyExists,
+  updateExisting
 }
 
 export default backEndFns;

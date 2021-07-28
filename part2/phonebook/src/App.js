@@ -33,38 +33,88 @@ const App = () => {
 
     event.preventDefault();
 
-    if(persons.map(person => person.name.toLowerCase()).indexOf(newName) !== -1){
-      window.alert(`${newName} already exists in the phonebook.`);
-      return;
-    }
-
-    let newPerson = {
-      name: newName,
-      number: newNumber,
-      id: persons.length + 2
-    };
-
-    backEndFns.createNew(newPerson)
-      .then( savedContact => {
-        let successNotification = {
-          positive: true,
-          message: 'New entry saved successfully!'
+    backEndFns.nameAlreadyExists(newName)
+      .then( nameAlreadyExists => {
+        let newPerson = {
+          name: newName,
+          number: newNumber,
+          id: persons.length + 200
         };
 
-        setPersons(persons.concat(savedContact));
-        setNewName('');
-        setNewNumber('');
+        if(nameAlreadyExists) {
+          let overWrite = window.confirm(`${newName} already exists in the phonebook. Do you want to update the number?`);
+          if(overWrite) {
+            let existingPerson = persons.find(person => person.name.toLowerCase().localeCompare(newName.toLowerCase()) === 0);
+            newPerson.id = existingPerson.id;
+            backEndFns.updateExisting(newPerson)
+              .then( updatedContact => {
 
-        setNotification(successNotification);
+                let newPersons = [...persons];
+                let successNotification = {
+                  positive: true,
+                  message: 'Updated successfully.'
+                };
+
+                newPersons = newPersons.filter(person => person.id !== updatedContact.id );
+                
+                setPersons(newPersons.concat(updatedContact));
+                setNewName('');
+                setNewNumber('');
+                setNotification(successNotification);
+                setTimeout(() => {
+                  setNotification(null);
+                }, notificationDuration);
+              })
+              .catch(error => {
+                let failedNotification = {
+                  positive: false,
+                  message: error.message
+                };
+
+                setNotification(failedNotification);
+                setTimeout(() => {
+                  setNotification(null);
+                }, notificationDuration);
+              });
+          }
+        }
+        else {
+          backEndFns.createNew(newPerson)
+            .then( savedContact => {
+              let successNotification = {
+                positive: true,
+                message: 'New entry saved successfully!'
+              };
+
+              setPersons(persons.concat(savedContact));
+              setNewName('');
+              setNewNumber('');
+
+              setNotification(successNotification);
+              setTimeout(() => {
+                setNotification(null);
+              }, notificationDuration);
+            })
+            .catch(error => {
+              console.log(error.message);
+              setNewName('');
+              setNewNumber('');
+            });
+        }
+      })
+      .catch(( _ ) => {
+        let failureNotification = {
+          positive: false,
+          message: 'Something went wrong. Try later.'
+        };
+
+        setNotification(failureNotification);
         setTimeout(() => {
           setNotification(null);
         }, notificationDuration);
-      })
-      .catch(error => {
-        console.log(error.message);
-        setNewName('');
-        setNewNumber('');
       });
+
+    
 
   };
 
