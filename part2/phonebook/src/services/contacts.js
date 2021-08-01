@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const baseURL = 'http://localhost:3001/persons';
+const baseURL = '/api/persons';
 
 const getAll = () => {
   return axios
@@ -72,7 +72,7 @@ const deleteContact = (id) => {
 
   return axios(config)
     .then( response => {
-      if(response.status !== 200) throw new Error('Delete request failed.');
+      if(response.status !== 204) throw new Error('Delete request failed.');
     });
 };
 
