@@ -37,8 +37,8 @@ const createNew = (contact) => {
     .then(response => {
       return response.data;
     })
-    .catch( _ => {
-      throw new Error('Creating new contact failed.');
+    .catch( error => {
+      throw error;
     });
 };
 

@@ -7,7 +7,7 @@ import Notification from './components/Notification';
 
 import backEndFns from './services/contacts';
 
-const notificationDuration = 2000;
+const notificationDuration = 3000;
 
 const App = () => {
 
@@ -96,9 +96,18 @@ const App = () => {
               }, notificationDuration);
             })
             .catch(error => {
-              console.log(error.message);
               setNewName('');
               setNewNumber('');
+
+              let failureNotification = {
+                positive: false,
+                message: error.response.data.error
+              };
+
+              setNotification(failureNotification);
+              setTimeout(() => {
+                setNotification(null);
+              }, notificationDuration);
             });
         }
       })
