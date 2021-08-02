@@ -22,6 +22,7 @@ describe('Total likes', () => {
 
 
 describe('Favorite Blog', () => {
+
   test('Most liked blog works', () => {
 
     const targetBlog = {
@@ -35,5 +36,15 @@ describe('Favorite Blog', () => {
 
     const result = listHelper.favoriteBlog(inputBlogs);
     expect(result).toEqual(targetBlog);
+  });
+
+  test('Author that has written most blogs works', () => {
+    const targetAuthor = {
+      author: "Robert C. Martin",
+      blogs: 3
+    };
+
+    const result = listHelper.mostBlogs(inputBlogs);
+    expect(result).toEqual(targetAuthor);
   });
 });
