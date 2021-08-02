@@ -1,0 +1,9 @@
+POST http://localhost:3001/api/blogs
+Content-Type: application/json
+
+{
+  "title": "Refactoring CSS: Strategy, Regression Testing And Maintenance (Part 2)",
+  "author": "Adrian Bece",
+  "url": "https://www.smashingmagazine.com/2021/08/refactoring-css-strategy-regression-testing-maintenance-part2/",
+  "likes": 50
+}
