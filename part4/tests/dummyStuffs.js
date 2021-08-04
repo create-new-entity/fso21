@@ -1,4 +1,24 @@
-const blogs = [
+const dummyBlog = {
+  title: "Node.js – The Past, Present, and Future",
+  author: "Jason Grant",
+  url: "https://sevenpeakssoftware.com/node-js-past-present-future-summary/",
+  likes: 5
+};
+
+const dummyUsers = [
+  {
+    name: 'Abul',
+    username: 'vokchod_the_great',
+    password: 'the_cow_is_a_domestic_animal'
+  },
+  {
+    name: 'Babul',
+    username: 'abal_man',
+    password: 'the_goat_is_a_domestic_animal'
+  }
+];
+
+const dummyBlogs = [
   {
     _id: "5a422a851b54a676234d17f7",
     title: "React patterns",
@@ -47,6 +67,16 @@ const blogs = [
     likes: 2,
     __v: 0
   }  
-]
+].map(blog => {
+  delete blog._id;
+  delete blog.__v;
+  return blog;
+});
 
-module.exports = blogs;
+const dummyStuffs = {
+  dummyBlog,
+  dummyBlogs,
+  dummyUsers
+};
+
+module.exports = dummyStuffs;

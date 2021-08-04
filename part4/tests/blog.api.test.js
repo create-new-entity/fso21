@@ -1,8 +1,10 @@
 const mongoose = require('mongoose');
 const supertest = require('supertest');
+
+
 const app = require('./../app');
 const TIMEOUT = 10000;
-
+const dummyStuffs = require('./dummyStuffs');
 const helpers = require('./test_helper');
 
 const api = supertest(app);
@@ -15,73 +17,130 @@ beforeEach(async () => {
 describe('API returns data in correct amount and in correct format.', () => {
   
   test('API return correct amount of data', async () => {
-    const response = await api.get('/api/blogs');
+    let response;
+    const dummyUsers = dummyStuffs.dummyUsers;
+
+    response = await api.post('/api/users').send(dummyUsers[0]).expect(201);
+    const userId = response.body.id;
+
+    const dummyBlogs = dummyStuffs.dummyBlogs.map(blog => {
+      blog.user = userId;
+      return blog;
+    });
+
+    const promises = dummyBlogs.map(blog => {
+      return api.post('/api/blogs').send(blog).expect(201);
+    });
+
+    await Promise.all(promises);
+    
+    response = await api.get('/api/blogs');
     expect(response.body.length).toBe(6);
   }, TIMEOUT);
 
   test('API returns data in JSON format', async () => {
+    let response;
+    const dummyUsers = dummyStuffs.dummyUsers;
+
+    response = await api.post('/api/users').send(dummyUsers[0]).expect(201);
+    const userId = response.body.id;
+    
+    const dummyBlog = dummyStuffs.dummyBlogs[0];
+
+    const newDummyBlog = {
+      ...dummyBlog,
+      user: userId
+    };
+
     await api
+      .post('/api/blogs')
+      .send(newDummyBlog)
+      .expect(201);
+
+    response = await api
       .get('/api/blogs')
       .expect(200)
       .expect('Content-Type', /json/);
   }, TIMEOUT);
 
-  test('id is not undefined in document', async () => {
-    const response = await api.get('/api/blogs');
+  test('id is defined in document', async () => {
+    let response;
+    const dummyUsers = dummyStuffs.dummyUsers;
+
+    response = await api.post('/api/users').send(dummyUsers[0]).expect(201);
+    const userId = response.body.id;
+    
+    const dummyBlog = dummyStuffs.dummyBlogs[0];
+
+    const newDummyBlog = {
+      ...dummyBlog,
+      user: userId
+    };
+
+    await api
+      .post('/api/blogs')
+      .send(newDummyBlog)
+      .expect(201);
+
+    response = await api.get('/api/blogs');
     expect(response.body[0].id).toBeDefined();
   }, TIMEOUT);
 
   test('Adding new blog works', async () => {
-    const dummyBlog = {
-      title: "Node.js – The Past, Present, and Future",
-      author: "Jason Grant",
-      url: "https://sevenpeakssoftware.com/node-js-past-present-future-summary/",
-      likes: 5
-    };
+    let response;
+    const dummyUsers = dummyStuffs.dummyUsers;
 
-    let response = await api.get('/api/blogs');
-    let initialLength = response.body.length;
+    response = await api.post('/api/users').send(dummyUsers[0]).expect(201);
+    const userId = response.body.id;
+    
+    const dummyBlog = dummyStuffs.dummyBlogs[0];
+
+    response = await api.get('/api/blogs');
+    expect(response.body.length).toBe(0);
+
+    const newDummyBlog = {
+      ...dummyBlog,
+      user: userId
+    };
 
     await api
       .post('/api/blogs')
-      .send(dummyBlog)
+      .send(newDummyBlog)
       .expect(201);
 
     response = await api.get('/api/blogs');
-    expect(response.body.length).toBe(initialLength+1);
-    let dummyExists = response.body.some((blog) => {
-      if (
-        dummyBlog.title.localeCompare(blog.title) === 0 &&
-        dummyBlog.author.localeCompare(blog.author) === 0  &&
-        dummyBlog.url.localeCompare(blog.url) === 0  &&
-        dummyBlog.likes === blog.likes
-      ) return true;
-      return false
-    });
-    expect(dummyExists).toBe(true);
+    expect(response.body.length).toBe(1);
   }, TIMEOUT);
 
   test('If likes is missing in new entry, it is set to 0', async () => {
-    const dummyBlog = {
-      title: "Node.js – The Past, Present, and Future",
-      author: "Jason Grant",
-      url: "https://sevenpeakssoftware.com/node-js-past-present-future-summary/"
-    };
+    let response;
+    const dummyUsers = dummyStuffs.dummyUsers;
 
-    let response = await api
-    .post('/api/blogs')
-    .send(dummyBlog)
-    .expect(201);
+    response = await api.post('/api/users').send(dummyUsers[0]).expect(201);
+    const userId = response.body.id;
+
+    const dummyBlog = { ...dummyStuffs.dummyBlog };
+    delete dummyBlog.likes;
+    dummyBlog.user = userId;
+    
+    response = await api
+      .post('/api/blogs')
+      .send(dummyBlog)
+      .expect(201);
   
     expect(response.body.likes).toBeDefined();
     expect(response.body.likes).toBe(0);
   }, TIMEOUT);
 
   test('If title is missing POST request returns with 400 status code', async () => {
-    const dummyBlog = {
-      author: "Jason Grant",
-      url: "https://sevenpeakssoftware.com/node-js-past-present-future-summary/"
-    };
+    const dummyUsers = dummyStuffs.dummyUsers;
+
+    response = await api.post('/api/users').send(dummyUsers[0]).expect(201);
+    const userId = response.body.id;
+
+    const dummyBlog = { ...dummyStuffs.dummyBlog };
+    delete dummyBlog.title;
+    dummyBlog.user = userId;
 
     await api
       .post('/api/blogs')
@@ -90,10 +149,14 @@ describe('API returns data in correct amount and in correct format.', () => {
   }, TIMEOUT);
 
   test('If url is missing POST request returns with 400 status code', async () => {
-    const dummyBlog = {
-      title: "Node.js – The Past, Present, and Future",
-      author: "Jason Grant"
-    };
+    const dummyUsers = dummyStuffs.dummyUsers;
+
+    response = await api.post('/api/users').send(dummyUsers[0]).expect(201);
+    const userId = response.body.id;
+
+    const dummyBlog = { ...dummyStuffs.dummyBlog };
+    delete dummyBlog.url;
+    dummyBlog.user = userId;
 
     await api
       .post('/api/blogs')

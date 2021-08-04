@@ -10,7 +10,16 @@ const commonConfig = {
 const user = {
   username: commonConfig,
   passwordHash: commonConfig,
-  name: commonConfig
+  name: {
+    type: String,
+    required: true
+  },
+  blogs: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Blog'
+    }
+  ]
 };
 
 const userSchema = new mongoose.Schema(user);

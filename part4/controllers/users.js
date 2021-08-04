@@ -47,14 +47,17 @@ usersRouter.post('/', async (req, res, next) => {
     const saltRounds = 10;
     const passwordHash = await bcrypt.hash(newPassword, saltRounds);
   
-    const newUser = {
+    let newUser = {
       username: newUserName,
       passwordHash,
       name: newName
     };
   
-    await userModel(newUser).save();
-    res.status(201).end();
+    newUser = await userModel(newUser).save();
+    res.status(201).json({
+      username: newUser.username,
+      id: newUser.id
+    });
   }
   catch(error) {
     next(error);

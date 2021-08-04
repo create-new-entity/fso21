@@ -1,4 +1,3 @@
-const inputBlogs = require('./../utils/testInputBlogs');
 const listHelper = require('../utils/list_helper');
 
 describe('Initial tests', () => {
