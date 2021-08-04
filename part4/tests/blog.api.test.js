@@ -11,8 +11,6 @@ beforeEach(async () => {
   await helpers.resetDatabase();
 });
 
-//Verify that the blog list application Returns the correct amount of 
-//blog posts in the JSON format.
 
 describe('API returns data in correct amount and in correct format.', () => {
   
@@ -156,6 +154,27 @@ describe('Deletion and Update', () => {
     let target = response.body.find((blog) => blog.author.localeCompare(helpers.dummyBlog.author) === 0);
     expect(target.likes).toBe(50);
 
+  }, TIMEOUT);
+
+});
+
+
+describe('Authentication tests', () => {
+
+  test('New User creation works', async () =>{
+    let response;
+
+    const initialUsernames = await helpers.getAllUsernamesFromDB();
+    expect(initialUsernames).not.toContain(helpers.dummyNewUser.username);
+
+    await api
+      .post('/api/users')
+      .send(helpers.dummyNewUser)
+      .expect(201);
+    
+    response = await api.get('/api/users');
+    const usernamesInDB = response.body.map(user => user.username);
+    expect(usernamesInDB).toContain(helpers.dummyNewUser.username);
   }, TIMEOUT);
 
 });
