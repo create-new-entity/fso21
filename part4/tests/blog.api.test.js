@@ -78,7 +78,29 @@ describe('API returns data in correct amount and in correct format.', () => {
     expect(response.body.likes).toBe(0);
   });
 
-  
+  test('If title is missing POST request returns with 400 status code', async () => {
+    const dummyBlog = {
+      author: "Jason Grant",
+      url: "https://sevenpeakssoftware.com/node-js-past-present-future-summary/"
+    };
+
+    await api
+      .post('/api/blogs')
+      .send(dummyBlog)
+      .expect(400);
+  });
+
+  test('If url is missing POST request returns with 400 status code', async () => {
+    const dummyBlog = {
+      title: "Node.js – The Past, Present, and Future",
+      author: "Jason Grant"
+    };
+
+    await api
+      .post('/api/blogs')
+      .send(dummyBlog)
+      .expect(400);
+  });
 
 });
 

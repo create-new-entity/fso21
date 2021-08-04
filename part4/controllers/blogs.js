@@ -8,12 +8,16 @@ blogsRouter.get('/', async (request, response) => {
 
 blogsRouter.post('/', async (request, response) => {
   let newObj = request.body;
+  if(!newObj.title || !newObj.url) {
+    response.status(400).end();
+    return;
+  }
   newObj.hasOwnProperty('likes') ? newObj : newObj.likes = 0;
 
   const blog = new Blog(newObj);
 
   const result = await blog.save();
-  response.status(201).json(result)
+  response.status(201).json(result);
 });
 
 module.exports = blogsRouter;
