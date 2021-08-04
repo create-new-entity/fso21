@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 const supertest = require('supertest');
 const app = require('./../app');
+const TIMEOUT = 10000;
 
 const helpers = require('./test_helper');
 
@@ -18,19 +19,19 @@ describe('API returns data in correct amount and in correct format.', () => {
   test('API return correct amount of data', async () => {
     const response = await api.get('/api/blogs');
     expect(response.body.length).toBe(6);
-  });
+  }, TIMEOUT);
 
   test('API returns data in JSON format', async () => {
     await api
       .get('/api/blogs')
       .expect(200)
       .expect('Content-Type', /json/);
-  });
+  }, TIMEOUT);
 
   test('id is not undefined in document', async () => {
     const response = await api.get('/api/blogs');
     expect(response.body[0].id).toBeDefined();
-  });
+  }, TIMEOUT);
 
   test('Adding new blog works', async () => {
     const dummyBlog = {
@@ -60,7 +61,7 @@ describe('API returns data in correct amount and in correct format.', () => {
       return false
     });
     expect(dummyExists).toBe(true);
-  });
+  }, TIMEOUT);
 
   test('If likes is missing in new entry, it is set to 0', async () => {
     const dummyBlog = {
@@ -76,7 +77,7 @@ describe('API returns data in correct amount and in correct format.', () => {
   
     expect(response.body.likes).toBeDefined();
     expect(response.body.likes).toBe(0);
-  });
+  }, TIMEOUT);
 
   test('If title is missing POST request returns with 400 status code', async () => {
     const dummyBlog = {
@@ -88,7 +89,7 @@ describe('API returns data in correct amount and in correct format.', () => {
       .post('/api/blogs')
       .send(dummyBlog)
       .expect(400);
-  });
+  }, TIMEOUT);
 
   test('If url is missing POST request returns with 400 status code', async () => {
     const dummyBlog = {
@@ -100,8 +101,40 @@ describe('API returns data in correct amount and in correct format.', () => {
       .post('/api/blogs')
       .send(dummyBlog)
       .expect(400);
-  });
+  }, TIMEOUT);
 
+});
+
+
+describe('Deletion', () => {
+  test('Deleting a blog entry works', async () => {
+
+    const dummyBlog = {
+      title: "Node.js – The Past, Present, and Future",
+      author: "Jason Grant",
+      url: "https://sevenpeakssoftware.com/node-js-past-present-future-summary/",
+      likes: 5
+    };
+
+    let response = await api.get('/api/blogs');
+    expect(response.body.map(blog => blog.author)).not.toContain(dummyBlog.author);
+
+    response = await api
+      .post('/api/blogs')
+      .send(dummyBlog);
+
+    const targetId = response.body.id;
+
+    response = await api.get('/api/blogs');
+    expect(response.body.map(blog => blog.author)).toContain(dummyBlog.author);
+    
+    await api
+      .delete(`/api/blogs/${targetId}`)
+      .expect(204);
+
+    response = await api.get('/api/blogs');
+    expect(response.body.map(blog => blog.author)).not.toContain(dummyBlog.author);
+  }, TIMEOUT);
 });
 
 
