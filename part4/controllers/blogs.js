@@ -7,7 +7,10 @@ blogsRouter.get('/', async (request, response) => {
 })
 
 blogsRouter.post('/', async (request, response) => {
-  const blog = new Blog(request.body);
+  let newObj = request.body;
+  newObj.hasOwnProperty('likes') ? newObj : newObj.likes = 0;
+
+  const blog = new Blog(newObj);
 
   const result = await blog.save();
   response.status(201).json(result)

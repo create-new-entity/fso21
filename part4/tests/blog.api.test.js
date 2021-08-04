@@ -62,6 +62,24 @@ describe('API returns data in correct amount and in correct format.', () => {
     expect(dummyExists).toBe(true);
   });
 
+  test('If likes is missing in new entry, it is set to 0', async () => {
+    const dummyBlog = {
+      title: "Node.js – The Past, Present, and Future",
+      author: "Jason Grant",
+      url: "https://sevenpeakssoftware.com/node-js-past-present-future-summary/"
+    };
+
+    let response = await api
+    .post('/api/blogs')
+    .send(dummyBlog)
+    .expect(201);
+  
+    expect(response.body.likes).toBeDefined();
+    expect(response.body.likes).toBe(0);
+  });
+
+  
+
 });
 
 
