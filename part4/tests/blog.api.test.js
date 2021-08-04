@@ -161,6 +161,41 @@ describe('Deletion and Update', () => {
 
 describe('Authentication tests', () => {
 
+  test('Can not create user without username', async () => {
+    let dummyUser = { ...helpers.dummyNewUser };
+    delete dummyUser.username;
+
+    await api.post('/api/users').send(dummyUser).expect(400);
+  });
+
+  test('Can not create user without password', async () => {
+    let dummyUser = { ...helpers.dummyNewUser };
+    delete dummyUser.password;
+
+    await api.post('/api/users').send(dummyUser).expect(400);
+  });
+
+  test('Can not create user with very short username', async () => {
+    let dummyUser = { ...helpers.dummyNewUser };
+    dummyUser.username = 'ba';
+
+    await api.post('/api/users').send(dummyUser).expect(400);
+  });
+
+  test('Can not create user with very short password', async () => {
+    let dummyUser = { ...helpers.dummyNewUser };
+    dummyUser.password = 'qw';
+
+    await api.post('/api/users').send(dummyUser).expect(400);
+  });
+
+  test('Duplicate username not allowed', async () => {
+    let dummyUser = { ...helpers.dummyNewUser };
+
+    await api.post('/api/users').send(dummyUser).expect(201);
+    await api.post('/api/users').send(dummyUser).expect(400);
+  });
+
   test('New User creation works', async () =>{
     let response;
 
@@ -178,6 +213,7 @@ describe('Authentication tests', () => {
   }, TIMEOUT);
 
 });
+
 
 
 

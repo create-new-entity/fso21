@@ -1,5 +1,7 @@
 const logger = require('./logger');
 
+const ErrorNames = require('../error');
+
 const requestLogger = (request, response, next) => {
   logger.info('Method:', request.method)
   logger.info('Path:  ', request.path)
@@ -13,12 +15,19 @@ const unknownEndpoint = (request, response) => {
 }
 
 const errorHandler = (error, request, response, next) => {
-  logger.error(error.message)
-
+  logger.error(`${error.name}: ${error.message}`);
   if (error.name === 'CastError') {
-    return response.status(400).send({ error: 'malformatted id' })
-  } else if (error.name === 'ValidationError') {
-    return response.status(400).json({ error: error.message })
+    return response.status(400).send({ error: 'malformatted id' });
+  }
+  else if (error.name === 'ValidationError') {
+    return response.status(400).json({ error: error.message });
+  }
+  else if(
+    error.name === ErrorNames.UsernameMissingError
+    || error.name === ErrorNames.PasswordMissingError
+    || error.name === ErrorNames.ShortUsernameError
+    || error.name === ErrorNames.ShortPasswordError) {
+      return response.status(400).json({ error: error.message })
   }
 
   next(error)
