@@ -27,6 +27,11 @@ describe('API returns data in correct amount and in correct format.', () => {
       .expect('Content-Type', /json/);
   });
 
+  test('id is not undefined in document', async () => {
+    const response = await api.get('/api/blogs');
+    expect(response.body[0].id).toBeDefined();
+  });
+
 });
 
 
