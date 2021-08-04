@@ -32,7 +32,38 @@ describe('API returns data in correct amount and in correct format.', () => {
     expect(response.body[0].id).toBeDefined();
   });
 
+  test('Adding new blog works', async () => {
+    const dummyBlog = {
+      title: "Node.js – The Past, Present, and Future",
+      author: "Jason Grant",
+      url: "https://sevenpeakssoftware.com/node-js-past-present-future-summary/",
+      likes: 5
+    };
+
+    let response = await api.get('/api/blogs');
+    let initialLength = response.body.length;
+
+    await api
+      .post('/api/blogs')
+      .send(dummyBlog)
+      .expect(201);
+
+    response = await api.get('/api/blogs');
+    expect(response.body.length).toBe(initialLength+1);
+    let dummyExists = response.body.some((blog) => {
+      if (
+        dummyBlog.title.localeCompare(blog.title) === 0 &&
+        dummyBlog.author.localeCompare(blog.author) === 0  &&
+        dummyBlog.url.localeCompare(blog.url) === 0  &&
+        dummyBlog.likes === blog.likes
+      ) return true;
+      return false
+    });
+    expect(dummyExists).toBe(true);
+  });
+
 });
+
 
 
 afterAll(async () => {
