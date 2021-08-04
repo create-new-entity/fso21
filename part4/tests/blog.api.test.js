@@ -106,7 +106,8 @@ describe('API returns data in correct amount and in correct format.', () => {
 });
 
 
-describe('Deletion', () => {
+describe('Deletion and Update', () => {
+
   test('Deleting a blog entry works', async () => {
 
     const dummyBlog = {
@@ -135,6 +136,28 @@ describe('Deletion', () => {
     response = await api.get('/api/blogs');
     expect(response.body.map(blog => blog.author)).not.toContain(dummyBlog.author);
   }, TIMEOUT);
+
+
+  test('Updating likes works', async () => {
+
+    let response = await api
+      .post('/api/blogs')
+      .send(helpers.dummyBlog);
+    
+    const targetId = response.body.id;
+    expect(response.body.likes).toBe(helpers.dummyBlog.likes);
+
+    response = await api
+      .patch(`/api/blogs/${targetId}`)
+      .send({ likes: 50 });
+    expect(response.body.likes).toBe(50);
+
+    response = await api.get('/api/blogs');
+    let target = response.body.find((blog) => blog.author.localeCompare(helpers.dummyBlog.author) === 0);
+    expect(target.likes).toBe(50);
+
+  }, TIMEOUT);
+
 });
 
 
