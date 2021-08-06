@@ -17,39 +17,19 @@ beforeEach(async () => {
 describe('API returns data in correct amount and in correct format.', () => {
   
   test('API return correct amount of data', async () => {
-    let response;
-    const dummyUsers = dummyStuffs.dummyUsers;
-
-    response = await api.post('/api/users').send(dummyUsers[0]).expect(201);
-    const userId = response.body.id;
-
-    const dummyBlogs = dummyStuffs.dummyBlogs.map(blog => {
-      blog.user = userId;
-      return blog;
-    });
-
-    const promises = dummyBlogs.map(blog => {
-      return api.post('/api/blogs').send(blog).expect(201);
-    });
-
-    await Promise.all(promises);
-    
-    response = await api.get('/api/blogs');
-    expect(response.body.length).toBe(6);
+    const blogs = await helpers.createAUserAndInitializeDB(api);
+    expect(blogs.length).toBe(6);
   }, TIMEOUT);
 
   test('API returns data in JSON format', async () => {
     let response;
-    const dummyUsers = dummyStuffs.dummyUsers;
 
-    response = await api.post('/api/users').send(dummyUsers[0]).expect(201);
-    const userId = response.body.id;
-    
+    const user = await helpers.createADummyUser(api);
     const dummyBlog = dummyStuffs.dummyBlogs[0];
 
     const newDummyBlog = {
       ...dummyBlog,
-      user: userId
+      user: user.id
     };
 
     await api
@@ -65,16 +45,13 @@ describe('API returns data in correct amount and in correct format.', () => {
 
   test('id is defined in document', async () => {
     let response;
-    const dummyUsers = dummyStuffs.dummyUsers;
-
-    response = await api.post('/api/users').send(dummyUsers[0]).expect(201);
-    const userId = response.body.id;
+    const user = await helpers.createADummyUser(api);
     
     const dummyBlog = dummyStuffs.dummyBlogs[0];
 
     const newDummyBlog = {
       ...dummyBlog,
-      user: userId
+      user: user.id
     };
 
     await api
@@ -88,10 +65,7 @@ describe('API returns data in correct amount and in correct format.', () => {
 
   test('Adding new blog works', async () => {
     let response;
-    const dummyUsers = dummyStuffs.dummyUsers;
-
-    response = await api.post('/api/users').send(dummyUsers[0]).expect(201);
-    const userId = response.body.id;
+    const user = await helpers.createADummyUser(api);
     
     const dummyBlog = dummyStuffs.dummyBlogs[0];
 
@@ -100,7 +74,7 @@ describe('API returns data in correct amount and in correct format.', () => {
 
     const newDummyBlog = {
       ...dummyBlog,
-      user: userId
+      user: user.id
     };
 
     await api
@@ -114,14 +88,11 @@ describe('API returns data in correct amount and in correct format.', () => {
 
   test('If likes is missing in new entry, it is set to 0', async () => {
     let response;
-    const dummyUsers = dummyStuffs.dummyUsers;
-
-    response = await api.post('/api/users').send(dummyUsers[0]).expect(201);
-    const userId = response.body.id;
+    const user = await helpers.createADummyUser(api);
 
     const dummyBlog = { ...dummyStuffs.dummyBlog };
     delete dummyBlog.likes;
-    dummyBlog.user = userId;
+    dummyBlog.user = user.id;
     
     response = await api
       .post('/api/blogs')
@@ -133,14 +104,11 @@ describe('API returns data in correct amount and in correct format.', () => {
   }, TIMEOUT);
 
   test('If title is missing POST request returns with 400 status code', async () => {
-    const dummyUsers = dummyStuffs.dummyUsers;
-
-    response = await api.post('/api/users').send(dummyUsers[0]).expect(201);
-    const userId = response.body.id;
+    const user = await helpers.createADummyUser(api);
 
     const dummyBlog = { ...dummyStuffs.dummyBlog };
     delete dummyBlog.title;
-    dummyBlog.user = userId;
+    dummyBlog.user = user.id;
 
     await api
       .post('/api/blogs')
@@ -149,14 +117,11 @@ describe('API returns data in correct amount and in correct format.', () => {
   }, TIMEOUT);
 
   test('If url is missing POST request returns with 400 status code', async () => {
-    const dummyUsers = dummyStuffs.dummyUsers;
-
-    response = await api.post('/api/users').send(dummyUsers[0]).expect(201);
-    const userId = response.body.id;
+    const user = await helpers.createADummyUser(api);
 
     const dummyBlog = { ...dummyStuffs.dummyBlog };
     delete dummyBlog.url;
-    dummyBlog.user = userId;
+    dummyBlog.user = user.id;
 
     await api
       .post('/api/blogs')
@@ -203,10 +168,10 @@ describe('Deletion and Update', () => {
 
     let response = await api
       .post('/api/blogs')
-      .send(helpers.dummyBlog);
+      .send(dummyStuffs.dummyBlog);
     
     const targetId = response.body.id;
-    expect(response.body.likes).toBe(helpers.dummyBlog.likes);
+    expect(response.body.likes).toBe(dummyStuffs.dummyBlog.likes);
 
     response = await api
       .patch(`/api/blogs/${targetId}`)
@@ -214,7 +179,7 @@ describe('Deletion and Update', () => {
     expect(response.body.likes).toBe(50);
 
     response = await api.get('/api/blogs');
-    let target = response.body.find((blog) => blog.author.localeCompare(helpers.dummyBlog.author) === 0);
+    let target = response.body.find((blog) => blog.author.localeCompare(dummyStuffs.dummyBlog.author) === 0);
     expect(target.likes).toBe(50);
 
   }, TIMEOUT);
@@ -253,7 +218,7 @@ describe('Authentication tests', () => {
   });
 
   test('Duplicate username not allowed', async () => {
-    let dummyUser = { ...helpers.dummyNewUser };
+    let dummyUser = { ...dummyStuffs.dummyUsers[0] };
 
     await api.post('/api/users').send(dummyUser).expect(201);
     await api.post('/api/users').send(dummyUser).expect(400);
@@ -263,21 +228,64 @@ describe('Authentication tests', () => {
     let response;
 
     const initialUsernames = await helpers.getAllUsernamesFromDB();
-    expect(initialUsernames).not.toContain(helpers.dummyNewUser.username);
+    expect(initialUsernames).not.toContain(dummyStuffs.dummyUsers[0].username);
 
     await api
       .post('/api/users')
-      .send(helpers.dummyNewUser)
+      .send(dummyStuffs.dummyUsers[0])
       .expect(201);
     
     response = await api.get('/api/users');
     const usernamesInDB = response.body.map(user => user.username);
-    expect(usernamesInDB).toContain(helpers.dummyNewUser.username);
+    expect(usernamesInDB).toContain(dummyStuffs.dummyUsers[0].username);
   }, TIMEOUT);
 
 });
 
 
+describe('Other tests', () => {
+  test('Total likes OK', async () => {
+    const blogs = await helpers.createAUserAndInitializeDB(api);
+    const totalLikes = helpers.totalLikes(blogs);
+    expect(totalLikes).toBe(36);
+  });
+
+  test('Most liked blog works', async () => {
+
+    const targetBlog = {
+      title: "Canonical string reduction",
+      author: "Edsger W. Dijkstra",
+      url: "http://www.cs.utexas.edu/~EWD/transcriptions/EWD08xx/EWD808.html",
+      likes: 12
+    };
+
+    const blogs = await helpers.createAUserAndInitializeDB(api);
+    const result = helpers.favoriteBlog(blogs);
+    expect(result.likes).toBe(targetBlog.likes);
+  });
+
+  test('Author that has written most blogs works', async () => {
+    const targetAuthor = {
+      author: "Robert C. Martin",
+      blogs: 3
+    };
+    
+    const blogs = await helpers.createAUserAndInitializeDB(api);
+    const result = helpers.mostBlogs(blogs);
+    expect(result).toEqual(targetAuthor);
+  });
+
+  test('Author that has most likes works', async () => {
+    const targetAuthor = {
+      author: "Edsger W. Dijkstra",
+      likes: 17
+    };
+
+    const blogs = await helpers.createAUserAndInitializeDB(api);
+    const result = helpers.mostLikes(blogs);
+    expect(result).toEqual(targetAuthor);
+  });
+});
 
 
 afterAll(async () => {
