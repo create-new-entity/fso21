@@ -8,8 +8,14 @@ const userModel = require('./../models/user');
 
 
 usersRouter.get('/', async (req, res, next) => {
-  const users = await userModel.find({});
-  res.status(200).json(users);
+  try {
+    const blogFieldsToReturn = {title: 1, author: 1, url: 1, likes: 1, id: 1};
+    let users = await userModel.find({}).populate('blogs', blogFieldsToReturn);
+    res.status(200).json(users);
+  }
+  catch(err) {
+    next(err);
+  }
 });
 
 usersRouter.post('/', async (req, res, next) => {
