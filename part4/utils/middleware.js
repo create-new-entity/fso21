@@ -50,6 +50,14 @@ const errorHandler = (error, request, response, next) => {
       error: error.message
     });
   }
+  else if(
+    error.name === ErrorNames.BlogEntryNotFound
+    || error.name === ErrorNames.UserIsNotAuthorized
+  ) {
+    return response.status(400).json({
+      error: error.message
+    });
+  }
 
   next(error)
 }
