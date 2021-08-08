@@ -29,6 +29,14 @@ const errorHandler = (error, request, response, next) => {
     || error.name === ErrorNames.ShortPasswordError) {
       return response.status(400).json({ error: error.message })
   }
+  else if(
+    error.name === ErrorNames.IncorrectUsername
+    || error.name === ErrorNames.IncorrectPassword
+  ) {
+    return response.status(401).json({
+      error: error.message
+    });
+  }
 
   next(error)
 }
