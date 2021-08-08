@@ -14,22 +14,37 @@ blogsRouter.get('/', async (req, res, next) => {
   }
 })
 
-blogsRouter.post('/', async (req, res) => {
-  const user = req.user;
+blogsRouter.post('/', async (req, res, next) => {
+  try {
+    const user = req.user;
+    if(!user) {
+      const err = new Error('Token missing or invalid');
+      err.name = ErrorNames.TokenMissingOrInvalid;
+      throw err;
+    }
 
-  let newObj = req.body;
-  if(!newObj.title || !newObj.url) {
-    res.status(400).end();
-    return;
+    let newObj = req.body;
+    if(!newObj.title || !newObj.url) {
+      res.status(400).end();
+      return;
+    }
+    newObj.hasOwnProperty('likes') ? newObj : newObj.likes = 0;
+    
+    newObj.user = user._id;
+    const blog = new Blog(newObj);
+    const result = await blog.save();
+    const updatedBlogs = user.blogs.concat(result.id);
+    const updateConfig = {
+      $set: { 
+        blogs: updatedBlogs
+      }
+    };
+    await user.update(updateConfig);
+    res.status(201).json(result);
   }
-  newObj.hasOwnProperty('likes') ? newObj : newObj.likes = 0;
-  
-  newObj.user = user._id;
-  const blog = new Blog(newObj);
-  const result = await blog.save();
-  user.blogs = user.blogs.concat(result.id);
-  await user.save();
-  res.status(201).json(result);
+  catch(err) {
+    next(err);
+  }
 });
 
 blogsRouter.delete('/:id', async (req, res, next) => {

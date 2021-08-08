@@ -72,6 +72,7 @@ const errorHandler = (error, request, response, next) => {
   else if(
     error.name === ErrorNames.IncorrectUsername
     || error.name === ErrorNames.IncorrectPassword
+    || error.name === ErrorNames.TokenMissingOrInvalid
   ) {
     return response.status(401).json({
       error: error.message

@@ -10,7 +10,8 @@ const resetDatabase = async () => {
 
 const createAUserAndInitializeDB = async (api) => {
   const dummyUser = await createADummyUser(api);
-  await initializeDBWithDummyBlogs(api, dummyUser.id);
+  const { token } = await login(api, dummyUser);
+  await initializeDBWithDummyBlogs(api, token);
   const response = await api.get('/api/blogs');
   return response.body;
 };
@@ -23,22 +24,30 @@ const getAllUsernamesFromDB = async () => {
 const createADummyUser = async (api) => {
   const dummyUsers = dummyStuffs.dummyUsers;
 
-  response = await api.post('/api/users').send(dummyUsers[0]);
-  return response.body;
+  await api.post('/api/users').send(dummyUsers[0]);
+  return dummyUsers[0];  // { name, username, password }
 };
 
-const initializeDBWithDummyBlogs = async (api, userId) => {
-  const promises = dummyStuffs.dummyBlogs.map((blog) => {
-    const newDummyBlog = {
-      ...blog,
-      user: userId
-    };
-    return api
-      .post('/api/blogs')
-      .send(newDummyBlog);
-  });
+const login = async (api, user) => {
+  const res = await api
+    .post('/api/login')
+    .send({
+      username: user.username,
+      password: user.password
+    });
+  return res.body  // { username, id, token }
+};
 
-  return Promise.all(promises);
+const initializeDBWithDummyBlogs = async (api, token) => {
+  for (blog of dummyStuffs.dummyBlogs) {
+    const newDummyBlog = {
+      ...blog
+    };
+    await api
+      .post('/api/blogs')
+      .send(newDummyBlog)
+      .set('Authorization', 'bearer ' + token);
+  }
 };
 
 const totalLikes = (blogs) => {
@@ -103,5 +112,6 @@ module.exports = {
   favoriteBlog,
   mostBlogs,
   createAUserAndInitializeDB,
-  mostLikes
+  mostLikes,
+  login
 };

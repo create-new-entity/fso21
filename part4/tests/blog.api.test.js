@@ -24,18 +24,7 @@ describe('API returns data in correct amount and in correct format.', () => {
   test('API returns data in JSON format', async () => {
     let response;
 
-    const user = await helpers.createADummyUser(api);
-    const dummyBlog = dummyStuffs.dummyBlogs[0];
-
-    const newDummyBlog = {
-      ...dummyBlog,
-      user: user.id
-    };
-
-    await api
-      .post('/api/blogs')
-      .send(newDummyBlog)
-      .expect(201);
+    await helpers.createAUserAndInitializeDB(api);
 
     response = await api
       .get('/api/blogs')
@@ -45,19 +34,8 @@ describe('API returns data in correct amount and in correct format.', () => {
 
   test('id is defined in document', async () => {
     let response;
-    const user = await helpers.createADummyUser(api);
     
-    const dummyBlog = dummyStuffs.dummyBlogs[0];
-
-    const newDummyBlog = {
-      ...dummyBlog,
-      user: user.id
-    };
-
-    await api
-      .post('/api/blogs')
-      .send(newDummyBlog)
-      .expect(201);
+    await helpers.createAUserAndInitializeDB(api);
 
     response = await api.get('/api/blogs');
     expect(response.body[0].id).toBeDefined();
@@ -66,20 +44,20 @@ describe('API returns data in correct amount and in correct format.', () => {
   test('Adding new blog works', async () => {
     let response;
     const user = await helpers.createADummyUser(api);
-    
+    const { username, id, token } = await helpers.login(api, user);
     const dummyBlog = dummyStuffs.dummyBlogs[0];
 
     response = await api.get('/api/blogs');
     expect(response.body.length).toBe(0);
 
     const newDummyBlog = {
-      ...dummyBlog,
-      user: user.id
+      ...dummyBlog
     };
 
     await api
       .post('/api/blogs')
       .send(newDummyBlog)
+      .set('Authorization', 'bearer ' + token)
       .expect(201);
 
     response = await api.get('/api/blogs');
@@ -93,10 +71,13 @@ describe('API returns data in correct amount and in correct format.', () => {
     const dummyBlog = { ...dummyStuffs.dummyBlog };
     delete dummyBlog.likes;
     dummyBlog.user = user.id;
+
+    const { username, id, token } = await helpers.login(api, user);
     
     response = await api
       .post('/api/blogs')
       .send(dummyBlog)
+      .set('Authorization',  'bearer ' + token)
       .expect(201);
   
     expect(response.body.likes).toBeDefined();
@@ -104,15 +85,19 @@ describe('API returns data in correct amount and in correct format.', () => {
   }, TIMEOUT);
 
   test('If title is missing POST request returns with 400 status code', async () => {
+    let response;
     const user = await helpers.createADummyUser(api);
 
     const dummyBlog = { ...dummyStuffs.dummyBlog };
     delete dummyBlog.title;
     dummyBlog.user = user.id;
 
-    await api
+    const { username, id, token } = await helpers.login(api, user);
+    
+    response = await api
       .post('/api/blogs')
       .send(dummyBlog)
+      .set('Authorization',  'bearer ' + token)
       .expect(400);
   }, TIMEOUT);
 
@@ -122,10 +107,13 @@ describe('API returns data in correct amount and in correct format.', () => {
     const dummyBlog = { ...dummyStuffs.dummyBlog };
     delete dummyBlog.url;
     dummyBlog.user = user.id;
-
-    await api
+    
+    const { username, id, token } = await helpers.login(api, user);
+  
+    response = await api
       .post('/api/blogs')
       .send(dummyBlog)
+      .set('Authorization',  'bearer ' + token)
       .expect(400);
   }, TIMEOUT);
 
@@ -145,10 +133,14 @@ describe('Deletion and Update', () => {
 
     let response = await api.get('/api/blogs');
     expect(response.body.map(blog => blog.author)).not.toContain(dummyBlog.author);
+    
 
+    const user = await helpers.createADummyUser(api);
+    const { username, id, token } = await helpers.login(api, user);
     response = await api
       .post('/api/blogs')
-      .send(dummyBlog);
+      .send(dummyBlog)
+      .set('Authorization', `bearer ${token}`);
 
     const targetId = response.body.id;
 
@@ -157,6 +149,7 @@ describe('Deletion and Update', () => {
     
     await api
       .delete(`/api/blogs/${targetId}`)
+      .set('Authorization', `bearer ${token}`)
       .expect(204);
 
     response = await api.get('/api/blogs');
@@ -165,17 +158,22 @@ describe('Deletion and Update', () => {
 
 
   test('Updating likes works', async () => {
+    const user = await helpers.createADummyUser(api);
+    const { username, id, token } = await helpers.login(api, user);
 
     let response = await api
       .post('/api/blogs')
-      .send(dummyStuffs.dummyBlog);
+      .send(dummyStuffs.dummyBlog)
+      .set('Authorization', `bearer ${token}`);
     
     const targetId = response.body.id;
     expect(response.body.likes).toBe(dummyStuffs.dummyBlog.likes);
 
     response = await api
       .patch(`/api/blogs/${targetId}`)
-      .send({ likes: 50 });
+      .send({ likes: 50 })
+      .set('Authorization', `bearer ${token}`);
+    
     expect(response.body.likes).toBe(50);
 
     response = await api.get('/api/blogs');
@@ -188,6 +186,13 @@ describe('Deletion and Update', () => {
 
 
 describe('Authentication tests', () => {
+
+  test('Can not create new blog without authentication', async () => {
+    await api
+      .post('/api/blogs')
+      .send(dummyStuffs.dummyBlog)
+      .expect(401);
+  });
 
   test('Can not create user without username', async () => {
     let dummyUser = { ...helpers.dummyNewUser };
@@ -248,7 +253,7 @@ describe('Other tests', () => {
     const blogs = await helpers.createAUserAndInitializeDB(api);
     const totalLikes = helpers.totalLikes(blogs);
     expect(totalLikes).toBe(36);
-  });
+  }, TIMEOUT);
 
   test('Most liked blog works', async () => {
 
