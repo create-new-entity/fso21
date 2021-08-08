@@ -1,9 +1,7 @@
 const blogsRouter = require('express').Router();
-const jwt = require('jsonwebtoken');
 const ErrorNames = require('../error');
 
 const Blog = require('./../models/blog');
-const User = require('./../models/user');
 
 blogsRouter.get('/', async (req, res, next) => {
   try {
@@ -17,8 +15,7 @@ blogsRouter.get('/', async (req, res, next) => {
 })
 
 blogsRouter.post('/', async (req, res) => {
-  const token = req.token;
-  const decodedToken = await jwt.verify(token, process.env.SECRET);
+  const user = req.user;
 
   let newObj = req.body;
   if(!newObj.title || !newObj.url) {
@@ -26,8 +23,7 @@ blogsRouter.post('/', async (req, res) => {
     return;
   }
   newObj.hasOwnProperty('likes') ? newObj : newObj.likes = 0;
-
-  const user = await User.findById(decodedToken.id);
+  
   newObj.user = user._id;
   const blog = new Blog(newObj);
   const result = await blog.save();
@@ -38,15 +34,7 @@ blogsRouter.post('/', async (req, res) => {
 
 blogsRouter.delete('/:id', async (req, res, next) => {
   try {
-    const token = req.token;
-    const decodedToken = await jwt.verify(token, process.env.SECRET);
-
-    if(!token || !decodedToken.id){
-      const err = new Error('Token missing or invalid');
-      err.name = ErrorNames.TokenMissingOrInvalid;
-      throw err;
-    }
-    
+    const user = req.user;
     const targetId = req.params.id;
     
     const blog = await Blog.findOne( { _id: targetId });
@@ -55,8 +43,10 @@ blogsRouter.delete('/:id', async (req, res, next) => {
       err.name = ErrorNames.BlogEntryNotFound;
       throw err;
     }
-    if(blog.user.toString().localeCompare(decodedToken.id.toString()) === 0){
+    if(blog.user.toString().localeCompare(user._id.toString()) === 0){
       await Blog.findByIdAndDelete( { _id: targetId });
+      user.blogs = user.blogs.filter(id => id.toString().localeCompare(targetId.toString()) !== 0 );
+      await user.save();
       res.status(204).end();
     }
     else {
