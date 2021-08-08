@@ -4,7 +4,8 @@ const ErrorNames = {
   UsernameMissingError: 'UsernameMissingError',
   PasswordMissingError: 'PasswordMissingError',
   IncorrectPassword: 'IncorrectPassword',
-  IncorrectUsername: 'IncorrectUsername'
+  IncorrectUsername: 'IncorrectUsername',
+  TokenMissingOrInvalid: 'TokenMissingOrInvalid'
 };
 
 module.exports = ErrorNames;

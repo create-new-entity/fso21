@@ -1,52 +1,65 @@
 const blogsRouter = require('express').Router();
+const jwt = require('jsonwebtoken');
+
 const Blog = require('./../models/blog');
 const User = require('./../models/user');
 
-blogsRouter.get('/', async (request, response, next) => {
+const getTokenFrom = req => {
+  const authorization = req.get('authorization')
+  if (authorization && authorization.toLowerCase().startsWith('bearer ')) {
+    return authorization.substring(7)
+  }
+  return null
+}
+
+blogsRouter.get('/', async (req, res, next) => {
   try {
     const userFieldsToReturn = { name: 1, username: 1, id: 1 };
     const blogs = await Blog.find({}).populate('user', userFieldsToReturn);
-    response.status(200).json(blogs);
+    res.status(200).json(blogs);
   }
   catch(err) {
     next(err);
   }
 })
 
-blogsRouter.post('/', async (request, response) => {
-  let newObj = request.body;
+blogsRouter.post('/', async (req, res) => {
+  const token = getTokenFrom(req);
+  const decodedToken = await jwt.verify(token, process.env.SECRET);
+
+  let newObj = req.body;
   if(!newObj.title || !newObj.url) {
-    response.status(400).end();
+    res.status(400).end();
     return;
   }
   newObj.hasOwnProperty('likes') ? newObj : newObj.likes = 0;
 
-  const user = await User.findById('610da203af2fff2fececf0c8');
+  const user = await User.findById(decodedToken.id);
   newObj.user = user._id;
   const blog = new Blog(newObj);
   const result = await blog.save();
   user.blogs = user.blogs.concat(result.id);
   await user.save();
-  response.status(201).json(result);
+  res.status(201).json(result);
 });
 
-blogsRouter.delete('/:id', async (request, response, next) => {
-  const targetId = request.params.id;
+blogsRouter.delete('/:id', async (req, res, next) => {
+  const targetId = res.params.id;
 
   await Blog.remove({ _id: targetId });
-  response.status(204).end();
+  res.status(204).end();
 });
 
-blogsRouter.patch('/:id', async (request, response, next) => {
-  const targetId = request.params.id;
-  const newLikes = request.body.likes;
+blogsRouter.patch('/:id', async (req, res, next) => {
+  const targetId = req.params.id;
+  const newLikes = req.body.likes;
 
   const filter = { _id: targetId };
   const update = { likes: newLikes };
   const options = { new: true };
 
   let updatedDocument = await Blog.findOneAndUpdate(filter, update, options);
-  response.status(200).json(updatedDocument);
+  res.status(200).json(updatedDocument);
 });
 
 module.exports = blogsRouter;
