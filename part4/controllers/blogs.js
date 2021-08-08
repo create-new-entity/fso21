@@ -4,14 +4,6 @@ const jwt = require('jsonwebtoken');
 const Blog = require('./../models/blog');
 const User = require('./../models/user');
 
-const getTokenFrom = req => {
-  const authorization = req.get('authorization')
-  if (authorization && authorization.toLowerCase().startsWith('bearer ')) {
-    return authorization.substring(7)
-  }
-  return null
-}
-
 blogsRouter.get('/', async (req, res, next) => {
   try {
     const userFieldsToReturn = { name: 1, username: 1, id: 1 };
@@ -24,7 +16,7 @@ blogsRouter.get('/', async (req, res, next) => {
 })
 
 blogsRouter.post('/', async (req, res) => {
-  const token = getTokenFrom(req);
+  const token = req.token;
   const decodedToken = await jwt.verify(token, process.env.SECRET);
 
   let newObj = req.body;
