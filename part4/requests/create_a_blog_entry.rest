@@ -5,6 +5,6 @@ Authorization: bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Imhvd
 {
   "title": "Refactoring CSS: Strategy, Regression Testing And Maintenance (Part 2)",
   "author": "Adrian Bece",
-  "url": "https://www.smashingmagazine.com/2021/08/refactoring-css-strategy-regression-testing-maintenance-part2/",
+  "url": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6IndoYWNreV90b2JhY2NpIiwiaWQiOiI2MTEwOGFkNzdhYzA3MjNiMGNjZWQ0ZGMiLCJpYXQiOjE2Mjg0NzQxMDB9.Ki9pD7U_DbdyHk7yMbw1Pbso4Eq6hBzmNt6Ye0vkMtU",
   "likes": 50
 }

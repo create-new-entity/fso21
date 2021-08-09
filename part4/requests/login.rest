@@ -1,7 +1,7 @@
-POST http://localhost:3001/api/login
+POST http://localhost:3003/api/login
 Content-Type: application/json
 
 {
-  "username": "house_of_gucci",
-  "password": "ridley_won"
+  "username": "whacky_tobacci",
+  "password": "fincher_won_2"
 }

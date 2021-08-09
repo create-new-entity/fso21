@@ -1,8 +1,8 @@
-POST http://localhost:3001/api/users
+POST http://localhost:3003/api/users
 Content-Type: application/json
 
 {
-  "name": "Ridley Scott",
-  "username": "house_of_gucci",
-  "password": "ridley_won"
+  "name": "David Fincher",
+  "username": "whacky_tobacci",
+  "password": "fincher_won_2"
 }
