@@ -9,7 +9,6 @@ const login = async (user) => {
     data: user
   };
   const res = await axios(config);
-  console.log(res.data);
   return res.data;
 };
 

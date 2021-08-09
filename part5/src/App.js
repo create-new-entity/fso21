@@ -12,6 +12,11 @@ const App = () => {
   const [password, setPassword] = useState('');
   const [user, setUser] = useState(null);
 
+  const logoutButtonHandler = () => {
+    setUser(null);
+    window.localStorage.removeItem('user');
+  };
+
   const loginFormSubmitHandler = async (event) => {
     event.preventDefault();
 
@@ -21,6 +26,7 @@ const App = () => {
     };
     const newUser = await userServices.login(userCredentials);
     setUser(newUser);
+    window.localStorage.setItem('user', newUser);
 
     setUsername('');
     setPassword('');
@@ -44,11 +50,16 @@ const App = () => {
     })();
   }, [user]);
 
+  useEffect(() => {
+    const existingUser = window.localStorage.getItem('user');
+    if(existingUser) setUser(existingUser);
+  }, []);
+
   const blogsContent = () => {
     return (
       <React.Fragment>
         <h2>blogs</h2>
-        <p>{user.name} logged in</p>
+        <p>{ user.name } logged in <button onClick={logoutButtonHandler}>logout</button></p>
         {
           blogs.map(blog =>
             <Blog key={blog.id} blog={blog} />
@@ -72,7 +83,6 @@ const App = () => {
 
   return (
     <div>
-      
       {
         user ? blogsContent(): loginForm()
       }
