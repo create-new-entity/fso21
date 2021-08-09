@@ -12,3 +12,6 @@ miscellaneousRouter.delete('/', async (req, res, next) => {
     res.status(500).end();
   }
 });
+
+
+module.exports = miscellaneousRouter;

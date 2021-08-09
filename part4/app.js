@@ -9,7 +9,7 @@ const config = require('./utils/config');
 const blogsRouter = require('./controllers/blogs');
 const usersRouter = require('./controllers/users');
 const loginRouter = require('./controllers/login');
-const miscellaneousRouter = require('./controllers/miscellaneous');
+const miscellaneousRouter = require('./controllers/miscellaneous/miscellaneous');
 
 
 
