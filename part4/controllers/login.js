@@ -31,6 +31,7 @@ loginRouter.post('/', async (req, res, next) => {
 
     const token = await jwt.sign(payload, process.env.SECRET);
     res.status(200).json({
+      name: user.name,
       username: user.username,
       id: user._id,
       token
