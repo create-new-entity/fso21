@@ -11,11 +11,26 @@ const getAll = async () => {
   
   const res = await axios(config);
   return res.data;
-}
+};
+
+const createNew = async (blog, token) => {
+  const config = {
+    method: 'post',
+    url: baseUrl,
+    headers: {
+      'Authorization': `bearer ${token}`
+    },
+    data: blog
+  };
+
+  const res = await axios(config);
+  return res.data;
+};
 
 
 const blogServices = {
-  getAll
+  getAll,
+  createNew
 };
 
 export default blogServices;
