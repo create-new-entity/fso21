@@ -3,10 +3,13 @@ import React, { useState, useEffect } from 'react';
 
 import Blog from './components/Blog';
 import LoginForm from './components/LoginForm';
+import Notification from './components/Notification';
 import CreateNewBlogForm from './components/CreateNewBlogForm';
 import LoggedInUser from './components/LoggedInUser';
 import userServices from './services/user';
 import blogServices from './services/blogs';
+
+const NOTIFICATION_TIMEOUT = 3000;
 
 const App = () => {
   const [blogs, setBlogs] = useState([]);
@@ -16,16 +19,42 @@ const App = () => {
   const [title, setTitle] = useState('');
   const [author, setAuthor] = useState('');
   const [url, setUrl] = useState('');
+  const [notification, setNotification] = useState(null);
 
+  const setNewNotification = (newNotification) => {
+    setNotification(newNotification);
+    setTimeout(
+      () => { setNotification(null) },
+      NOTIFICATION_TIMEOUT
+    );
+  };
+
+  const resetCreateNewForm = () => {
+    setTitle('');
+    setAuthor('');
+    setUrl('');
+  };
 
   const createNewBlogSubmitHandler = async (event) => {
+    event.preventDefault();
+  
     let newBlog = {
       title: event.target.title.value,
       author: event.target.author.value,
       url: event.target.url.value
     };
 
-    await blogServices.createNew(newBlog, user.token);
+    resetCreateNewForm();
+
+    try {
+      const newAddedBlog = await blogServices.createNew(newBlog, user.token);
+      const newBlogs = [...blogs, newAddedBlog];
+      setBlogs(newBlogs);
+      setNewNotification({ positive: true, message: `New blog ${newBlog.title} by ${newBlog.author} added.`});
+    }
+    catch (err) {
+      setNewNotification({ positive: false, message: `Adding new blog failed.`});
+    }
   };
 
   const logoutButtonHandler = () => {
@@ -40,13 +69,22 @@ const App = () => {
       username: event.target.username.value,
       password: event.target.password.value
     };
-    const newUser = await userServices.login(userCredentials);
-    window.localStorage.setItem('user', JSON.stringify(newUser));
-    setUser(newUser);
-    
 
     setUsername('');
     setPassword('');
+    
+    try {
+      const newUser = await userServices.login(userCredentials);
+      window.localStorage.setItem('user', JSON.stringify(newUser));
+      setUser(newUser);
+      setNewNotification({ positive: true, message: `${newUser.username} logged in.` });
+    }
+    catch(err) {
+      setNewNotification({ positive: false, message: 'Log in failed.' });
+    }
+    
+
+    
   };
 
   const onUsernameChange = (event) => {
@@ -106,6 +144,16 @@ const App = () => {
     );
   };
 
+  const notificationContent = () => {
+    if(notification) return (
+      <Notification
+        positive={notification.positive}
+        message={notification.message}
+      />
+    );
+    return null;
+  };
+
 
   const contentIfLoggedIn = () => {
     return (
@@ -138,6 +186,9 @@ const App = () => {
 
   return (
     <div>
+      {
+        notificationContent()
+      }
       {
         user ? contentIfLoggedIn(): loginForm()
       }

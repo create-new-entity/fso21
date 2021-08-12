@@ -8,8 +8,13 @@ const login = async (user) => {
     url: loginUrl,
     data: user
   };
-  const res = await axios(config);
-  return res.data;
+  try {
+    const res = await axios(config);
+    return res.data;
+  }
+  catch(err) {
+    throw err;
+  }
 };
 
 const userServices = {
