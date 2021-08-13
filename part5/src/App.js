@@ -1,9 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 
 
 import Blog from './components/Blog';
 import LoginForm from './components/LoginForm';
 import Notification from './components/Notification';
+import Togglable from './components/Togglable';
 import CreateNewBlogForm from './components/CreateNewBlogForm';
 import LoggedInUser from './components/LoggedInUser';
 import userServices from './services/user';
@@ -51,6 +52,7 @@ const App = () => {
       const newBlogs = [...blogs, newAddedBlog];
       setBlogs(newBlogs);
       setNewNotification({ positive: true, message: `New blog ${newBlog.title} by ${newBlog.author} added.`});
+      createNewFormRef.current.toggleVisibility();
     }
     catch (err) {
       setNewNotification({ positive: false, message: `Adding new blog failed.`});
@@ -116,18 +118,27 @@ const App = () => {
     };
   };
 
+  const createNewFormRef = useRef();
   const createNewFormContent = () => {
     return (
       <React.Fragment>
-        <CreateNewBlogForm
-          title={title}
-          author={author}
-          url={url}
-          titleChangeHandler={inputChangeHandler(setTitle)}
-          authorChangeHandler={inputChangeHandler(setAuthor)}
-          urlChangeHandler={inputChangeHandler(setUrl)}
-          createNewBlogSubmitHandler={createNewBlogSubmitHandler}
-        />
+        <Togglable
+          showContentButtonLabel='Create New Blog'
+          hideContentButtonLabel='Cancel'
+          resetFn={resetCreateNewForm}
+          ref={createNewFormRef}
+        >
+          <CreateNewBlogForm
+            title={title}
+            author={author}
+            url={url}
+            titleChangeHandler={inputChangeHandler(setTitle)}
+            authorChangeHandler={inputChangeHandler(setAuthor)}
+            urlChangeHandler={inputChangeHandler(setUrl)}
+            createNewBlogSubmitHandler={createNewBlogSubmitHandler}
+          />
+        </Togglable>
+        
       </React.Fragment>
     );
   };

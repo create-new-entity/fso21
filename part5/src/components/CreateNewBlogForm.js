@@ -15,7 +15,7 @@ const CreateNewBlogForm = ({ title, author, url, titleChangeHandler, authorChang
         <div>
           url: <input name='url' value={url} onChange={urlChangeHandler}/>
         </div>
-        <button type='submit'>create</button>
+        <button type='submit'>Create</button>
       </form>
     </React.Fragment>
   );
