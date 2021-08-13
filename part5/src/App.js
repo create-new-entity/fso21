@@ -1,10 +1,9 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 
 
 import Blog from './components/Blog';
 import LoginForm from './components/LoginForm';
 import Notification from './components/Notification';
-import Togglable from './components/Togglable';
 import CreateNewBlogForm from './components/CreateNewBlogForm';
 import LoggedInUser from './components/LoggedInUser';
 import userServices from './services/user';
@@ -17,10 +16,19 @@ const App = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [user, setUser] = useState(null);
-  const [title, setTitle] = useState('');
-  const [author, setAuthor] = useState('');
-  const [url, setUrl] = useState('');
   const [notification, setNotification] = useState(null);
+
+  const addNewBlog = async (newBlog) => {
+    try {
+      const newAddedBlog = await blogServices.createNew(newBlog, user.token);
+      const newBlogs = [...blogs, newAddedBlog];
+      setBlogs(newBlogs);
+      setNewNotification({ positive: true, message: `New blog ${newBlog.title} by ${newBlog.author} added.`});
+    }
+    catch(err) {
+      setNewNotification({ positive: false, message: `Adding new blog failed.`});
+    }
+  };
 
   const setNewNotification = (newNotification) => {
     setNotification(newNotification);
@@ -29,36 +37,7 @@ const App = () => {
       NOTIFICATION_TIMEOUT
     );
   };
-
-  const resetCreateNewForm = () => {
-    setTitle('');
-    setAuthor('');
-    setUrl('');
-  };
-
-  const createNewBlogSubmitHandler = async (event) => {
-    event.preventDefault();
   
-    let newBlog = {
-      title: event.target.title.value,
-      author: event.target.author.value,
-      url: event.target.url.value
-    };
-
-    resetCreateNewForm();
-
-    try {
-      const newAddedBlog = await blogServices.createNew(newBlog, user.token);
-      const newBlogs = [...blogs, newAddedBlog];
-      setBlogs(newBlogs);
-      setNewNotification({ positive: true, message: `New blog ${newBlog.title} by ${newBlog.author} added.`});
-      createNewFormRef.current.toggleVisibility();
-    }
-    catch (err) {
-      setNewNotification({ positive: false, message: `Adding new blog failed.`});
-    }
-  };
-
   const logoutButtonHandler = () => {
     setUser(null);
     window.localStorage.removeItem('user');
@@ -111,38 +90,7 @@ const App = () => {
     const existingUser = window.localStorage.getItem('user');
     if(existingUser) setUser(JSON.parse(existingUser));
   }, []);
-
-  const inputChangeHandler = (setFn) => {
-    return (event) => {
-      setFn(event.target.value);
-    };
-  };
-
-  const createNewFormRef = useRef();
-  const createNewFormContent = () => {
-    return (
-      <React.Fragment>
-        <Togglable
-          showContentButtonLabel='Create New Blog'
-          hideContentButtonLabel='Cancel'
-          resetFn={resetCreateNewForm}
-          ref={createNewFormRef}
-        >
-          <CreateNewBlogForm
-            title={title}
-            author={author}
-            url={url}
-            titleChangeHandler={inputChangeHandler(setTitle)}
-            authorChangeHandler={inputChangeHandler(setAuthor)}
-            urlChangeHandler={inputChangeHandler(setUrl)}
-            createNewBlogSubmitHandler={createNewBlogSubmitHandler}
-          />
-        </Togglable>
-        
-      </React.Fragment>
-    );
-  };
-
+  
   const blogsContent = () => {
     return (
       <React.Fragment>
@@ -173,9 +121,7 @@ const App = () => {
           name={user.name}
           logoutButtonHandler={logoutButtonHandler}
         />
-        {
-          createNewFormContent()
-        }
+        <CreateNewBlogForm addNewBlog={addNewBlog}/>
         {
           blogsContent()
         }
