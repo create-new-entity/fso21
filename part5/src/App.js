@@ -82,7 +82,7 @@ const App = () => {
     (async () => {
       if (user) {
         const blogs = await blogServices.getAll();
-        setBlogs(blogs);
+        setBlogs(blogs.sort((blog1, blog2) => blog1.likes - blog2.likes));
       } else return [];
     })();
   }, [user]);
@@ -103,13 +103,15 @@ const App = () => {
   const blogsContent = () => {
     return (
       <React.Fragment>
-        {blogs.map((blog) => (
-          <Blog
-            key={blog.id}
-            blog={blog}
-            likeButtonHandler={likeButtonHandler}
-          />
-        ))}
+        {
+          blogs
+            .sort((blog1, blog2) => blog1.likes - blog2.likes)
+            .map((blog) => <Blog
+              key={blog.id}
+              blog={blog}
+              likeButtonHandler={likeButtonHandler}
+            />)
+        }
       </React.Fragment>
     );
   };
