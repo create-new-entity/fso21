@@ -87,4 +87,27 @@ blogsRouter.patch('/:id', async (req, res, next) => {
   res.status(200).json(updatedDocument);
 });
 
+blogsRouter.put('/:id', async (req, res, next) => {
+  try {
+    const targetId = req.params.id;
+    const updatedBlog = {
+      user: req.body.user,
+      likes: req.body.likes,
+      author: req.body.author,
+      title: req.body.title,
+      url: req.body.url
+    };
+
+    const filter = { _id: targetId };
+    const options = { new: true };
+
+    const result = await Blog.findOneAndReplace(filter, updatedBlog, options);
+    res.status(204).json(result);
+  }
+  catch(err) {
+    next(err);
+  }
+});
+
+
 module.exports = blogsRouter;

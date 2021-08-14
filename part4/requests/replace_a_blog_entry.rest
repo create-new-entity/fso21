@@ -1,0 +1,10 @@
+PUT http://localhost:3003/api/blogs/6117a0d41c55681c3c13c80d
+Content-Type: application/json
+
+{
+  "user": "6117a0d31c55681c3c13c7fc",
+  "likes": -15,
+  "author": "Adrian Bece",
+  "title": "Refactoring CSS: Strategy, Regression Testing And Maintenance (Part 2)",
+  "url": "https://www.smashingmagazine.com/2021/08/refactoring-css-strategy-regression-testing-maintenance-part2/"
+}

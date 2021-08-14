@@ -1,4 +1,4 @@
-POST http://localhost:3001/api/blogs
+POST http://localhost:3003/api/blogs
 Content-Type: application/json
 Authorization: bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImhvdXNlX29mX2d1Y2NpIiwiaWQiOiI2MTBmZWI2NDE4NDVjNjFmM2M2YzFjMTYiLCJpYXQiOjE2Mjg0MzMyNTd9.hM0t8smbO_cZWDGNAYyt4W6g_LUlhrl1ehepgKqMGQk
 
