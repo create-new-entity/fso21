@@ -1,7 +1,7 @@
-import React, { useState } from 'react'
+import React, { useState } from 'react';
 
 
-const Blog = ({blog}) => {
+const Blog = ({ blog, likeButtonHandler }) => {
   const [view, setView] = useState(false);
 
   const blogStyle = {
@@ -17,14 +17,20 @@ const Blog = ({blog}) => {
     marginLeft: 10
   };
 
-  console.log(blog);
-
-  const likeButtonHandler = () => {
-    console.log('Like Pressed');
-  };
-
   const viewButtonHandler = () => {
     setView(!view);
+  };
+
+  const likeHandler = async () => {
+    const newBlog = {
+      user: blog.user.id,
+      likes: blog.likes + 1,
+      author: blog.author,
+      title: blog.title,
+      url: blog.url
+    };
+
+    await likeButtonHandler(newBlog, blog.id);
   };
 
   const detailsContent = () => {
@@ -32,11 +38,13 @@ const Blog = ({blog}) => {
     return (
       <React.Fragment>
         <p>{blog.url}</p>
-        <p>likes {blog.likes} <button onClick={likeButtonHandler}>like</button></p>
+        <p>likes {blog.likes} <button onClick={likeHandler}>like</button></p>
         <p>{blog.author}</p>
       </React.Fragment>
     );
   };
+
+  
   
   return (
     <div style={blogStyle}>
@@ -48,4 +56,4 @@ const Blog = ({blog}) => {
   )
 };
 
-export default Blog
+export default Blog;

@@ -102,7 +102,7 @@ blogsRouter.put('/:id', async (req, res, next) => {
     const options = { new: true };
 
     const result = await Blog.findOneAndReplace(filter, updatedBlog, options);
-    res.status(204).json(result);
+    res.status(200).json(result);
   }
   catch(err) {
     next(err);

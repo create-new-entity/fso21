@@ -1,5 +1,4 @@
-import axios from 'axios'
-
+import axios from 'axios';
 
 const baseUrl = '/api/blogs';
 
@@ -27,10 +26,25 @@ const createNew = async (blog, token) => {
   return res.data;
 };
 
+const updateABlogEntry = async (blog, token, blogId) => {
+  const config = {
+    method: 'put',
+    url: `${baseUrl}/${blogId}`,
+    headers: {
+      'Authorization': `bearer ${token}`
+    },
+    data: blog
+  };
+
+  const res = await axios(config);
+  return res.data;
+};
+
 
 const blogServices = {
   getAll,
-  createNew
+  createNew,
+  updateABlogEntry
 };
 
 export default blogServices;
