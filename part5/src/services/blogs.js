@@ -40,11 +40,24 @@ const updateABlogEntry = async (blog, token, blogId) => {
   return res.data;
 };
 
+const removeBlog = async (blogId, token) => {
+  const config = {
+    method: 'delete',
+    url: `${baseUrl}/${blogId}`,
+    headers: {
+      'Authorization': `bearer ${token}`
+    }
+  };
+
+  await axios(config);
+};
+
 
 const blogServices = {
   getAll,
   createNew,
-  updateABlogEntry
+  updateABlogEntry,
+  removeBlog
 };
 
 export default blogServices;

@@ -100,6 +100,22 @@ const App = () => {
     setBlogs(newBlogs);
   };
 
+  const removeButtonHandler = (blogId) => {
+    return async () => {
+      try {
+        const yes = window.confirm('Are you sure?');
+        if(!yes) return;
+        await blogServices.removeBlog(blogId, user.token);
+        const newBlogs = blogs.filter(blog => blog.id.localeCompare(blogId) !== 0);
+        setBlogs(newBlogs);
+        setNewNotification({ positive: true, message: 'Blog deleted successfully!!'});
+      }
+      catch(err) {
+        setNewNotification({ positive: false, message: 'Blog deletion failed!!'});
+      }
+    };
+  };
+
   const blogsContent = () => {
     return (
       <React.Fragment>
@@ -110,6 +126,7 @@ const App = () => {
               key={blog.id}
               blog={blog}
               likeButtonHandler={likeButtonHandler}
+              removeButtonHandler={removeButtonHandler(blog.id)}
             />)
         }
       </React.Fragment>
@@ -139,6 +156,8 @@ const App = () => {
       </React.Fragment>
     );
   };
+
+
 
   const loginForm = () => {
     return (

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 
 
-const Blog = ({ blog, likeButtonHandler }) => {
+const Blog = ({ blog, likeButtonHandler, removeButtonHandler }) => {
   const [view, setView] = useState(false);
 
   const blogStyle = {
@@ -40,6 +40,9 @@ const Blog = ({ blog, likeButtonHandler }) => {
         <p>{blog.url}</p>
         <p>likes {blog.likes} <button onClick={likeHandler}>like</button></p>
         <p>{blog.author}</p>
+        <div>
+          <button onClick={removeButtonHandler}>remove</button>
+        </div>
       </React.Fragment>
     );
   };
