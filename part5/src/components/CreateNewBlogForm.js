@@ -1,4 +1,5 @@
 import React, { useState, useRef } from 'react';
+import PropTypes from 'prop-types';
 
 import Togglable from './Togglable';
 
@@ -67,6 +68,10 @@ const CreateNewBlogForm = ({ addNewBlog }) => {
         </Togglable>
       </React.Fragment>
   );
+};
+
+CreateNewBlogForm.propTypes = {
+  addNewBlog: PropTypes.func.isRequired
 };
 
 export default CreateNewBlogForm;
