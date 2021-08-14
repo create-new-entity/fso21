@@ -47,15 +47,13 @@ const Blog = ({ blog, likeButtonHandler, removeButtonHandler }) => {
     );
   };
 
-  
-  
   return (
     <div style={blogStyle}>
       {blog.title} <button style={viewButtonStyle} onClick={viewButtonHandler}>{ view ? 'hide' : 'view'}</button>
       {
         detailsContent()
       }
-    </div>  
+    </div>
   )
 };
 

@@ -8,13 +8,9 @@ const login = async (user) => {
     url: loginUrl,
     data: user
   };
-  try {
-    const res = await axios(config);
-    return res.data;
-  }
-  catch(err) {
-    throw err;
-  }
+
+  const res = await axios(config);
+  return res.data;
 };
 
 const userServices = {

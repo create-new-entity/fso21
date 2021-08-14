@@ -5,7 +5,7 @@ const Togglable = React.forwardRef(
     const [visible, setVisible] = useState(false);
     const showWhenVisible = { display: visible ? '' : 'none' };
     const hideWhenVisible = { display: visible ? 'none' : '' };
-  
+
     const toggleVisibility = () => {
       setVisible(!visible);
       props.resetFn();
@@ -16,7 +16,7 @@ const Togglable = React.forwardRef(
         toggleVisibility
       };
     });
-  
+
     return (
       <React.Fragment>
         <div style={hideWhenVisible}>
@@ -30,5 +30,7 @@ const Togglable = React.forwardRef(
     );
   }
 );
+
+Togglable.displayName = 'Togglable';
 
 export default Togglable;

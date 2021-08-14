@@ -23,35 +23,29 @@ const CreateNewBlogForm = ({ addNewBlog }) => {
 
   const createNewBlogSubmitHandler = async (event) => {
     event.preventDefault();
-  
+
     let newBlog = {
       title: event.target.title.value,
       author: event.target.author.value,
       url: event.target.url.value
     };
-    
+
     resetCreateNewForm();
 
-    try {
-      await addNewBlog(newBlog);
-      createNewFormRef.current.toggleVisibility();
-    }
-    catch (err) {
-      throw err;
-    }
+    await addNewBlog(newBlog);
+    createNewFormRef.current.toggleVisibility();
   };
 
   const createNewFormRef = useRef();
-  
-  
+
   return (
     <React.Fragment>
-        <Togglable
-          showContentButtonLabel='Create New Blog'
-          hideContentButtonLabel='Cancel'
-          resetFn={resetCreateNewForm}
-          ref={createNewFormRef}
-        >
+      <Togglable
+        showContentButtonLabel='Create New Blog'
+        hideContentButtonLabel='Cancel'
+        resetFn={resetCreateNewForm}
+        ref={createNewFormRef}
+      >
         <h2>create new</h2>
         <form onSubmit={createNewBlogSubmitHandler}>
           <div>
@@ -65,8 +59,8 @@ const CreateNewBlogForm = ({ addNewBlog }) => {
           </div>
           <button type='submit'>Create</button>
         </form>
-        </Togglable>
-      </React.Fragment>
+      </Togglable>
+    </React.Fragment>
   );
 };
 

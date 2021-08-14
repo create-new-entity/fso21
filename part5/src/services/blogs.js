@@ -7,7 +7,7 @@ const getAll = async () => {
     method: 'get',
     url: baseUrl
   };
-  
+
   const res = await axios(config);
   return res.data;
 };

@@ -1,19 +1,19 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect } from 'react';
 
-import Blog from "./components/Blog";
-import LoginForm from "./components/LoginForm";
-import Notification from "./components/Notification";
-import CreateNewBlogForm from "./components/CreateNewBlogForm";
-import LoggedInUser from "./components/LoggedInUser";
-import userServices from "./services/user";
-import blogServices from "./services/blogs";
+import Blog from './components/Blog';
+import LoginForm from './components/LoginForm';
+import Notification from './components/Notification';
+import CreateNewBlogForm from './components/CreateNewBlogForm';
+import LoggedInUser from './components/LoggedInUser';
+import userServices from './services/user';
+import blogServices from './services/blogs';
 
 const NOTIFICATION_TIMEOUT = 3000;
 
 const App = () => {
   const [blogs, setBlogs] = useState([]);
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
   const [user, setUser] = useState(null);
   const [notification, setNotification] = useState(null);
 
@@ -29,7 +29,7 @@ const App = () => {
     } catch (err) {
       setNewNotification({
         positive: false,
-        message: `Adding new blog failed.`,
+        message: 'Adding new blog failed.',
       });
     }
   };
@@ -43,7 +43,7 @@ const App = () => {
 
   const logoutButtonHandler = () => {
     setUser(null);
-    window.localStorage.removeItem("user");
+    window.localStorage.removeItem('user');
   };
 
   const loginFormSubmitHandler = async (event) => {
@@ -54,19 +54,19 @@ const App = () => {
       password: event.target.password.value,
     };
 
-    setUsername("");
-    setPassword("");
+    setUsername('');
+    setPassword('');
 
     try {
       const newUser = await userServices.login(userCredentials);
-      window.localStorage.setItem("user", JSON.stringify(newUser));
+      window.localStorage.setItem('user', JSON.stringify(newUser));
       setUser(newUser);
       setNewNotification({
         positive: true,
         message: `${newUser.username} logged in.`,
       });
     } catch (err) {
-      setNewNotification({ positive: false, message: "Log in failed." });
+      setNewNotification({ positive: false, message: 'Log in failed.' });
     }
   };
 
@@ -88,7 +88,7 @@ const App = () => {
   }, [user]);
 
   useEffect(() => {
-    const existingUser = window.localStorage.getItem("user");
+    const existingUser = window.localStorage.getItem('user');
     if (existingUser) setUser(JSON.parse(existingUser));
   }, []);
 
@@ -108,10 +108,10 @@ const App = () => {
         await blogServices.removeBlog(blogId, user.token);
         const newBlogs = blogs.filter(blog => blog.id.localeCompare(blogId) !== 0);
         setBlogs(newBlogs);
-        setNewNotification({ positive: true, message: 'Blog deleted successfully!!'});
+        setNewNotification({ positive: true, message: 'Blog deleted successfully!!' });
       }
       catch(err) {
-        setNewNotification({ positive: false, message: 'Blog deletion failed!!'});
+        setNewNotification({ positive: false, message: 'Blog deletion failed!!' });
       }
     };
   };
