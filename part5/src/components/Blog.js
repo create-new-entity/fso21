@@ -49,7 +49,7 @@ const Blog = ({ blog, likeButtonHandler, removeButtonHandler }) => {
   return (
     <div style={blogStyle} className='blog'>
       <div className='title'>
-        {blog.title} <button style={viewButtonStyle} onClick={viewButtonHandler}>{ view ? 'hide' : 'view'}</button>
+        {blog.title} <button className='viewButton' style={viewButtonStyle} onClick={viewButtonHandler}>{ view ? 'hide' : 'view'}</button>
       </div>
       <div className='author'>
         by {blog.author}
