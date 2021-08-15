@@ -152,7 +152,7 @@ const App = () => {
           logoutButtonHandler={logoutButtonHandler}
         />
         <CreateNewBlogForm addNewBlog={addNewBlog} />
-        {blogsContent()}
+        { blogsContent() }
       </React.Fragment>
     );
   };

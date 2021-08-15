@@ -37,8 +37,8 @@ const Blog = ({ blog, likeButtonHandler, removeButtonHandler }) => {
     if(!view) return null;
     return (
       <React.Fragment>
-        <p>{blog.url}</p>
-        <p>likes {blog.likes} <button onClick={likeHandler}>like</button></p>
+        <p className='url'>{blog.url}</p>
+        <p className='likes'>likes {blog.likes} <button onClick={likeHandler}>like</button></p>
         <div>
           <button onClick={removeButtonHandler}>remove</button>
         </div>
@@ -47,9 +47,11 @@ const Blog = ({ blog, likeButtonHandler, removeButtonHandler }) => {
   };
 
   return (
-    <div style={blogStyle}>
-      {blog.title} <button style={viewButtonStyle} onClick={viewButtonHandler}>{ view ? 'hide' : 'view'}</button>
-      <div>
+    <div style={blogStyle} className='blog'>
+      <div className='title'>
+        {blog.title} <button style={viewButtonStyle} onClick={viewButtonHandler}>{ view ? 'hide' : 'view'}</button>
+      </div>
+      <div className='author'>
         by {blog.author}
       </div>
       {
