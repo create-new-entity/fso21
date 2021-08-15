@@ -14,15 +14,15 @@ describe('Blog component tests', () => {
     url: 'dambadumba.com',
   };
 
-  const likeButtonHandler = jest.fn();
-  const removeButtonHandler = jest.fn();
+  const mockLikeButtonHandler = jest.fn();
+  const mockRemoveButtonHandler = jest.fn();
 
   beforeEach(() => {
     component = render(
       <Blog
         blog={blog}
-        likeButtonHandler={likeButtonHandler}
-        removeButtonHandler={removeButtonHandler}
+        likeButtonHandler={mockLikeButtonHandler}
+        removeButtonHandler={mockRemoveButtonHandler}
       />
     );
   });
@@ -70,5 +70,15 @@ describe('Blog component tests', () => {
     expect(likesElement).toBeDefined();
     expect(urlElement).toBeVisible();
     expect(likesElement).toBeVisible();
+  });
+
+  test('If the like button is pressed twice, the respective event handler is called twice.', () => {
+    let viewButton = component.container.querySelector('.viewButton');
+    fireEvent.click(viewButton);
+    let likeButton = component.container.querySelector('.likeButton');
+    fireEvent.click(likeButton);
+    fireEvent.click(likeButton);
+
+    expect(mockLikeButtonHandler.mock.calls).toHaveLength(2);
   });
 });
