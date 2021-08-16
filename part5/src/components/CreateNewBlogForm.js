@@ -1,71 +1,58 @@
-import React, { useState, useRef } from 'react';
-import PropTypes from 'prop-types';
+import React, { useState, useRef, useImperativeHandle } from 'react';
 
 import Togglable from './Togglable';
 
 
-const CreateNewBlogForm = ({ addNewBlog }) => {
-  const [title, setTitle] = useState('');
-  const [author, setAuthor] = useState('');
-  const [url, setUrl] = useState('');
+const CreateNewBlogForm = React.forwardRef(
+  (props, ref) => {
+    const [title, setTitle] = useState('');
+    const [author, setAuthor] = useState('');
+    const [url, setUrl] = useState('');
+    const createNewFormRef = useRef();
 
-  const resetCreateNewForm = () => {
-    setTitle('');
-    setAuthor('');
-    setUrl('');
-  };
-
-  const inputChangeHandler = (setFn) => {
-    return (event) => {
-      setFn(event.target.value);
-    };
-  };
-
-  const createNewBlogSubmitHandler = async (event) => {
-    event.preventDefault();
-
-    let newBlog = {
-      title: event.target.title.value,
-      author: event.target.author.value,
-      url: event.target.url.value
+    const resetCreateNewForm = () => {
+      setTitle('');
+      setAuthor('');
+      setUrl('');
     };
 
-    resetCreateNewForm();
+    useImperativeHandle(ref, () => {
+      return {
+        resetCreateNewForm,
+        createNewFormRef
+      };
+    });
 
-    await addNewBlog(newBlog);
-    createNewFormRef.current.toggleVisibility();
-  };
+    const inputChangeHandler = (setFn) => {
+      return (event) => {
+        setFn(event.target.value);
+      };
+    };
 
-  const createNewFormRef = useRef();
+    return (
+      <React.Fragment>
+        <Togglable
+          showContentButtonLabel='Create New Blog'
+          hideContentButtonLabel='Cancel'
+          resetFn={resetCreateNewForm}
+          ref={createNewFormRef}
+        >
+          <h2>create new</h2>
+          <form className='createNewForm' onSubmit={props.createNewBlogSubmitHandler}>
+            <label htmlFor='title'>title:</label>
+            <input type='text' id='title' name='title' value={title} onChange={inputChangeHandler(setTitle)}/>
+            <label htmlFor='author'>author:</label>
+            <input type='text' id='author' name='author' value={author} onChange={inputChangeHandler(setAuthor)}/>
+            <label htmlFor='url'>url:</label>
+            <input type='text' id='url' name='url' value={url} onChange={inputChangeHandler(setUrl)}/>
+            <button id='submit' type='submit'>Create</button>
+          </form>
+        </Togglable>
+      </React.Fragment>
+    );
+  }
+);
 
-  return (
-    <React.Fragment>
-      <Togglable
-        showContentButtonLabel='Create New Blog'
-        hideContentButtonLabel='Cancel'
-        resetFn={resetCreateNewForm}
-        ref={createNewFormRef}
-      >
-        <h2>create new</h2>
-        <form onSubmit={createNewBlogSubmitHandler}>
-          <div>
-            title: <input name='title' value={title} onChange={inputChangeHandler(setTitle)}/>
-          </div>
-          <div>
-            author: <input name='author' value={author} onChange={inputChangeHandler(setAuthor)}/>
-          </div>
-          <div>
-            url: <input name='url' value={url} onChange={inputChangeHandler(setUrl)}/>
-          </div>
-          <button type='submit'>Create</button>
-        </form>
-      </Togglable>
-    </React.Fragment>
-  );
-};
-
-CreateNewBlogForm.propTypes = {
-  addNewBlog: PropTypes.func.isRequired
-};
+CreateNewBlogForm.displayName = 'CreateNewBlogForm';
 
 export default CreateNewBlogForm;

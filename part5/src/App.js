@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 
 import Blog from './components/Blog';
 import LoginForm from './components/LoginForm';
@@ -16,6 +16,22 @@ const App = () => {
   const [password, setPassword] = useState('');
   const [user, setUser] = useState(null);
   const [notification, setNotification] = useState(null);
+
+  const appRef = useRef();
+
+  const createNewBlogSubmitHandler = async (event) => {
+    event.preventDefault();
+
+    let newBlog = {
+      title: event.target.title.value,
+      author: event.target.author.value,
+      url: event.target.url.value
+    };
+
+    await addNewBlog(newBlog);
+    appRef.current.resetCreateNewForm();
+    appRef.current.createNewFormRef.current.toggleVisibility();
+  }
 
   const addNewBlog = async (newBlog) => {
     try {
@@ -151,7 +167,7 @@ const App = () => {
           name={user.name}
           logoutButtonHandler={logoutButtonHandler}
         />
-        <CreateNewBlogForm addNewBlog={addNewBlog} />
+        <CreateNewBlogForm createNewBlogSubmitHandler={createNewBlogSubmitHandler} ref={appRef}/>
         { blogsContent() }
       </React.Fragment>
     );
