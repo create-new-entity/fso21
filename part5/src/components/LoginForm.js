@@ -5,14 +5,14 @@ const LoginForm = ({ username, password, onUsernameChange, onPasswordChange, log
   return (
     <React.Fragment>
       <h2>login to application</h2>
-      <form onSubmit={loginFormSubmitHandler}>
+      <form id='login' onSubmit={loginFormSubmitHandler}>
         <div>
-          username <input name='username' value={username} onChange={onUsernameChange}/>
+          username <input id='username' name='username' value={username} onChange={onUsernameChange}/>
         </div>
         <div>
-          password <input name='password' type='password' value={password} onChange={onPasswordChange}/>
+          password <input id='password' name='password' type='password' value={password} onChange={onPasswordChange}/>
         </div>
-        <button type='submit'>login</button>
+        <button id='submit' type='submit'>login</button>
       </form>
     </React.Fragment>
   );

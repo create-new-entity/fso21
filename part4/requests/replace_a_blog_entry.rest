@@ -1,8 +1,8 @@
-PUT http://localhost:3003/api/blogs/6117a0d41c55681c3c13c80d
+PUT http://localhost:3003/api/blogs/6117b6eed085fb1914dc3b54
 Content-Type: application/json
 
 {
-  "user": "6117a0d31c55681c3c13c7fc",
+  "user": "6117b6edd085fb1914dc3b45",
   "likes": -15,
   "author": "Adrian Bece",
   "title": "Refactoring CSS: Strategy, Regression Testing And Maintenance (Part 2)",
