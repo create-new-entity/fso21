@@ -134,7 +134,7 @@ const App = () => {
 
   const blogsContent = () => {
     return (
-      <React.Fragment>
+      <div id='blogs'>
         {
           blogs
             .sort((blog1, blog2) => blog1.likes - blog2.likes)
@@ -145,7 +145,7 @@ const App = () => {
               removeButtonHandler={removeButtonHandler(blog.id)}
             />)
         }
-      </React.Fragment>
+      </div>
     );
   };
 

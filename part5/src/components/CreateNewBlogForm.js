@@ -45,7 +45,7 @@ const CreateNewBlogForm = React.forwardRef(
             <input type='text' id='author' name='author' value={author} onChange={inputChangeHandler(setAuthor)}/>
             <label htmlFor='url'>url:</label>
             <input type='text' id='url' name='url' value={url} onChange={inputChangeHandler(setUrl)}/>
-            <button id='submit' type='submit'>Create</button>
+            <button type='submit'>Create</button>
           </form>
         </Togglable>
       </React.Fragment>
