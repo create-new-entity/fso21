@@ -38,7 +38,8 @@ const Blog = ({ blog, likeButtonHandler, removeButtonHandler }) => {
     return (
       <React.Fragment>
         <p className='url'>{blog.url}</p>
-        <p className='likes'>likes {blog.likes} <button className='likeButton' onClick={likeHandler}>like</button></p>
+        <p className='likes'>likes {blog.likes}</p>
+        <button className='likeButton' onClick={likeHandler}>like</button>
         <div>
           <button onClick={removeButtonHandler}>remove</button>
         </div>

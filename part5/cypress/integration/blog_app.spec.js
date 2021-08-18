@@ -102,7 +102,6 @@ describe('Blog app', function () {
 
     afterEach(function () {
       cy.get('#logout').click();
-      cy.wait(NOTIFICATION_TIMEOUT);
     });
 
     it('A blog can be created', function () {
@@ -118,5 +117,26 @@ describe('Blog app', function () {
 
       cy.get('.blog').contains(newBlog.title);
     });
+
+    it('User can like a blog', function () {
+
+      cy.get('button').contains('Create New Blog').click();
+      cy.get('#title').type(newBlog.title);
+      cy.get('#author').type(newBlog.author);
+      cy.get('#url').type(newBlog.url);
+      cy.get('button').contains(/^Create$/).click();
+      cy.wait(NOTIFICATION_TIMEOUT);
+
+      cy.get('.blog').contains(newBlog.title)
+        .get('button').contains('view').click();
+
+      cy.get('.title').contains(newBlog.title).parent().within(function () {
+        cy.get('.likes').should('have.text', 'likes 0');
+        cy.get('button').contains('like').click();
+        cy.wait(2000);
+        cy.get('.likes').should('have.text', 'likes 1');
+      });
+    });
+
   });
 });
