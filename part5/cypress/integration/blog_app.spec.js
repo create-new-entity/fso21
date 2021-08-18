@@ -1,29 +1,13 @@
-const resetEverythingURL = 'http://localhost:3003/api/testing/reset';
-const userURL = 'http://localhost:3003/api/users';
-const frontEndURL = 'http://localhost:3000';
-const NOTIFICATION_TIMEOUT = 5000;
-
-const user = {
-  'name': 'Ridley Scott',
-  'username': 'house_of_gucci',
-  'password': 'ridley_won'
-};
-
-const newBlog = {
-  title: 'Create an Abstract Image Slideshow with OGL, GLSL, and GSAP',
-  author: 'Francesco Michelini',
-  url: 'https://tympanus.net/codrops/2021/08/16/abstract-image-carousel-ogl-glsl-gsap/'
-};
-
-const correctLoginCredentials = {
-  username: user.username,
-  password: user.password
-};
-
-const wrongLoginCredentials = {
-  username: 'vadur_jadu',
-  password: 'ore_jala'
-};
+import {
+  resetEverythingURL,
+  userURL,
+  frontEndURL,
+  NOTIFICATION_TIMEOUT,
+  user,
+  newBlog,
+  correctLoginCredentials,
+  wrongLoginCredentials
+} from './utils';
 
 
 describe('Blog app', function () {
@@ -136,6 +120,10 @@ describe('Blog app', function () {
         cy.wait(2000);
         cy.get('.likes').should('have.text', 'likes 1');
       });
+    });
+
+    it('User who created the blog, can delete it', function () {
+
     });
 
   });
