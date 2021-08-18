@@ -36,6 +36,11 @@ const App = () => {
   const addNewBlog = async (newBlog) => {
     try {
       const newAddedBlog = await blogServices.createNew(newBlog, user.token);
+      newAddedBlog.user = {
+        id: user.id,
+        name: user.name,
+        username: user.username
+      };
       const newBlogs = [...blogs, newAddedBlog];
       setBlogs(newBlogs);
       setNewNotification({
