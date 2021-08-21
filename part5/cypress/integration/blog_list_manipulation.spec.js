@@ -82,6 +82,51 @@ describe('Blog app', function () {
       cy.wait(utils.NOTIFICATION_TIMEOUT);
       cy.get('.blog').contains(utils.dummyBlogs[1].title).parent().should('exist');
     });
+
+    it('Blogs are sorted properly (most liked one comes first)', function () {
+      //Add one blog
+      cy.get('button').contains('Create New Blog').click();
+      cy.get('#title').type(utils.newBlog.title);
+      cy.get('#author').type(utils.newBlog.author);
+      cy.get('#url').type(utils.newBlog.url);
+      cy.get('button').contains(/^Create$/).click();
+      cy.wait(utils.NOTIFICATION_TIMEOUT);
+
+      //Add another
+      cy.get('button').contains('Create New Blog').click();
+      cy.get('#title').type(utils.dummyBlogs[1].title);
+      cy.get('#author').type(utils.dummyBlogs[1].author);
+      cy.get('#url').type(utils.dummyBlogs[1].url);
+      cy.get('button').contains(/^Create$/).click();
+      cy.wait(utils.NOTIFICATION_TIMEOUT);
+
+      cy.get('.title').then(function (els) {
+        const firstBlogOk = els[0].innerText.includes(utils.dummyBlogs[0].title);
+        const secondBlogOk = els[1].innerText.includes(utils.dummyBlogs[1].title);
+
+        if(!firstBlogOk || !secondBlogOk) throw new Error('Blogs were not rendered correctly the first time');
+      });
+
+
+      cy.get('.title').contains(utils.dummyBlogs[1].title).parent().within(function () {
+        cy.get('button').contains('view').click();
+        cy.get('button').contains('like').click();
+        cy.wait(3000);
+        cy.get('button').contains('like').click();
+        cy.wait(3000);
+        cy.get('button').contains('like').click();
+        cy.wait(3000);
+        cy.get('button').contains('hide').click();
+        cy.wait(3000);
+      });
+
+      cy.get('.title').then(function (els) {
+        const firstBlogOk = els[0].innerText.includes(utils.dummyBlogs[1].title);
+        const secondBlogOk = els[1].innerText.includes(utils.dummyBlogs[0].title);
+
+        if(!firstBlogOk || !secondBlogOk) throw new Error('Pressing like did not reorder the rendered blogs');
+      });
+    });
   });
 });
 
