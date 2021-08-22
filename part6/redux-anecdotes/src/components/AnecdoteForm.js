@@ -15,6 +15,7 @@ const AnecdoteForm = () => {
 
   return (
     <React.Fragment>
+      <h2>create new</h2>
       <form onSubmit={createHandler}>
         <div><input name='new_anecdote'/></div>
         <button>create</button>
