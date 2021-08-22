@@ -22,8 +22,17 @@ const getInitialState = () => {
   return anecdotesAtStart.map(asObject);
 };
 
+const getNewContent = (content) => {
+  return {
+    content,
+    id: getId(),
+    votes: 0
+  };
+};
+
 const utils = {
-  getInitialState
+  getInitialState,
+  getNewContent
 };
 
 export default utils;

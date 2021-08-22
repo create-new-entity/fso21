@@ -28,7 +28,23 @@ export const createVoteAction = (id) => {
   };
 };
 
+export const createAddNewNoteAction = (content) => {
+  return {
+    type: 'NEW_NOTE',
+    data: {
+      content,
+      id: getId(),
+      votes: 0
+    }
+  };
+};
+
 const reducer = (state = initialState, action) => {
+
+  const sortByVoteFn = (anec1, anec2) => {
+    return -1 * (anec1.votes - anec2.votes);
+  };
+
   switch(action.type) {
     case 'VOTE':
       const foundAnecdoteIndex = state.findIndex(anecdote => anecdote.id === action.data.id);
@@ -37,7 +53,10 @@ const reducer = (state = initialState, action) => {
       foundAnecdote.votes = foundAnecdote.votes + 1;
       const newAnecdotes = [...state];
       newAnecdotes.splice(foundAnecdoteIndex, 1, foundAnecdote);
+      newAnecdotes.sort(sortByVoteFn);
       return newAnecdotes;
+    case 'NEW_NOTE':
+      return state.concat(action.data);
     default:
       return state;
   }
