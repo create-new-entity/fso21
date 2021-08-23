@@ -1,3 +1,6 @@
+import { anecdoteStateName } from './anecdoteReducer';
+import { notificationStateName } from './notificationReducer';
+
 const anecdotesAtStart = [
   'If it hurts, do it more often',
   'Adding manpower to a late software project makes it later!',
@@ -17,9 +20,20 @@ const asObject = (anecdote) => {
   }
 }
 
+const getInitialAnecdotes = () => {
+  return anecdotesAtStart.map(asObject);
+};
+
+const getInitialNotification = () => {
+  return null;
+};
+
 
 const getInitialState = () => {
-  return anecdotesAtStart.map(asObject);
+  const preloadedState = {};
+  preloadedState[anecdoteStateName] = getInitialAnecdotes();
+  preloadedState[notificationStateName] = getInitialNotification();
+  return preloadedState;
 };
 
 const getNewContent = (content) => {

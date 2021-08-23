@@ -1,8 +1,9 @@
 import anecdoteReducer from './anecdoteReducer';
+import { anecdoteStateName } from './anecdoteReducer';
 import deepFreeze from 'deep-freeze';
 import utils from './utils';
 
-describe('anecdote tests', () => {
+describe(`State tests (${anecdoteStateName})`, () => {
   let initialState;
 
   beforeEach(() => {
@@ -10,7 +11,7 @@ describe('anecdote tests', () => {
   });
 
   test('vote action works', () => {
-    const firstAnecdote = initialState[0];
+    const firstAnecdote = initialState.anecdotes[0];
     const action = {
       type: 'VOTE', 
       data: {
@@ -20,8 +21,11 @@ describe('anecdote tests', () => {
 
     deepFreeze(initialState);
     const newState = anecdoteReducer(initialState, action);
-    expect(newState[0].id).toBe(initialState[0].id);
-    expect(newState[0].votes).toBe(initialState[0].votes + 1);
+    const found = newState.anecdotes.find(anec => anec.id === firstAnecdote.id);
+    expect(found).toBeDefined();
+    expect(found.id).toBe(initialState.anecdotes[0].id);
+    expect(found.votes).toBe(initialState.anecdotes[0].votes + 1);
+    expect(newState.anecdotes.length).toBe(initialState.anecdotes.length);
   });
 
   test('creating new note action works', () => {
@@ -33,10 +37,10 @@ describe('anecdote tests', () => {
 
     deepFreeze(initialState);
     const newState = anecdoteReducer(initialState, action);
-    const indexInInitialState = initialState.findIndex(anecdote => anecdote.id === newContent.id);
-    const indexInNewState = newState.findIndex(anecdote => anecdote.id === newContent.id);
+    const indexInInitialState = initialState.anecdotes.findIndex(anecdote => anecdote.id === newContent.id);
+    const indexInNewState = newState.anecdotes.findIndex(anecdote => anecdote.id === newContent.id);
     
-    expect(newState.length).toBe(initialState.length + 1);
+    expect(newState.anecdotes.length).toBe(initialState.anecdotes.length + 1);
     expect(indexInInitialState).toBe(-1);
     expect(indexInNewState).not.toBe(-1);
   });
