@@ -1,5 +1,6 @@
 import { anecdoteStateName } from './anecdoteReducer';
 import { notificationStateName } from './notificationReducer';
+import { filterStateName } from './filterReducer';
 
 const anecdotesAtStart = [
   'If it hurts, do it more often',
@@ -24,15 +25,12 @@ const getInitialAnecdotes = () => {
   return anecdotesAtStart.map(asObject);
 };
 
-const getInitialNotification = () => {
-  return null;
-};
-
 
 const getInitialState = () => {
   const preloadedState = {};
   preloadedState[anecdoteStateName] = getInitialAnecdotes();
-  preloadedState[notificationStateName] = getInitialNotification();
+  preloadedState[notificationStateName] = null;
+  preloadedState[filterStateName] = '';
   return preloadedState;
 };
 

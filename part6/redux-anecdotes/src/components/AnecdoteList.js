@@ -8,11 +8,17 @@ import {
 } from './../reducers/notificationReducer';
 
 const AnecdoteList = () => {
-  const anecdotes = useSelector(state => state.anecdotes);
+  const { anecdotes, filter } = useSelector(state => {
+    return {
+      anecdotes: state.anecdotes,
+      filter: state.filter
+    };
+  });
+
   const dispatch = useDispatch();
 
   const vote = (id) => {
-    const anecdote = anecdotes.find(anecdote => anecdote.id === id);
+    const anecdote = filteredAnecdotes.find(anecdote => anecdote.id === id);
     dispatch(createVoteAction(id));
     dispatch(createShowNotificationAction(`You voted ${anecdote.content}`, true));
     setTimeout(() => {
@@ -20,9 +26,16 @@ const AnecdoteList = () => {
     }, 5000);
   }
 
+  const filterAnecdotes = () => {
+    if(!filter || !filter.length) return anecdotes;
+    return anecdotes.filter(anecdote => anecdote.content.includes(filter));
+  };
+
+  const filteredAnecdotes = filterAnecdotes();
+
   return (
     <React.Fragment>
-      {anecdotes.map(anecdote =>
+      {filteredAnecdotes.map(anecdote =>
         <div key={anecdote.id}>
           <div>
             {anecdote.content}
