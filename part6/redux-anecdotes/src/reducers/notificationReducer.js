@@ -17,17 +17,12 @@ export const createHideNotificationAction = () => {
   };
 };
 
-const notificationReducer = (state = initialState, action) => {
-  let newState;
+const notification = (state = initialState, action) => {
   switch(action.type) {
     case 'SHOW_NOTIFICATION':
-      newState = { ...state };
-      newState.notification = action.data;
-      return newState;
+      return action.data;
     case 'HIDE_NOTIFICATION':
-      newState = { ...state };
-      newState.notification = null;
-      return newState;
+      return null;
     default:
       return state;
   }
@@ -35,4 +30,4 @@ const notificationReducer = (state = initialState, action) => {
 
 
 export const notificationStateName = 'notification';
-export default notificationReducer;
+export default notification;

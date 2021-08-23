@@ -19,13 +19,13 @@ describe(`State tests (${anecdoteStateName})`, () => {
       }
     };
 
-    deepFreeze(initialState);
-    const newState = anecdoteReducer(initialState, action);
-    const found = newState.anecdotes.find(anec => anec.id === firstAnecdote.id);
+    deepFreeze(initialState.anecdotes);
+    const newState = anecdoteReducer(initialState.anecdotes, action);
+    const found = newState.find(anec => anec.id === firstAnecdote.id);
     expect(found).toBeDefined();
     expect(found.id).toBe(initialState.anecdotes[0].id);
     expect(found.votes).toBe(initialState.anecdotes[0].votes + 1);
-    expect(newState.anecdotes.length).toBe(initialState.anecdotes.length);
+    expect(newState.length).toBe(initialState.anecdotes.length);
   });
 
   test('creating new note action works', () => {
@@ -35,12 +35,12 @@ describe(`State tests (${anecdoteStateName})`, () => {
       data: newContent
     };
 
-    deepFreeze(initialState);
-    const newState = anecdoteReducer(initialState, action);
+    deepFreeze(initialState.anecdotes);
+    const newState = anecdoteReducer(initialState.anecdotes, action);
     const indexInInitialState = initialState.anecdotes.findIndex(anecdote => anecdote.id === newContent.id);
-    const indexInNewState = newState.anecdotes.findIndex(anecdote => anecdote.id === newContent.id);
+    const indexInNewState = newState.findIndex(anecdote => anecdote.id === newContent.id);
     
-    expect(newState.anecdotes.length).toBe(initialState.anecdotes.length + 1);
+    expect(newState.length).toBe(initialState.anecdotes.length + 1);
     expect(indexInInitialState).toBe(-1);
     expect(indexInNewState).not.toBe(-1);
   });

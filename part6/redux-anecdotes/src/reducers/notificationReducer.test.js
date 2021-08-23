@@ -21,8 +21,8 @@ describe(`State tests (${notificationStateName})`, () => {
 
     deepFreeze(initialState);
     const newState = notificationReducer(initialState, action);
-    expect(newState.notification).toBeDefined();
-    expect(newState.notification).toEqual(action.data);
+    expect(newState).toBeDefined();
+    expect(newState).toEqual(action.data);
   });
 
   test('Hiding notification in state works', () => {
@@ -32,6 +32,6 @@ describe(`State tests (${notificationStateName})`, () => {
 
     deepFreeze(initialState);
     const newState = notificationReducer(initialState, action);
-    expect(newState.notification).toBeNull();
+    expect(newState).toBeNull();
   }); 
 });

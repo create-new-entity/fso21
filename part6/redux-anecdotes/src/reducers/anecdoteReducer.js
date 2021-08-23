@@ -39,34 +39,31 @@ export const createAddNewNoteAction = (content) => {
   };
 };
 
-const anecdoteReducer = (state = initialState, action) => {
+const anecdotes = (state = initialState, action) => {
 
   const sortByVoteFn = (anec1, anec2) => {
     return -1 * (anec1.votes - anec2.votes);
   };
 
-  let newState;
+  let newAnecdotes;
 
   switch(action.type) {
     case 'VOTE':
-      const foundAnecdoteIndex = state.anecdotes.findIndex(anecdote => anecdote.id === action.data.id);
+      const foundAnecdoteIndex = state.findIndex(anecdote => anecdote.id === action.data.id);
       if(foundAnecdoteIndex === -1) return state;
-      const foundAnecdote = { ...state.anecdotes[foundAnecdoteIndex] };
+      const foundAnecdote = { ...state[foundAnecdoteIndex] };
       foundAnecdote.votes = foundAnecdote.votes + 1;
-      const newAnecdotes = [...state.anecdotes];
+      newAnecdotes = [...state];
       newAnecdotes.splice(foundAnecdoteIndex, 1, foundAnecdote);
       newAnecdotes.sort(sortByVoteFn);
-      newState = { ...state };
-      newState.anecdotes = newAnecdotes;
-      return newState;
+      return newAnecdotes;
     case 'NEW_NOTE':
-      newState = { ...state };
-      newState.anecdotes = newState.anecdotes.concat(action.data);
-      return newState;
+      newAnecdotes = state.concat(action.data);
+      return newAnecdotes;
     default:
       return state;
   }
 };
 
 export const anecdoteStateName = 'anecdotes';
-export default anecdoteReducer;
+export default anecdotes;

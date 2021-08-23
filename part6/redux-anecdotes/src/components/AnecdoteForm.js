@@ -1,6 +1,11 @@
 import React from 'react';
 import { useDispatch } from 'react-redux';
+
 import { createAddNewNoteAction } from './../reducers/anecdoteReducer';
+import {
+  createShowNotificationAction,
+  createHideNotificationAction
+} from './../reducers/notificationReducer';
 
 
 const AnecdoteForm = () => {
@@ -10,7 +15,11 @@ const AnecdoteForm = () => {
     event.preventDefault();
 
     dispatch(createAddNewNoteAction(event.target.new_anecdote.value));
+    dispatch(createShowNotificationAction(`${event.target.new_anecdote.value} created`, true));
     event.target.new_anecdote.value = '';
+    setTimeout(() => {
+      dispatch(createHideNotificationAction());
+    }, 5000);
   };
 
   return (
