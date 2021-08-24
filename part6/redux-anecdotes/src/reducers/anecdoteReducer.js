@@ -12,11 +12,7 @@ export const createVoteAction = (id) => {
 export const createAddNewNoteAction = (content) => {
   return {
     type: 'NEW_NOTE',
-    data: {
-      content,
-      id: getId(),
-      votes: 0
-    }
+    data: content
   };
 };
 

@@ -6,20 +6,31 @@ import {
   createShowNotificationAction,
   createHideNotificationAction
 } from './../reducers/notificationReducer';
+import anecdotesServices from '../services/anecdotes';
 
 
 const AnecdoteForm = () => {
   const dispatch = useDispatch();
+  const getId = () => (100000 * Math.random()).toFixed(0);
 
   const createHandler = (event) => {
     event.preventDefault();
+    
+    const newAnecdote = {
+      content: event.target.new_anecdote.value,
+      id: getId(),
+      votes: 0
+    };
 
-    dispatch(createAddNewNoteAction(event.target.new_anecdote.value));
-    dispatch(createShowNotificationAction(`${event.target.new_anecdote.value} created`, true));
-    event.target.new_anecdote.value = '';
-    setTimeout(() => {
-      dispatch(createHideNotificationAction());
-    }, 5000);
+    anecdotesServices.createNewAnecdote(newAnecdote)
+      .then((newAnecdote) => {
+        dispatch(createAddNewNoteAction(newAnecdote));
+        dispatch(createShowNotificationAction(`${event.target.new_anecdote.value} created`, true));
+        event.target.new_anecdote.value = '';
+        setTimeout(() => {
+          dispatch(createHideNotificationAction());
+        }, 5000);
+      });
   };
 
   return (
