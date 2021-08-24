@@ -6,8 +6,7 @@ import {
   createInitializeAction
 } from './../reducers/anecdoteReducer';
 import { 
-  createShowNotificationAction,
-  createHideNotificationAction
+  createShowNotificationAction
 } from './../reducers/notificationReducer';
 
 const AnecdoteList = () => {
@@ -29,10 +28,7 @@ const AnecdoteList = () => {
   const vote = (id) => {
     const anecdote = filteredAnecdotes.find(anecdote => anecdote.id === id);
     dispatch(createVoteAction(id));
-    dispatch(createShowNotificationAction(`You voted ${anecdote.content}`, true));
-    setTimeout(() => {
-      dispatch(createHideNotificationAction());
-    }, 5000);
+    dispatch(createShowNotificationAction(`You voted ${anecdote.content}`, true, 5000));
   }
 
   const filterAnecdotes = () => {

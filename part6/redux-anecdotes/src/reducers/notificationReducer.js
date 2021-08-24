@@ -1,13 +1,21 @@
 const initialState = null;
 
 //message should be string, positive should be bool
-export const createShowNotificationAction = (message, positive) => {
-  return {
-    type: 'SHOW_NOTIFICATION',
-    data: {
-      message,
-      positive
-    }
+export const createShowNotificationAction = (message, positive, timeLimit) => {
+  return async (dispatch) => {
+
+    setTimeout(() => {
+      dispatch(createHideNotificationAction());
+    }, timeLimit);
+
+    dispatch({
+      type: 'SHOW_NOTIFICATION',
+      data: {
+        message,
+        positive
+      }
+    });
+    
   };
 };
 

@@ -1,11 +1,6 @@
 import anecdotesServices from "../services/anecdotes";
 
 export const createVoteAction = (id) => {
-
-  const sortByVoteFn = (anec1, anec2) => {
-    return -1 * (anec1.votes - anec2.votes);
-  };
-
   return async (dispatch) => {
 
     let anecdotes = await anecdotesServices.getAll();
@@ -14,7 +9,6 @@ export const createVoteAction = (id) => {
     const foundAnecdote = anecdotes[foundAnecdoteIndex];
     await anecdotesServices.updateVote(id, foundAnecdote.votes + 1);
     anecdotes = await anecdotesServices.getAll();
-    anecdotes.sort(sortByVoteFn);
 
     dispatch({
       type: 'VOTE',
@@ -48,18 +42,20 @@ export const createInitializeAction = () => {
 
 const anecdotes = (state = [], action) => {
 
-  
+  const sortByVoteFn = (anec1, anec2) => {
+    return -1 * (anec1.votes - anec2.votes);
+  };
 
   let newAnecdotes;
 
   switch(action.type) {
     case 'VOTE':
-      return action.data;
+      return action.data.sort(sortByVoteFn);
     case 'NEW_NOTE':
       newAnecdotes = state.concat(action.data);
       return newAnecdotes;
     case 'INITIALIZE':
-      return action.data;
+      return action.data.sort(sortByVoteFn);
     default:
       return state;
   }
