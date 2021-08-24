@@ -1,13 +1,25 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 
-import { createVoteAction } from './../reducers/anecdoteReducer';
+import {
+  createVoteAction,
+  createInitializeAction
+} from './../reducers/anecdoteReducer';
 import { 
   createShowNotificationAction,
   createHideNotificationAction
 } from './../reducers/notificationReducer';
+import anecdotesServices from '../services/anecdotes';
 
 const AnecdoteList = () => {
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    anecdotesServices.getAll().then(anecdotes => {
+      dispatch(createInitializeAction(anecdotes));
+    });
+  }, [dispatch]);
+
   const { anecdotes, filter } = useSelector(state => {
     return {
       anecdotes: state.anecdotes,
@@ -15,7 +27,7 @@ const AnecdoteList = () => {
     };
   });
 
-  const dispatch = useDispatch();
+  
 
   const vote = (id) => {
     const anecdote = filteredAnecdotes.find(anecdote => anecdote.id === id);
