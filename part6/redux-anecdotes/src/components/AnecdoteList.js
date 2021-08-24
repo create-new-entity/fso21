@@ -9,15 +9,12 @@ import {
   createShowNotificationAction,
   createHideNotificationAction
 } from './../reducers/notificationReducer';
-import anecdotesServices from '../services/anecdotes';
 
 const AnecdoteList = () => {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    anecdotesServices.getAll().then(anecdotes => {
-      dispatch(createInitializeAction(anecdotes));
-    });
+    dispatch(createInitializeAction());
   }, [dispatch]);
 
   const { anecdotes, filter } = useSelector(state => {

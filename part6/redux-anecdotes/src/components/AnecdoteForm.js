@@ -22,15 +22,12 @@ const AnecdoteForm = () => {
       votes: 0
     };
 
-    anecdotesServices.createNewAnecdote(newAnecdote)
-      .then((newAnecdote) => {
-        dispatch(createAddNewNoteAction(newAnecdote));
-        dispatch(createShowNotificationAction(`${event.target.new_anecdote.value} created`, true));
-        event.target.new_anecdote.value = '';
-        setTimeout(() => {
-          dispatch(createHideNotificationAction());
-        }, 5000);
-      });
+    dispatch(createAddNewNoteAction(newAnecdote));
+    dispatch(createShowNotificationAction(`${event.target.new_anecdote.value} created`, true));
+    event.target.new_anecdote.value = '';
+    setTimeout(() => {
+      dispatch(createHideNotificationAction());
+    }, 5000);
   };
 
   return (

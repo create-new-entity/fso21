@@ -1,46 +1,60 @@
-const getId = () => (100000 * Math.random()).toFixed(0);
+import anecdotesServices from "../services/anecdotes";
 
 export const createVoteAction = (id) => {
-  return {
-    type: 'VOTE',
-    data: {
-      id
-    }
-  };
-};
-
-export const createAddNewNoteAction = (content) => {
-  return {
-    type: 'NEW_NOTE',
-    data: content
-  };
-};
-
-export const createInitializeAction = (anecdotes) => {
-  return {
-    type: 'INITIALIZE',
-    data: anecdotes
-  };
-};
-
-const anecdotes = (state = [], action) => {
 
   const sortByVoteFn = (anec1, anec2) => {
     return -1 * (anec1.votes - anec2.votes);
   };
 
+  return async (dispatch) => {
+
+    let anecdotes = await anecdotesServices.getAll();
+    const foundAnecdoteIndex = anecdotes.findIndex(anecdote => anecdote.id === id);
+    if(foundAnecdoteIndex === -1) return;
+    const foundAnecdote = anecdotes[foundAnecdoteIndex];
+    await anecdotesServices.updateVote(id, foundAnecdote.votes + 1);
+    anecdotes = await anecdotesServices.getAll();
+    anecdotes.sort(sortByVoteFn);
+
+    dispatch({
+      type: 'VOTE',
+      data: anecdotes
+    });
+
+  };
+};
+
+export const createAddNewNoteAction = (newAnecdote) => {
+  return async (dispatch) => {
+    const content = await anecdotesServices.createNewAnecdote(newAnecdote);
+    dispatch({
+      type: 'NEW_NOTE',
+      data: content
+    });
+  };
+};
+
+export const createInitializeAction = () => {
+  return async (dispatch) => {
+    const anecdotes = await anecdotesServices.getAll();
+    dispatch(
+      {
+        type: 'INITIALIZE',
+        data: anecdotes
+      }
+    );
+  };
+};
+
+const anecdotes = (state = [], action) => {
+
+  
+
   let newAnecdotes;
 
   switch(action.type) {
     case 'VOTE':
-      const foundAnecdoteIndex = state.findIndex(anecdote => anecdote.id === action.data.id);
-      if(foundAnecdoteIndex === -1) return state;
-      const foundAnecdote = { ...state[foundAnecdoteIndex] };
-      foundAnecdote.votes = foundAnecdote.votes + 1;
-      newAnecdotes = [...state];
-      newAnecdotes.splice(foundAnecdoteIndex, 1, foundAnecdote);
-      newAnecdotes.sort(sortByVoteFn);
-      return newAnecdotes;
+      return action.data;
     case 'NEW_NOTE':
       newAnecdotes = state.concat(action.data);
       return newAnecdotes;
