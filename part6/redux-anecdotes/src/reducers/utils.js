@@ -8,7 +8,10 @@ const getId = () => (100000 * Math.random()).toFixed(0);
 const getInitialState = () => {
   const preloadedState = {};
   preloadedState[anecdoteStateName] = [];
-  preloadedState[notificationStateName] = null;
+  preloadedState[notificationStateName] = {
+    currentNotification: null,
+    currentTimeoutIds: []
+  };
   preloadedState[filterStateName] = '';
   return preloadedState;
 };

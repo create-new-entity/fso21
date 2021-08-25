@@ -22,11 +22,11 @@ const Notification = (props) => {
 const mapStateToProps = (state) => {
   let notification;
 
-  if(!state.notification) notification = null;
+  if(!state.notification || !state.notification.currentNotification) notification = null;
   else {
     notification = {
-      message: state.notification.message,
-      positive: state.notification.positive
+      message: state.notification.currentNotification.message,
+      positive: state.notification.currentNotification.positive
     };
   };
 

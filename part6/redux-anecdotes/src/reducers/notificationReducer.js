@@ -4,7 +4,7 @@ const initialState = null;
 export const createShowNotificationAction = (message, positive, timeLimit) => {
   return async (dispatch) => {
 
-    setTimeout(() => {
+    const setTimeoutId = setTimeout(() => {
       dispatch(createHideNotificationAction());
     }, timeLimit);
 
@@ -12,7 +12,8 @@ export const createShowNotificationAction = (message, positive, timeLimit) => {
       type: 'SHOW_NOTIFICATION',
       data: {
         message,
-        positive
+        positive,
+        setTimeoutId
       }
     });
     
@@ -25,12 +26,43 @@ export const createHideNotificationAction = () => {
   };
 };
 
+
 const notification = (state = initialState, action) => {
+  let newCurrentNotification, newCurrentTimeoutIds, newNotificationState;
+
   switch(action.type) {
+
     case 'SHOW_NOTIFICATION':
-      return action.data;
+      newCurrentNotification = {
+        message: action.data.message,
+        positive: action.data.positive
+      };
+
+      newCurrentTimeoutIds = [...state.currentTimeoutIds];
+      newCurrentTimeoutIds.push(action.data.setTimeoutId);
+
+      newNotificationState = {
+        currentNotification: newCurrentNotification,
+        currentTimeoutIds: newCurrentTimeoutIds
+      };
+
+      return newNotificationState;
+
+
     case 'HIDE_NOTIFICATION':
-      return null;
+      newCurrentNotification = state.currentNotification;
+      newCurrentTimeoutIds = [...state.currentTimeoutIds];
+      newCurrentTimeoutIds.shift();
+      if(newCurrentTimeoutIds.length < 1) newCurrentNotification = null;
+
+      newNotificationState = {
+        currentNotification: newCurrentNotification,
+        currentTimeoutIds: newCurrentTimeoutIds
+      };
+
+      return newNotificationState;
+
+      
     default:
       return state;
   }
