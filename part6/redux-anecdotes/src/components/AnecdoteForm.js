@@ -1,5 +1,5 @@
 import React from 'react';
-import { useDispatch } from 'react-redux';
+import { connect } from 'react-redux';
 
 import { createAddNewNoteAction } from './../reducers/anecdoteReducer';
 import {
@@ -7,8 +7,7 @@ import {
 } from './../reducers/notificationReducer';
 
 
-const AnecdoteForm = () => {
-  const dispatch = useDispatch();
+const AnecdoteForm = (props) => {
   const getId = () => (100000 * Math.random()).toFixed(0);
 
   const createHandler = (event) => {
@@ -20,8 +19,8 @@ const AnecdoteForm = () => {
       votes: 0
     };
 
-    dispatch(createAddNewNoteAction(newAnecdote));
-    dispatch(createShowNotificationAction(`${event.target.new_anecdote.value} created`, true, 5000));
+    props.createAddNewNoteAction(newAnecdote);
+    props.createShowNotificationAction(`${event.target.new_anecdote.value} created`, true, 5000);
     event.target.new_anecdote.value = '';
   };
 
@@ -36,4 +35,11 @@ const AnecdoteForm = () => {
   );
 };
 
-export default AnecdoteForm;
+const mapDispatchToProps = {
+  createAddNewNoteAction,
+  createShowNotificationAction
+};
+
+const ConnectedAnecdoteForm = connect(null, mapDispatchToProps)(AnecdoteForm);
+
+export default ConnectedAnecdoteForm;

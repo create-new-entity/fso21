@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import { connect } from 'react-redux';
 
 import {
   createVoteAction,
@@ -9,26 +9,21 @@ import {
   createShowNotificationAction
 } from './../reducers/notificationReducer';
 
-const AnecdoteList = () => {
-  const dispatch = useDispatch();
+const AnecdoteList = (props) => {
+
+  const createInitializeAction = props.createInitializeAction;
 
   useEffect(() => {
-    dispatch(createInitializeAction());
-  }, [dispatch]);
-
-  const { anecdotes, filter } = useSelector(state => {
-    return {
-      anecdotes: state.anecdotes,
-      filter: state.filter
-    };
-  });
-
+    createInitializeAction();
+  }, [createInitializeAction]);
   
+  const anecdotes = props.anecdotes;
+  const filter = props.filter;
 
   const vote = (id) => {
     const anecdote = filteredAnecdotes.find(anecdote => anecdote.id === id);
-    dispatch(createVoteAction(id));
-    dispatch(createShowNotificationAction(`You voted ${anecdote.content}`, true, 5000));
+    props.createVoteAction(id);
+    props.createShowNotificationAction(`You voted ${anecdote.content}`, true, 5000);
   }
 
   const filterAnecdotes = () => {
@@ -55,4 +50,20 @@ const AnecdoteList = () => {
   );
 };
 
-export default AnecdoteList;
+
+const mapStateToProps = (state) => {
+  return {
+    anecdotes: state.anecdotes,
+    filter: state.filter
+  };
+};
+
+const mapDispatchToProps = {
+  createVoteAction,
+  createInitializeAction,
+  createShowNotificationAction
+};
+
+const ConnectedAnecdoteList = connect(mapStateToProps, mapDispatchToProps)(AnecdoteList);
+
+export default ConnectedAnecdoteList;
