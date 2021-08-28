@@ -3,6 +3,8 @@ import {
   Switch, Route, Link, useRouteMatch, useHistory
 } from "react-router-dom";
 
+import { useField } from './hooks';
+
 const Anecdote = ({ anecdote }) => {
   return (
     <React.Fragment>
@@ -70,20 +72,21 @@ const Footer = () => (
 )
 
 const CreateNew = (props) => {
-  const [content, setContent] = useState('')
-  const [author, setAuthor] = useState('')
-  const [info, setInfo] = useState('')
 
+  const contentInput = useField('text');
+  const authorInput = useField('text');
+  const infoInput = useField('text');
 
   const handleSubmit = (e) => {
     e.preventDefault()
     props.addNew({
-      content,
-      author,
-      info,
+      content: contentInput.value,
+      author: authorInput.value,
+      info: infoInput.value,
       votes: 0
     })
   }
+  
 
   return (
     <div>
@@ -91,15 +94,15 @@ const CreateNew = (props) => {
       <form onSubmit={handleSubmit}>
         <div>
           content
-          <input name='content' value={content} onChange={(e) => setContent(e.target.value)} />
+          <input name='content' value={contentInput.value} onChange={contentInput.onChange} />
         </div>
         <div>
           author
-          <input name='author' value={author} onChange={(e) => setAuthor(e.target.value)} />
+          <input name='author' value={authorInput.value} onChange={authorInput.onChange} />
         </div>
         <div>
           url for more info
-          <input name='info' value={info} onChange={(e)=> setInfo(e.target.value)} />
+          <input name='info' value={infoInput.value} onChange={infoInput.onChange} />
         </div>
         <button>create</button>
       </form>
