@@ -4,12 +4,19 @@ export const useField = (type, initialValue = '') => {
   const [value, setValue] = useState(initialValue)
 
   const onChange = (event) => {
-    event ? setValue(event.target.value) : setValue('');
+    setValue(event.target.value);
+  }
+
+  const reset = () => {
+    setValue('');
   }
 
   return {
-    type,
-    value,
-    onChange
+    fieldProps: {
+      type,
+      value,
+      onChange
+    },
+    reset
   }
 };

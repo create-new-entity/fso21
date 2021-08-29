@@ -88,14 +88,9 @@ const CreateNew = (props) => {
   }
 
   const handleReset = (e) => {
-    const inputs = document.querySelectorAll('form input');
-    inputs.forEach(input => {
-      input.value = '';
-    });
-
-    contentInput.onChange();
-    authorInput.onChange();
-    infoInput.onChange();
+    contentInput.reset();
+    authorInput.reset();
+    infoInput.reset();
   };
   
 
@@ -105,15 +100,15 @@ const CreateNew = (props) => {
       <form onSubmit={handleSubmit}>
         <div>
           content
-          <input { ...contentInput } />
+          <input { ...contentInput.fieldProps } />
         </div>
         <div>
           author
-          <input { ...authorInput } />
+          <input { ...authorInput.fieldProps } />
         </div>
         <div>
           url for more info
-          <input { ...infoInput } />
+          <input { ...infoInput.fieldProps } />
         </div>
         <button type='submit'>create</button>
         <button type='reset' onClick={handleReset}>reset</button>
