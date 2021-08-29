@@ -76,6 +76,7 @@ const CreateNew = (props) => {
   const contentInput = useField('text');
   const authorInput = useField('text');
   const infoInput = useField('text');
+  const submitInput = useField('submit', 'create');
 
   const handleSubmit = (e) => {
     e.preventDefault()
@@ -104,7 +105,8 @@ const CreateNew = (props) => {
           url for more info
           <input { ...infoInput } />
         </div>
-        <button>create</button>
+        <input { ...submitInput }/>
+
       </form>
     </div>
   )
