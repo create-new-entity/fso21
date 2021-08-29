@@ -76,7 +76,6 @@ const CreateNew = (props) => {
   const contentInput = useField('text');
   const authorInput = useField('text');
   const infoInput = useField('text');
-  const submitInput = useField('submit', 'create');
 
   const handleSubmit = (e) => {
     e.preventDefault()
@@ -87,6 +86,17 @@ const CreateNew = (props) => {
       votes: 0
     })
   }
+
+  const handleReset = (e) => {
+    const inputs = document.querySelectorAll('form input');
+    inputs.forEach(input => {
+      input.value = '';
+    });
+
+    contentInput.onChange();
+    authorInput.onChange();
+    infoInput.onChange();
+  };
   
 
   return (
@@ -105,7 +115,8 @@ const CreateNew = (props) => {
           url for more info
           <input { ...infoInput } />
         </div>
-        <input { ...submitInput }/>
+        <button type='submit'>create</button>
+        <button type='reset' onClick={handleReset}>reset</button>
 
       </form>
     </div>
