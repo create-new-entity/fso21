@@ -1,4 +1,9 @@
 import userServices from '../services/user';
+import {
+  createNotificationObject,
+  createSetNotificationAction,
+  createRemoveNotificationAction
+} from './notificationReducer';
 
 
 export const createSetUserToNull = () => {
@@ -18,12 +23,27 @@ export const createSetExistingUser = () => {
 };
 
 export const createSetNewUser = (userCredentials) => {
+  const successNotification = createNotificationObject(true, `${userCredentials.username} logged in.`);
+  const failureNotification = createNotificationObject(false, 'Login failed');
+
   return async (dispatch) => {
-    const newUser = await userServices.login(userCredentials);
-    dispatch({
-      type: 'SET_LOGGED_IN_USER',
-      data: newUser
-    });
+    try {
+      const newUser = await userServices.login(userCredentials);
+      dispatch({
+        type: 'SET_LOGGED_IN_USER',
+        data: newUser
+      });
+      dispatch(createSetNotificationAction(successNotification));
+      setTimeout(() => {
+        dispatch(createRemoveNotificationAction());
+      }, 3000);
+    }
+    catch(err) {
+      dispatch(createSetNotificationAction(failureNotification));
+      setTimeout(() => {
+        dispatch(createRemoveNotificationAction());
+      }, 3000);
+    }
   };
 };
 

@@ -1,22 +1,51 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useEffect, useRef } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 
 import Blog from './components/Blog';
 import LoginForm from './components/LoginForm';
 import Notification from './components/Notification';
 import CreateNewBlogForm from './components/CreateNewBlogForm';
 import LoggedInUser from './components/LoggedInUser';
-import userServices from './services/user';
-import blogServices from './services/blogs';
 
-const NOTIFICATION_TIMEOUT = 3000;
+import {
+  createInitializeBlogsAction,
+  createBlogLikedAction,
+  createAddNewBlogAction,
+  createRemoveBlogAction
+} from './reducers/blogsReducer';
+
+import {
+  createSetUsernameAction
+} from './reducers/usernameReducer';
+
+import {
+  createSetPasswordAction
+} from './reducers/passwordReducer';
+
+import {
+  createSetUserToNull,
+  createSetExistingUser,
+  createSetNewUser
+} from './reducers/userReducer';
 
 const App = () => {
-  const [blogs, setBlogs] = useState([]);
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
-  const [user, setUser] = useState(null);
-  const [notification, setNotification] = useState(null);
 
+  const {
+    blogs,
+    notification,
+    username,
+    password,
+    user
+  } = useSelector(state => {
+    return {
+      blogs: state.blogs,
+      notification: state.notification,
+      username: state.username,
+      password: state.password,
+      user: state.user
+    };
+  });
+  const dispatch = useDispatch();
   const appRef = useRef();
 
   const createNewBlogSubmitHandler = async (event) => {
@@ -33,38 +62,10 @@ const App = () => {
     appRef.current.createNewFormRef.current.toggleVisibility();
   }
 
-  const addNewBlog = async (newBlog) => {
-    try {
-      const newAddedBlog = await blogServices.createNew(newBlog, user.token);
-      newAddedBlog.user = {
-        id: user.id,
-        name: user.name,
-        username: user.username
-      };
-      const newBlogs = [...blogs, newAddedBlog];
-      setBlogs(newBlogs);
-      setNewNotification({
-        positive: true,
-        message: `New blog ${newBlog.title} by ${newBlog.author} added.`,
-      });
-    } catch (err) {
-      setNewNotification({
-        positive: false,
-        message: 'Adding new blog failed.',
-      });
-    }
-  };
-
-  const setNewNotification = (newNotification) => {
-    setNotification(newNotification);
-    setTimeout(() => {
-      setNotification(null);
-    }, NOTIFICATION_TIMEOUT);
-  };
+  const addNewBlog = async (newBlog) => dispatch(createAddNewBlogAction(newBlog, user));
 
   const logoutButtonHandler = () => {
-    setUser(null);
-    window.localStorage.removeItem('user');
+    dispatch(createSetUserToNull());
   };
 
   const loginFormSubmitHandler = async (event) => {
@@ -75,65 +76,40 @@ const App = () => {
       password: event.target.password.value,
     };
 
-    setUsername('');
-    setPassword('');
-
-    try {
-      const newUser = await userServices.login(userCredentials);
-      window.localStorage.setItem('user', JSON.stringify(newUser));
-      setUser(newUser);
-      setNewNotification({
-        positive: true,
-        message: `${newUser.username} logged in.`,
-      });
-    } catch (err) {
-      setNewNotification({ positive: false, message: 'Log in failed.' });
-    }
+    dispatch(createSetUsernameAction(''));
+    dispatch(createSetPasswordAction(''));
+    dispatch(createSetNewUser(userCredentials));
   };
 
   const onUsernameChange = (event) => {
-    setUsername(event.target.value);
+    dispatch(createSetUsernameAction(event.target.value));
   };
 
   const onPasswordChange = (event) => {
-    setPassword(event.target.value);
+    dispatch(createSetPasswordAction(event.target.value));
   };
 
   useEffect(() => {
     (async () => {
       if (user) {
-        const blogs = await blogServices.getAll();
-        setBlogs(blogs.sort((blog1, blog2) => blog1.likes - blog2.likes));
+        dispatch(createInitializeBlogsAction());
       } else return [];
     })();
   }, [user]);
 
   useEffect(() => {
-    const existingUser = window.localStorage.getItem('user');
-    if (existingUser) setUser(JSON.parse(existingUser));
+    dispatch(createSetExistingUser());
   }, []);
 
   const likeButtonHandler = async (blog, blogId) => {
-    const updatedBlog = await blogServices.updateABlogEntry(blog, user.token, blogId);
-    const newBlogs = blogs.map(blog => { return { ...blog }});
-    const oldBlog = newBlogs.find(blog => blog.id.localeCompare(updatedBlog.id) === 0);
-    oldBlog.likes = updatedBlog.likes;
-    setBlogs(newBlogs);
+    dispatch(createBlogLikedAction(blog, blogId, user.token));
   };
 
   const removeButtonHandler = (blogId) => {
     return async () => {
-      try {
-        const yes = window.confirm('Are you sure?');
-        if(!yes) return;
-        await blogServices.removeBlog(blogId, user.token);
-        const newBlogs = blogs.filter(blog => blog.id.localeCompare(blogId) !== 0);
-        setBlogs(newBlogs);
-        setNewNotification({ positive: true, message: 'Blog deleted successfully!!' });
-      }
-      catch(err) {
-        setNewNotification({ positive: false, message: 'Blog deletion failed!!' });
-      }
+      const yes = window.confirm('Are you sure?');
+      if(!yes) return;
+      dispatch(createRemoveBlogAction(blogId, user.token));
     };
   };
 

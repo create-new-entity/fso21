@@ -1,3 +1,11 @@
+export const NOTIFICATION_TIMEOUT = 3000;
+
+export const createNotificationObject = (positive, message) => {
+  return {
+    positive,
+    message
+  };
+};
 
 export const createSetNotificationAction = (notification) => {
   return async (dispatch) => {
