@@ -5,7 +5,7 @@ export const createInitializeBlogsAction = () => {
     const blogs = await blogServices.getAll();
     dispatch({
       type: 'INITIALIZE_BLOGS',
-      data: blogs
+      data: blogs.sort((blog1, blog2) => blog1.likes - blog2.likes)
     });
   };
 };
