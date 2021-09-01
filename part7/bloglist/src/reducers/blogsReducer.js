@@ -21,8 +21,14 @@ export const createBlogLikedAction = (blog, blogId, userToken) => {
   };
 };
 
-export const createAddNewBlogAction = (newBlog) => {
+export const createAddNewBlogAction = (newBlog, user) => {
   return async (dispatch) => {
+    const newAddedBlog = await blogServices.createNew(newBlog, user.token);
+    newAddedBlog.user = {
+      id: user.id,
+      name: user.name,
+      username: user.username
+    };
     dispatch({
       type: 'ADD_NEW_BLOG',
       data: newBlog
