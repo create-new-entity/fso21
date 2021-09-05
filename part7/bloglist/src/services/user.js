@@ -14,7 +14,7 @@ const login = async (user) => {
   return res.data;
 };
 
-const getUserData = async () => {
+const getUsersData = async () => {
   const config = {
     method: 'get',
     url: userDataUrl
@@ -26,7 +26,7 @@ const getUserData = async () => {
 
 const userServices = {
   login,
-  getUserData
+  getUsersData
 };
 
 export default userServices;

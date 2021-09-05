@@ -159,15 +159,6 @@ const App = () => {
     );
   };
 
-  const usersStuffs = () => {
-    return (
-      <React.Fragment>
-        <Users/>
-      </React.Fragment>
-    );
-  };
-
-
 
   const loginForm = () => {
     return (
@@ -197,7 +188,7 @@ const App = () => {
           { user ? blogsStuffs() : <Redirect to='/login'/> }
         </Route>
         <Route path='/users'>
-          { user ? usersStuffs() : null }
+          { user ? <Users/> : null }
         </Route>
         <Route path='/login'>
           { user ? <Redirect to='/'/> : loginForm() }

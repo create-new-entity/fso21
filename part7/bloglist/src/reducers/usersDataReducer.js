@@ -10,7 +10,7 @@ export const createSetUsersDataAction = () => {
 
   return async (dispatch) => {
     try {
-      const usersData = await userServices.getUserData();
+      const usersData = await userServices.getUsersData();
       dispatch({
         type: 'SET_USERS_DATA',
         data: usersData
