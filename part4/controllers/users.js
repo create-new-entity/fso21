@@ -91,7 +91,7 @@ usersRouter.get('/userData', async (req, res) => {
 
 usersRouter.get('/userData/:id', async (req, res) => {
   try {
-    const blogFieldsToReturn = {title: 1, author: 1, url: 1, likes: 1, id: 1};
+    const blogFieldsToReturn = {title: 1, id: 1};
     const user = await userModel.findById(req.params.id).populate('blogs', blogFieldsToReturn);
     res.status(200).json(user);
   }
