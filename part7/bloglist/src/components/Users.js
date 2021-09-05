@@ -1,33 +1,9 @@
-import React, { useState, useEffect } from 'react';
-import { useDispatch } from 'react-redux';
-
-import userServices from '../services/user';
-import {
-  createNotificationObject,
-  createRemoveNotificationAction,
-  createSetNotificationAction
-} from '../reducers/notificationReducer';
+import React from 'react';
+import { useSelector } from 'react-redux';
 
 
 const Users = () => {
-  const [userData, setUserData] = useState([]);
-  const dispatch = useDispatch();
-
-  useEffect(() => {
-    (async () => {
-      try {
-        const user_data = await userServices.getUserData();
-        setUserData(user_data);
-      }
-      catch(err) {
-        const notification = createNotificationObject(false, 'Could not fetch user data');
-        dispatch(createSetNotificationAction(notification));
-        setTimeout(() => {
-          dispatch(createRemoveNotificationAction());
-        }, 3000);
-      }
-    })();
-  }, []);
+  const userData = useSelector(state => state.userData);
 
   if(!userData.length) return (
     <React.Fragment>

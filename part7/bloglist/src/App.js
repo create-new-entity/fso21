@@ -30,6 +30,10 @@ import {
   createSetNewUser
 } from './reducers/userReducer';
 
+import {
+  createSetUsersDataAction
+} from './reducers/usersDataReducer';
+
 const App = () => {
 
   const {
@@ -97,6 +101,7 @@ const App = () => {
     (async () => {
       if (user) {
         dispatch(createInitializeBlogsAction());
+        dispatch(createSetUsersDataAction());
       } else return [];
     })();
   }, [user]);
