@@ -1,6 +1,7 @@
 import axios from 'axios';
 
 const loginUrl = '/api/login';
+const userDataUrl = '/api/users/userData';
 
 const login = async (user) => {
   const config = {
@@ -13,8 +14,19 @@ const login = async (user) => {
   return res.data;
 };
 
+const getUserData = async () => {
+  const config = {
+    method: 'get',
+    url: userDataUrl
+  };
+
+  const res = await axios(config);
+  return res.data;
+};
+
 const userServices = {
-  login
+  login,
+  getUserData
 };
 
 export default userServices;

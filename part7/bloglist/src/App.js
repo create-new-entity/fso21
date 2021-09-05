@@ -1,11 +1,13 @@
 import React, { useEffect, useRef } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
+import { Switch, Route, Redirect, useHistory } from 'react-router';
 
 import Blog from './components/Blog';
 import LoginForm from './components/LoginForm';
 import Notification from './components/Notification';
 import CreateNewBlogForm from './components/CreateNewBlogForm';
 import LoggedInUser from './components/LoggedInUser';
+import Users from './components/Users';
 
 import {
   createInitializeBlogsAction,
@@ -47,6 +49,7 @@ const App = () => {
   });
   const dispatch = useDispatch();
   const appRef = useRef();
+  const history = useHistory();
 
   const createNewBlogSubmitHandler = async (event) => {
     event.preventDefault();
@@ -79,6 +82,7 @@ const App = () => {
     dispatch(createSetUsernameAction(''));
     dispatch(createSetPasswordAction(''));
     dispatch(createSetNewUser(userCredentials));
+    history.push('/blogs');
   };
 
   const onUsernameChange = (event) => {
@@ -141,7 +145,7 @@ const App = () => {
     return null;
   };
 
-  const contentIfLoggedIn = () => {
+  const blogsStuffs = () => {
     return (
       <React.Fragment>
         <LoggedInUser
@@ -150,6 +154,18 @@ const App = () => {
         />
         <CreateNewBlogForm createNewBlogSubmitHandler={createNewBlogSubmitHandler} ref={appRef}/>
         { blogsContent() }
+      </React.Fragment>
+    );
+  };
+
+  const usersStuffs = () => {
+    return (
+      <React.Fragment>
+        <LoggedInUser
+          name={user.name}
+          logoutButtonHandler={logoutButtonHandler}
+        />
+        <Users/>
       </React.Fragment>
     );
   };
@@ -168,10 +184,25 @@ const App = () => {
     );
   };
 
+  console.log('user', user);
+
   return (
     <div>
-      {notificationContent()}
-      {user ? contentIfLoggedIn() : loginForm()}
+      { notificationContent() }
+      <Switch>
+        <Route path='/blogs'>
+          { user ? blogsStuffs() : <Redirect to='/login'/> }
+        </Route>
+        <Route path='/users'>
+          { user ? usersStuffs() : null }
+        </Route>
+        <Route path='/login'>
+          { user ? <Redirect to='/'/> : loginForm() }
+        </Route>
+        <Route path='/'>
+          { user ? blogsStuffs() : <Redirect to='/login'/> }
+        </Route>
+      </Switch>
     </div>
   );
 };
