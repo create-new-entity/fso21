@@ -148,10 +148,6 @@ const App = () => {
   const blogsStuffs = () => {
     return (
       <React.Fragment>
-        <LoggedInUser
-          name={user.name}
-          logoutButtonHandler={logoutButtonHandler}
-        />
         <CreateNewBlogForm createNewBlogSubmitHandler={createNewBlogSubmitHandler} ref={appRef}/>
         { blogsContent() }
       </React.Fragment>
@@ -161,10 +157,6 @@ const App = () => {
   const usersStuffs = () => {
     return (
       <React.Fragment>
-        <LoggedInUser
-          name={user.name}
-          logoutButtonHandler={logoutButtonHandler}
-        />
         <Users/>
       </React.Fragment>
     );
@@ -184,11 +176,17 @@ const App = () => {
     );
   };
 
-  console.log('user', user);
-
   return (
     <div>
-      { notificationContent() }
+      {
+        notificationContent()
+      }
+      {
+        user ? <LoggedInUser
+          name={user.name}
+          logoutButtonHandler={logoutButtonHandler}
+        /> : null
+      }
       <Switch>
         <Route path='/blogs'>
           { user ? blogsStuffs() : <Redirect to='/login'/> }
