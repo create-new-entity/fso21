@@ -1,9 +1,11 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
+import { Link, useLocation } from 'react-router-dom';
 
 
 const Users = () => {
   const usersData = useSelector(state => state.usersData);
+  const location = useLocation();
 
   if(!usersData.length) return (
     <React.Fragment>
@@ -15,7 +17,11 @@ const Users = () => {
     return usersData.map(user => {
       return (
         <tr key={user.id}>
-          <td> { user.name } </td>
+          <td>
+            <Link to={`${location.pathname}/${user.id}`}>
+              { user.name }
+            </Link>
+          </td>
           <td> { user.blogsCount } </td>
         </tr>
       );
