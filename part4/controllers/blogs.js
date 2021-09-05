@@ -12,7 +12,18 @@ blogsRouter.get('/', async (req, res, next) => {
   catch(err) {
     next(err);
   }
-})
+});
+
+blogsRouter.get('/:id', async (req, res, next) => {
+  try {
+    const userFieldsToReturn = { name: 1, id: 1 };
+    const blog = await Blog.findById(req.params.id).populate('user', userFieldsToReturn);
+    res.status(200).json(blog);
+  }
+  catch(err) {
+    next(err);
+  }
+});
 
 blogsRouter.post('/', async (req, res, next) => {
   try {
