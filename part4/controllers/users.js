@@ -70,4 +70,22 @@ usersRouter.post('/', async (req, res, next) => {
   }
 });
 
+
+usersRouter.get('/userData', async (req, res) => {
+  try {
+    const blogFieldsToReturn = {title: 1, author: 1, url: 1, likes: 1, id: 1};
+    let users = await userModel.find({}).populate('blogs', blogFieldsToReturn);
+    users = users.map((user) => {
+      return {
+        name: user.name,
+        blogsCount: user.blogs.length
+      };
+    });
+    res.status(200).json(users);
+  }
+  catch(error) {
+    next(error);
+  }
+});
+
 module.exports = usersRouter;
