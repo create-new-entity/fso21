@@ -78,6 +78,7 @@ usersRouter.get('/userData', async (req, res) => {
     users = users.map((user) => {
       return {
         name: user.name,
+        id: user.id,
         blogsCount: user.blogs.length
       };
     });
