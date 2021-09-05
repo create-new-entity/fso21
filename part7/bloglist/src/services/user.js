@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const loginUrl = '/api/login';
-const userDataUrl = '/api/users/userData';
+const usersDataUrl = '/api/users/userData';
 
 const login = async (user) => {
   const config = {
@@ -17,7 +17,17 @@ const login = async (user) => {
 const getUsersData = async () => {
   const config = {
     method: 'get',
-    url: userDataUrl
+    url: usersDataUrl
+  };
+
+  const res = await axios(config);
+  return res.data;
+};
+
+const getUserData = async (userId) => {
+  const config = {
+    method: 'get',
+    url: `${usersDataUrl}/${userId}`
   };
 
   const res = await axios(config);
@@ -26,7 +36,8 @@ const getUsersData = async () => {
 
 const userServices = {
   login,
-  getUsersData
+  getUsersData,
+  getUserData
 };
 
 export default userServices;

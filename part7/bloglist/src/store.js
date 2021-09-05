@@ -7,7 +7,8 @@ import notificationReducer from './reducers/notificationReducer';
 import passwordReducer from './reducers/passwordReducer';
 import usernameReducer from './reducers/usernameReducer';
 import userReducer from './reducers/userReducer';
-import userDataReducer from './reducers/usersDataReducer';
+import usersDataReducer from './reducers/usersDataReducer';
+import userDataReducer from './reducers/userDataReducer';
 
 const reducers = {
   blogs: blogsReducer,
@@ -15,6 +16,7 @@ const reducers = {
   username: usernameReducer,
   password: passwordReducer,
   user: userReducer,
+  usersData: usersDataReducer,
   userData: userDataReducer
 };
 
@@ -24,7 +26,8 @@ const preloadedState = {
   username: '',
   password: '',
   user: null,
-  usersData: []
+  usersData: [],
+  userData: null
 };
 
 const combinedReducers = combineReducers(reducers, preloadedState);

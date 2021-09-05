@@ -3,16 +3,16 @@ import { useSelector } from 'react-redux';
 
 
 const Users = () => {
-  const userData = useSelector(state => state.userData);
+  const usersData = useSelector(state => state.usersData);
 
-  if(!userData.length) return (
+  if(!usersData.length) return (
     <React.Fragment>
       <h2>No user data found</h2>
     </React.Fragment>
   );
 
   const remainingRows = () => {
-    return userData.map(user => {
+    return usersData.map(user => {
       return (
         <tr key={user.id}>
           <td> { user.name } </td>

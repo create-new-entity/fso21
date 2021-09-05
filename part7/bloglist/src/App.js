@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { Switch, Route, Redirect, useHistory } from 'react-router';
+import { Switch, Route, Redirect, useHistory } from 'react-router-dom';
 
 import Blog from './components/Blog';
 import LoginForm from './components/LoginForm';
@@ -8,6 +8,7 @@ import Notification from './components/Notification';
 import CreateNewBlogForm from './components/CreateNewBlogForm';
 import LoggedInUser from './components/LoggedInUser';
 import Users from './components/Users';
+import User from './components/User';
 
 import {
   createInitializeBlogsAction,
@@ -186,6 +187,9 @@ const App = () => {
       <Switch>
         <Route path='/blogs'>
           { user ? blogsStuffs() : <Redirect to='/login'/> }
+        </Route>
+        <Route path='/users/:id'>
+          <User/>
         </Route>
         <Route path='/users'>
           { user ? <Users/> : null }
