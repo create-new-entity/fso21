@@ -112,7 +112,8 @@ blogsRouter.put('/:id', async (req, res, next) => {
     const filter = { _id: targetId };
     const options = { new: true };
 
-    const result = await Blog.findOneAndReplace(filter, updatedBlog, options);
+    const userFieldsToReturn = { name: 1, username: 1, id: 1 };
+    const result = await Blog.findOneAndReplace(filter, updatedBlog, options).populate('user', userFieldsToReturn);
     res.status(200).json(result);
   }
   catch(err) {
