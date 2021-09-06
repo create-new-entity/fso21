@@ -72,6 +72,7 @@ const App = () => {
 
   const logoutButtonHandler = () => {
     dispatch(createSetUserToNull());
+    history.push('/');
   };
 
   const loginFormSubmitHandler = async (event) => {

@@ -12,7 +12,6 @@ export const createSetBlogAction = (id) => {
   return async (dispatch) => {
     try {
       const blog = await blogServices.getBlog(id);
-      console.log('Got', blog);
       dispatch({
         type: 'SET_BLOG_DATA',
         data: blog

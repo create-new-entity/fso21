@@ -11,7 +11,6 @@ const Blog = ({ likeButtonHandler, removeButtonHandler }) => {
   const dispatch = useDispatch();
   const { id } = useParams();
   const blog = useSelector(state => state.blog);
-  console.log(blog);
 
   useEffect(() => {
     dispatch(createSetBlogAction(id));
