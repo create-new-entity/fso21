@@ -13,7 +13,6 @@ import Blog from './components/Blog';
 import LoginForm from './components/LoginForm';
 import Notification from './components/Notification';
 import CreateNewBlogForm from './components/CreateNewBlogForm';
-import LoggedInUser from './components/LoggedInUser';
 import Users from './components/Users';
 import User from './components/User';
 
@@ -123,6 +122,28 @@ const App = () => {
     history.push('/');
   };
 
+  const navBarStyle = {
+    backgroundColor: 'rgb(194, 197, 205)',
+    margin: 5
+  };
+
+  const navBarChildStyle = {
+    display: 'inline-block',
+    margin: 5
+  };
+
+  const navigationBar = () => {
+    if(!user) return null;
+    return (
+      <div style={navBarStyle}>
+        <Link to='/blogs' style={navBarChildStyle}>blogs</Link>
+        <Link to='/users'style={navBarChildStyle}>users</Link>
+        <p style={navBarChildStyle}>{user.name} logged in</p>
+        <button onClick={logoutButtonHandler} style={navBarChildStyle}>logout</button>
+      </div>
+    );
+  };
+
   const blogsContent = () => {
     const blogStyle = {
       paddingTop: 10,
@@ -163,6 +184,7 @@ const App = () => {
   const blogsStuffs = () => {
     return (
       <React.Fragment>
+        <h2>blog app</h2>
         <CreateNewBlogForm
           createNewBlogSubmitHandler={createNewBlogSubmitHandler}
           ref={appRef}
@@ -186,13 +208,8 @@ const App = () => {
 
   return (
     <div>
-      {notificationContent()}
-      {user ? (
-        <LoggedInUser
-          name={user.name}
-          logoutButtonHandler={logoutButtonHandler}
-        />
-      ) : null}
+      { navigationBar() }
+      {notificationContent() }
       <Switch>
         <Route path="/blogs/:id">
           <Blog

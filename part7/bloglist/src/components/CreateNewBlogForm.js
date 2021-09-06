@@ -32,7 +32,7 @@ const CreateNewBlogForm = React.forwardRef(
     return (
       <React.Fragment>
         <Togglable
-          showContentButtonLabel='Create New Blog'
+          showContentButtonLabel='Create New'
           hideContentButtonLabel='Cancel'
           resetFn={resetCreateNewForm}
           ref={createNewFormRef}
