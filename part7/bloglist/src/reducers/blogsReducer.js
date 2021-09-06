@@ -58,7 +58,6 @@ export const createAddNewBlogAction = (newBlog, user) => {
 
 export const createRemoveBlogAction = (blogId, userToken) => {
   const successNotification = createNotificationObject(true, 'Blog deleted successfully!!');
-  const failedNotification = createNotificationObject(false, 'Blog deletion failed!!');
 
   return async (dispatch) => {
     try {
@@ -73,6 +72,7 @@ export const createRemoveBlogAction = (blogId, userToken) => {
       }, 3000);
     }
     catch(err) {
+      const failedNotification = createNotificationObject(false, err.response.data.error);
       dispatch(createSetNotificationAction(failedNotification));
       setTimeout(() => {
         dispatch(createRemoveNotificationAction());

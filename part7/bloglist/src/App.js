@@ -1,6 +1,13 @@
 import React, { useEffect, useRef } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { Switch, Route, Redirect, useHistory } from 'react-router-dom';
+import {
+  Link,
+  Switch,
+  Route,
+  Redirect,
+  useHistory,
+  useLocation,
+} from 'react-router-dom';
 
 import Blog from './components/Blog';
 import LoginForm from './components/LoginForm';
@@ -14,47 +21,37 @@ import {
   createInitializeBlogsAction,
   createBlogLikedAction,
   createAddNewBlogAction,
-  createRemoveBlogAction
+  createRemoveBlogAction,
 } from './reducers/blogsReducer';
 
-import {
-  createSetUsernameAction
-} from './reducers/usernameReducer';
+import { createSetUsernameAction } from './reducers/usernameReducer';
 
-import {
-  createSetPasswordAction
-} from './reducers/passwordReducer';
+import { createSetPasswordAction } from './reducers/passwordReducer';
 
 import {
   createSetUserToNull,
   createSetExistingUser,
-  createSetNewUser
+  createSetNewUser,
 } from './reducers/userReducer';
 
-import {
-  createSetUsersDataAction
-} from './reducers/usersDataReducer';
+import { createSetUsersDataAction } from './reducers/usersDataReducer';
 
 const App = () => {
-
-  const {
-    blogs,
-    notification,
-    username,
-    password,
-    user
-  } = useSelector(state => {
-    return {
-      blogs: state.blogs,
-      notification: state.notification,
-      username: state.username,
-      password: state.password,
-      user: state.user
-    };
-  });
+  const { blogs, notification, username, password, user } = useSelector(
+    (state) => {
+      return {
+        blogs: state.blogs,
+        notification: state.notification,
+        username: state.username,
+        password: state.password,
+        user: state.user,
+      };
+    }
+  );
   const dispatch = useDispatch();
   const appRef = useRef();
   const history = useHistory();
+  const location = useLocation();
 
   const createNewBlogSubmitHandler = async (event) => {
     event.preventDefault();
@@ -62,15 +59,16 @@ const App = () => {
     let newBlog = {
       title: event.target.title.value,
       author: event.target.author.value,
-      url: event.target.url.value
+      url: event.target.url.value,
     };
 
     await addNewBlog(newBlog);
     appRef.current.resetCreateNewForm();
     appRef.current.createNewFormRef.current.toggleVisibility();
-  }
+  };
 
-  const addNewBlog = async (newBlog) => dispatch(createAddNewBlogAction(newBlog, user));
+  const addNewBlog = async (newBlog) =>
+    dispatch(createAddNewBlogAction(newBlog, user));
 
   const logoutButtonHandler = () => {
     dispatch(createSetUserToNull());
@@ -111,31 +109,41 @@ const App = () => {
     dispatch(createSetExistingUser());
   }, []);
 
-  const likeButtonHandler = async (blog, blogId) => {
-    dispatch(createBlogLikedAction(blog, blogId, user.token));
-  };
-
-  const removeButtonHandler = (blogId) => {
-    return async () => {
-      const yes = window.confirm('Are you sure?');
-      if(!yes) return;
-      dispatch(createRemoveBlogAction(blogId, user.token));
+  const likeButtonHandler = () => {
+    return async (blog, blogId) => {
+      dispatch(createBlogLikedAction(blog, blogId, user.token));
     };
   };
 
+  const removeButtonHandler = (blogId) => {
+    const yes = window.confirm('Are you sure?');
+    if (!yes) return;
+    dispatch(createRemoveBlogAction(blogId, user.token));
+    history.push('/');
+  };
+
   const blogsContent = () => {
+    const blogStyle = {
+      paddingTop: 10,
+      paddingBottom: 10,
+      paddingLeft: 2,
+      border: 'solid',
+      borderWidth: 1,
+      marginBottom: 5,
+    };
+
     return (
-      <div id='blogs'>
+      <div id="blogs">
         {
           blogs
             .sort((blog1, blog2) => blog2.likes - blog1.likes)
-            .map((blog) => <Blog
-              key={blog.id}
-              blog={blog}
-              likeButtonHandler={likeButtonHandler}
-              removeButtonHandler={removeButtonHandler(blog.id)}
-            />)
-        }
+            .map((blog) => {
+              return <div key={blog.id} style={blogStyle}>
+                <Link to={`${location.pathname}/${blog.id}`}>
+                  {blog.title}
+                </Link>
+              </div>
+            })}
       </div>
     );
   };
@@ -154,12 +162,14 @@ const App = () => {
   const blogsStuffs = () => {
     return (
       <React.Fragment>
-        <CreateNewBlogForm createNewBlogSubmitHandler={createNewBlogSubmitHandler} ref={appRef}/>
-        { blogsContent() }
+        <CreateNewBlogForm
+          createNewBlogSubmitHandler={createNewBlogSubmitHandler}
+          ref={appRef}
+        />
+        {blogsContent()}
       </React.Fragment>
     );
   };
-
 
   const loginForm = () => {
     return (
@@ -175,30 +185,30 @@ const App = () => {
 
   return (
     <div>
-      {
-        notificationContent()
-      }
-      {
-        user ? <LoggedInUser
+      {notificationContent()}
+      {user ? (
+        <LoggedInUser
           name={user.name}
           logoutButtonHandler={logoutButtonHandler}
-        /> : null
-      }
+        />
+      ) : null}
       <Switch>
-        <Route path='/blogs'>
-          { user ? blogsStuffs() : <Redirect to='/login'/> }
+        <Route path="/blogs/:id">
+          <Blog
+            likeButtonHandler={likeButtonHandler()}
+            removeButtonHandler={removeButtonHandler}
+          />
         </Route>
-        <Route path='/users/:id'>
-          <User/>
+        <Route path="/blogs">
+          {user ? blogsStuffs() : <Redirect to="/login" />}
         </Route>
-        <Route path='/users'>
-          { user ? <Users/> : null }
+        <Route path="/users/:id">
+          <User />
         </Route>
-        <Route path='/login'>
-          { user ? <Redirect to='/'/> : loginForm() }
-        </Route>
-        <Route path='/'>
-          { user ? blogsStuffs() : <Redirect to='/login'/> }
+        <Route path="/users">{user ? <Users /> : null}</Route>
+        <Route path="/login">{user ? <Redirect to="/" /> : loginForm()}</Route>
+        <Route path="/">
+          {user ? <Redirect to='/blogs'/> : <Redirect to="/login" />}
         </Route>
       </Switch>
     </div>

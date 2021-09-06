@@ -1,25 +1,21 @@
-import React, { useState } from 'react';
+import React, { useEffect } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
+import { useParams } from 'react-router-dom';
+
+import { createSetBlogAction } from '../reducers/blogReducer';
 
 
-const Blog = ({ blog, likeButtonHandler, removeButtonHandler }) => {
-  const [view, setView] = useState(false);
 
-  const blogStyle = {
-    paddingTop: 10,
-    paddingBottom:10,
-    paddingLeft: 2,
-    border: 'solid',
-    borderWidth: 1,
-    marginBottom: 5
-  }
+const Blog = ({ likeButtonHandler, removeButtonHandler }) => {
 
-  const viewButtonStyle = {
-    marginLeft: 10
-  };
+  const dispatch = useDispatch();
+  const { id } = useParams();
+  const blog = useSelector(state => state.blog);
+  console.log(blog);
 
-  const viewButtonHandler = () => {
-    setView(!view);
-  };
+  useEffect(() => {
+    dispatch(createSetBlogAction(id));
+  }, [id]);
 
   const likeHandler = async () => {
     const newBlog = {
@@ -33,24 +29,31 @@ const Blog = ({ blog, likeButtonHandler, removeButtonHandler }) => {
     await likeButtonHandler(newBlog, blog.id);
   };
 
+  const remove = (id) => {
+    return () => {
+      removeButtonHandler(id);
+    }
+  };
+
   const detailsContent = () => {
-    if(!view) return null;
     return (
       <React.Fragment>
         <p className='url'>{blog.url}</p>
         <p className='likes'>likes {blog.likes}</p>
         <button className='likeButton' onClick={likeHandler}>like</button>
         <div>
-          <button onClick={removeButtonHandler}>remove</button>
+          <button onClick={remove(blog.id)}>remove</button>
         </div>
       </React.Fragment>
     );
   };
 
+  if(!blog) return <h1>Loading...</h1>;
+
   return (
-    <div style={blogStyle} className='blog'>
+    <div className='blog'>
       <div className='title'>
-        {blog.title} <button className='viewButton' style={viewButtonStyle} onClick={viewButtonHandler}>{ view ? 'hide' : 'view'}</button>
+        {blog.title}
       </div>
       <div className='author'>
         by {blog.author}

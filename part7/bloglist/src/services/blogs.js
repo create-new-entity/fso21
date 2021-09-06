@@ -12,6 +12,16 @@ const getAll = async () => {
   return res.data;
 };
 
+const getBlog = async (id) => {
+  const config = {
+    method: 'get',
+    url: `${baseUrl}/${id}`
+  };
+
+  const res = await axios(config);
+  return res.data;
+};
+
 const createNew = async (blog, token) => {
   const config = {
     method: 'post',
@@ -57,7 +67,8 @@ const blogServices = {
   getAll,
   createNew,
   updateABlogEntry,
-  removeBlog
+  removeBlog,
+  getBlog
 };
 
 export default blogServices;
