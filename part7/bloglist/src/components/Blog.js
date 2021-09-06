@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { useParams } from 'react-router-dom';
+import { useParams, Link } from 'react-router-dom';
 
 import { createSetBlogAction } from '../reducers/blogReducer';
 
@@ -10,7 +10,14 @@ const Blog = ({ likeButtonHandler, removeButtonHandler }) => {
 
   const dispatch = useDispatch();
   const { id } = useParams();
-  const blog = useSelector(state => state.blog);
+  const {
+    blog, user
+  } = useSelector(state => {
+    return {
+      blog: state.blog,
+      user: state.user
+    };
+  });
 
   useEffect(() => {
     dispatch(createSetBlogAction(id));
@@ -34,15 +41,31 @@ const Blog = ({ likeButtonHandler, removeButtonHandler }) => {
     }
   };
 
+  const removeButton = (blogCreatorId) => {
+    if(blogCreatorId !== user.id) return null;
+    return (
+      <div>
+        <button onClick={remove(blog.id)}>remove</button>
+      </div>
+    );
+  };
+
   const detailsContent = () => {
+    const inlineBlockStyle = {
+      display: 'inline-block',
+      margin: 5
+    };
     return (
       <React.Fragment>
-        <p className='url'>{blog.url}</p>
-        <p className='likes'>likes {blog.likes}</p>
-        <button className='likeButton' onClick={likeHandler}>like</button>
+        <Link to={{ pathname: blog.url }} target='_blank'>{blog.url}</Link>
         <div>
-          <button onClick={remove(blog.id)}>remove</button>
+          <p className='likes' style={inlineBlockStyle}>{blog.likes} likes</p>
+          <button className='likeButton' style={inlineBlockStyle} onClick={likeHandler}>like</button>
         </div>
+        <p style={ { margin: 0 } }>added by {blog.user.name}</p>
+        {
+          removeButton(blog.user.id)
+        }
       </React.Fragment>
     );
   };
@@ -52,10 +75,7 @@ const Blog = ({ likeButtonHandler, removeButtonHandler }) => {
   return (
     <div className='blog'>
       <div className='title'>
-        {blog.title}
-      </div>
-      <div className='author'>
-        by {blog.author}
+        <h2>{blog.title}</h2>
       </div>
       {
         detailsContent()

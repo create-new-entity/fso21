@@ -135,12 +135,15 @@ const App = () => {
   const navigationBar = () => {
     if(!user) return null;
     return (
-      <div style={navBarStyle}>
-        <Link to='/blogs' style={navBarChildStyle}>blogs</Link>
-        <Link to='/users'style={navBarChildStyle}>users</Link>
-        <p style={navBarChildStyle}>{user.name} logged in</p>
-        <button onClick={logoutButtonHandler} style={navBarChildStyle}>logout</button>
-      </div>
+      <React.Fragment>
+        <div style={navBarStyle}>
+          <Link to='/blogs' style={navBarChildStyle}>blogs</Link>
+          <Link to='/users'style={navBarChildStyle}>users</Link>
+          <p style={navBarChildStyle}>{user.name} logged in</p>
+          <button onClick={logoutButtonHandler} style={navBarChildStyle}>logout</button>
+        </div>
+        <h2>blog app</h2>
+      </React.Fragment>
     );
   };
 
@@ -184,7 +187,6 @@ const App = () => {
   const blogsStuffs = () => {
     return (
       <React.Fragment>
-        <h2>blog app</h2>
         <CreateNewBlogForm
           createNewBlogSubmitHandler={createNewBlogSubmitHandler}
           ref={appRef}
