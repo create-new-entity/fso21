@@ -22,6 +22,8 @@ const Blog = ({ likeButtonHandler, removeButtonHandler }) => {
     };
   });
 
+  console.log(blog);
+
   useEffect(() => {
     dispatch(createSetBlogAction(id));
   }, [id]);
@@ -59,7 +61,7 @@ const Blog = ({ likeButtonHandler, removeButtonHandler }) => {
       display: 'inline-block',
       margin: 5
     };
-    console.log(blog);
+
     return (
       <React.Fragment>
         <Link to={{ pathname: blog.url }} target='_blank'>{blog.url}</Link>
