@@ -5,6 +5,9 @@ import { useParams, Link } from 'react-router-dom';
 import { createSetBlogAction } from '../reducers/blogReducer';
 
 
+import Comments from './Comments';
+
+
 
 const Blog = ({ likeButtonHandler, removeButtonHandler }) => {
 
@@ -29,7 +32,8 @@ const Blog = ({ likeButtonHandler, removeButtonHandler }) => {
       likes: blog.likes + 1,
       author: blog.author,
       title: blog.title,
-      url: blog.url
+      url: blog.url,
+      comments: blog.comments
     };
 
     await likeButtonHandler(newBlog, blog.id);
@@ -55,6 +59,7 @@ const Blog = ({ likeButtonHandler, removeButtonHandler }) => {
       display: 'inline-block',
       margin: 5
     };
+    console.log(blog);
     return (
       <React.Fragment>
         <Link to={{ pathname: blog.url }} target='_blank'>{blog.url}</Link>
@@ -66,6 +71,7 @@ const Blog = ({ likeButtonHandler, removeButtonHandler }) => {
         {
           removeButton(blog.user.id)
         }
+        <Comments comments={blog.comments}/>
       </React.Fragment>
     );
   };
