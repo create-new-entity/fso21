@@ -2,12 +2,47 @@ const blogsRouter = require('express').Router();
 const ErrorNames = require('../error');
 
 const Blog = require('./../models/blog');
+const Comment = require('./../models/comment');
 
 blogsRouter.get('/', async (req, res, next) => {
   try {
     const userFieldsToReturn = { name: 1, username: 1, id: 1 };
-    const blogs = await Blog.find({}).populate('user', userFieldsToReturn);
+    const commentFieldsToReturn = { comment: 1, id: 1  };
+
+    const blogs = await Blog.find({})
+      .populate('user', userFieldsToReturn)
+      .populate('comments', commentFieldsToReturn);
+
     res.status(200).json(blogs);
+  }
+  catch(err) {
+    next(err);
+  }
+});
+
+blogsRouter.post('/:id/comments', async (req, res, next) => {
+  try {
+    const user = req.user;
+    if(!user) {
+      const err = new Error('Token missing or invalid');
+      err.name = ErrorNames.TokenMissingOrInvalid;
+      throw err;
+    }
+
+    const blogId = req.params.id;
+    const blog = await Blog.findById({ _id: blogId });
+    const newComment = {
+      comment: req.body.comment,
+      blog: blog._id
+    };
+
+    const comment = new Comment(newComment);
+    const savedComment = await comment.save();
+    
+    const newComments = blog.comments.concat(savedComment._id);
+    await Blog.findByIdAndUpdate({ _id: blogId }, { comments: newComments }, { new: true });
+
+    res.status(201).json(savedComment);
   }
   catch(err) {
     next(err);
@@ -17,7 +52,12 @@ blogsRouter.get('/', async (req, res, next) => {
 blogsRouter.get('/:id', async (req, res, next) => {
   try {
     const userFieldsToReturn = { name: 1, id: 1 };
-    const blog = await Blog.findById(req.params.id).populate('user', userFieldsToReturn);
+    const commentFieldsToReturn = { comment: 1, id: 1  };
+
+    const blog = await Blog.findById(req.params.id)
+      .populate('user', userFieldsToReturn)
+      .populate('comments', commentFieldsToReturn);
+      
     res.status(200).json(blog);
   }
   catch(err) {

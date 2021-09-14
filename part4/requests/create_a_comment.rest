@@ -1,0 +1,7 @@
+POST http://localhost:3003/api/blogs/614085e471044e73acaedf68/comments
+Content-Type: application/json
+Authorization: bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6IndoYWNreV90b2JhY2NpIiwiaWQiOiI2MTQwODVlNDcxMDQ0ZTczYWNhZWRmNTciLCJpYXQiOjE2MzE2MTg2MDN9.Gv7LV-KHtuu_PrqZPGFslCydbI3fnYjK2d-JoQTrkVw
+
+{
+  "comment": "Arekta notun comment"
+}
