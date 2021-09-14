@@ -1,5 +1,6 @@
 const blogsRouter = require('express').Router();
 const ErrorNames = require('../error');
+const mongoose = require('mongoose');
 
 const Blog = require('./../models/blog');
 const Comment = require('./../models/comment');
@@ -57,7 +58,7 @@ blogsRouter.get('/:id', async (req, res, next) => {
     const blog = await Blog.findById(req.params.id)
       .populate('user', userFieldsToReturn)
       .populate('comments', commentFieldsToReturn);
-      
+
     res.status(200).json(blog);
   }
   catch(err) {
@@ -146,14 +147,18 @@ blogsRouter.put('/:id', async (req, res, next) => {
       likes: req.body.likes,
       author: req.body.author,
       title: req.body.title,
-      url: req.body.url
+      url: req.body.url,
+      comments: req.body.comments.map(comment => mongoose.Types.ObjectId(comment.id))
     };
 
     const filter = { _id: targetId };
     const options = { new: true };
 
     const userFieldsToReturn = { name: 1, username: 1, id: 1 };
-    const result = await Blog.findOneAndReplace(filter, updatedBlog, options).populate('user', userFieldsToReturn);
+    const commentFieldsToReturn = { comment: 1, id: 1  };
+    const result = await Blog.findOneAndReplace(filter, updatedBlog, options)
+      .populate('user', userFieldsToReturn)
+      .populate('comments', commentFieldsToReturn);
     res.status(200).json(result);
   }
   catch(err) {
