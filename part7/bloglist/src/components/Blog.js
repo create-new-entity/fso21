@@ -22,7 +22,6 @@ const Blog = ({ likeButtonHandler, removeButtonHandler }) => {
     };
   });
 
-  console.log(blog);
 
   useEffect(() => {
     dispatch(createSetBlogAction(id));
