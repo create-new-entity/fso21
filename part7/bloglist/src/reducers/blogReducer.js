@@ -5,6 +5,13 @@ import {
   createRemoveNotificationAction
 } from './notificationReducer';
 
+export const createRemoveBlogAction = () => {
+  return async (dispatch) => {
+    dispatch({
+      type: 'REMOVE_BLOG_CONTENT'
+    });
+  };
+};
 
 export const createSetBlogAction = (id) => {
   const failedNotification = createNotificationObject(false, 'Fetching blog failed');
@@ -34,6 +41,8 @@ const blogReducer = (state = null, action) => {
     return action.data;
   case 'NEW_COMMENT_ADDED':
     return action.data.blog;
+  case 'REMOVE_BLOG_CONTENT':
+    return null;
   default:
     return state;
   }

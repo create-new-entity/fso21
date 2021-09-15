@@ -2,7 +2,10 @@ import React, { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useParams, Link } from 'react-router-dom';
 
-import { createSetBlogAction } from '../reducers/blogReducer';
+import {
+  createSetBlogAction,
+  createRemoveBlogAction
+} from '../reducers/blogReducer';
 
 
 import Comments from './Comments';
@@ -25,6 +28,9 @@ const Blog = ({ likeButtonHandler, removeButtonHandler }) => {
 
   useEffect(() => {
     dispatch(createSetBlogAction(id));
+    return () => {
+      dispatch(createRemoveBlogAction());
+    };
   }, [id]);
 
   const likeHandler = async () => {
