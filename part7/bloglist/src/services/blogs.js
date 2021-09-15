@@ -63,12 +63,30 @@ const removeBlog = async (blogId, token) => {
 };
 
 
+const addAComment = async (blogId, comment, token) => {
+  const config = {
+    method: 'post',
+    url: `${baseUrl}/${blogId}/comments`,
+    headers: {
+      'Authorization': `bearer ${token}`
+    },
+    data: {
+      comment
+    }
+  };
+
+  const res = await axios(config);
+  return res.data;
+};
+
+
 const blogServices = {
   getAll,
   createNew,
   updateABlogEntry,
   removeBlog,
-  getBlog
+  getBlog,
+  addAComment
 };
 
 export default blogServices;

@@ -32,6 +32,8 @@ const blogReducer = (state = null, action) => {
     return action.data;
   case 'BLOG_LIKED':
     return action.data;
+  case 'NEW_COMMENT_ADDED':
+    return action.data.blog;
   default:
     return state;
   }

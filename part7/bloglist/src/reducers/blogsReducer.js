@@ -98,6 +98,8 @@ const blogsReducer = (state = [], action) => {
   case 'REMOVE_BLOG':
     newBlogs = state.filter(blog => blog.id.localeCompare(action.data) !== 0);
     return newBlogs;
+  case 'NEW_COMMENT_ADDED':
+    return action.data.blogs;
   default:
     return state;
   }

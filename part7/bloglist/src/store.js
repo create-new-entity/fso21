@@ -10,6 +10,7 @@ import userReducer from './reducers/userReducer';
 import usersDataReducer from './reducers/usersDataReducer';
 import userDataReducer from './reducers/userDataReducer';
 import blogReducer from './reducers/blogReducer';
+import commentInputReducer from './reducers/commentInputReducer';
 
 const reducers = {
   blogs: blogsReducer,
@@ -19,7 +20,8 @@ const reducers = {
   user: userReducer,
   usersData: usersDataReducer,
   userData: userDataReducer,
-  blog: blogReducer
+  blog: blogReducer,
+  commentInput: commentInputReducer
 };
 
 const preloadedState = {
@@ -30,7 +32,8 @@ const preloadedState = {
   user: null,
   usersData: [],
   userData: null,
-  blog: null
+  blog: null,
+  commentInput: ''
 };
 
 const combinedReducers = combineReducers(reducers, preloadedState);
