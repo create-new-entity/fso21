@@ -9,12 +9,17 @@ import {
   useLocation,
 } from 'react-router-dom';
 
+import { Box } from '@material-ui/core';
+import { makeStyles } from '@material-ui/styles';
+
 import Blog from './components/Blog';
 import LoginForm from './components/LoginForm';
 import Notification from './components/Notification';
 import CreateNewBlogForm from './components/CreateNewBlogForm';
 import Users from './components/Users';
 import User from './components/User';
+
+
 
 import {
   createInitializeBlogsAction,
@@ -109,6 +114,30 @@ const App = () => {
     dispatch(createSetExistingUser());
   }, []);
 
+  const useStyles = makeStyles({
+    navBar: {
+      background: 'rgb(63, 148, 113)',
+      border: 0,
+      borderRadius: 3,
+      padding: 10
+    },
+    navBar__item: {
+      color: 'white',
+      textDecoration: 'none',
+      '&:hover': {
+        color: 'black'
+      }
+    },
+    navBar__message: {
+      color: 'white'
+    },
+    pageTitle: {
+      color: 'rgb(75, 165, 216)'
+    }
+  });
+
+  const classes = useStyles();
+
   const likeButtonHandler = () => {
     return async (blog, blogId) => {
       dispatch(createBlogLikedAction(blog, blogId, user.token));
@@ -122,30 +151,31 @@ const App = () => {
     history.push('/');
   };
 
-  const navBarStyle = {
-    backgroundColor: 'rgb(194, 197, 205)',
-    margin: 5
-  };
-
-  const navBarChildStyle = {
+  const inlineBlockStyle = {
     display: 'inline-block',
     margin: 5
   };
 
   const navigationBar = () => {
-    if(!user) return null;
+    if (!user) return null;
+
     return (
       <React.Fragment>
-        <div style={navBarStyle}>
-          <Link to='/blogs' style={navBarChildStyle}>blogs</Link>
-          <Link to='/users'style={navBarChildStyle}>users</Link>
-          <p style={navBarChildStyle}>{user.name} logged in</p>
-          <button onClick={logoutButtonHandler} style={navBarChildStyle}>logout</button>
+        <div className={classes.navBar}>
+          <Box display="inline" m={1}>
+            <Link to="/blogs" className={classes.navBar__item}>Blogs</Link>
+          </Box>
+          <Box display="inline" m={1}>
+            <Link to="/users" className={classes.navBar__item}>Users</Link>
+          </Box>
         </div>
-        <h2>blog app</h2>
+
+        <h2 className={classes.pageTitle}>Blog App</h2>
       </React.Fragment>
     );
   };
+
+
 
   const blogsContent = () => {
     const blogStyle = {
@@ -159,16 +189,15 @@ const App = () => {
 
     return (
       <div id="blogs">
-        {
-          blogs
-            .sort((blog1, blog2) => blog2.likes - blog1.likes)
-            .map((blog) => {
-              return <div key={blog.id} style={blogStyle}>
-                <Link to={`${location.pathname}/${blog.id}`}>
-                  {blog.title}
-                </Link>
+        {blogs
+          .sort((blog1, blog2) => blog2.likes - blog1.likes)
+          .map((blog) => {
+            return (
+              <div key={blog.id} style={blogStyle}>
+                <Link to={`${location.pathname}/${blog.id}`}>{blog.title}</Link>
               </div>
-            })}
+            );
+          })}
       </div>
     );
   };
@@ -208,6 +237,17 @@ const App = () => {
     );
   };
 
+  const footer = () => {
+    if(!user) return null;
+    return (
+      <div className={classes.navBar}>
+        <p style={inlineBlockStyle} className={classes.navBar__message}>{user.name} logged in</p>
+        <button style={inlineBlockStyle} onClick={logoutButtonHandler}>Logout</button>
+      </div>
+    );
+  };
+
+
   return (
     <div>
       { navigationBar() }
@@ -228,9 +268,10 @@ const App = () => {
         <Route path="/users">{user ? <Users /> : null}</Route>
         <Route path="/login">{user ? <Redirect to="/" /> : loginForm()}</Route>
         <Route path="/">
-          {user ? <Redirect to='/blogs'/> : <Redirect to="/login" />}
+          {user ? <Redirect to="/blogs" /> : <Redirect to="/login" />}
         </Route>
       </Switch>
+      { footer() }
     </div>
   );
 };
