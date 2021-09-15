@@ -37,16 +37,25 @@ const Comments = ({ comments }) => {
     );
   };
 
-  if (!comments || !comments.length) return null;
+  const commentsContent = () => {
+    if (!comments || !comments.length) return null;
+    return (
+      <ul>
+        {
+          comments.map((commentObj) => (
+            <li key={commentObj.id}>{commentObj.comment}</li>
+          ))
+        }
+      </ul>
+    );
+  };
+
+
   return (
     <div>
       <h2>comments</h2>
       { createNewCommentContent() }
-      <ul>
-        {comments.map((commentObj) => (
-          <li key={commentObj.id}>{commentObj.comment}</li>
-        ))}
-      </ul>
+      { commentsContent() }
     </div>
   );
 };
