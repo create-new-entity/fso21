@@ -211,7 +211,7 @@ const App = () => {
   return (
     <div>
       { navigationBar() }
-      {notificationContent() }
+      { notificationContent() }
       <Switch>
         <Route path="/blogs/:id">
           <Blog
