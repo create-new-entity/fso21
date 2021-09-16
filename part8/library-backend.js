@@ -34,13 +34,17 @@ const typeDefs = gql`
     allAuthors: [Author!]!
   }
 
+
   type Mutation {
+
     addBook(
       title: String!,
       published: Int!,
       author: String!,
       genres: [String!]!
-    ): Book
+    ): Book,
+
+    editAuthor(name: String!, setBornTo: Int!): Author
   }
 `
 
@@ -67,7 +71,10 @@ const resolvers = {
     allAuthors: () => authors
   },
 
+
+
   Mutation: {
+
     addBook: (root, args) => {
       const newBook = {
         ...args, id: uuid()
@@ -82,6 +89,12 @@ const resolvers = {
         authors.push(newAuthor);
       }
       return newBook;
+    },
+
+    editAuthor: (root, args) => {
+      const author = authors.find(author => author.name === args.name);
+      author.born = args.setBornTo;
+      return author;
     }
   }
 }
