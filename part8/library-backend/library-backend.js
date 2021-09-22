@@ -31,7 +31,10 @@ const initializeDB = async () => {
   for await (author of authors) {
     newAuthor = await new Author(author).save();
     filteredBooks = books.filter(book => book.author === newAuthor.name);
-    filteredBooks.forEach(book => book.author = newAuthor.id);
+    filteredBooks = filteredBooks.map(book => {
+      book.author = newAuthor.id;
+      return book;
+    });
     let promises = filteredBooks.map(book => new Book(book).save());
     await Promise.all(promises);
   }
@@ -110,13 +113,13 @@ const typeDefs = gql`
 const resolvers = {
 
   Author: {
-    bookCount: (root) => books.filter(book => book.author === root.name).length
+    bookCount: async (root) => (await Book.find({ author: root.id })).length
   },
 
   Query: {
     bookCount: () => Book.collection.countDocuments(),
     authorCount: () => Author.collection.countDocuments(),
-    allBooks: async (_, args) => Book.find(),
+    allBooks: async (_, args) => Book.find().populate('author'),
     allAuthors: async () => Author.find(),
     me: (root, args, { currentUser }) => currentUser 
   },
@@ -196,14 +199,10 @@ const resolvers = {
           throw new UserInputError("wrong credentials")
         }
 
-        console.log(user);
-
         const userForToken = {
           username: user.username,
           id: user.id,
         }
-
-        console.log(userForToken);
 
         return {
           value: jwt.sign(userForToken, process.env.JWT_SECRET)
@@ -224,13 +223,11 @@ const server = new ApolloServer({
   resolvers,
   context: async ({ req }) => {
     const auth = req ? req.headers.authorization : null
-    // console.log(auth);
     if (auth && auth.toLowerCase().startsWith('bearer ')) {
       const decodedToken = jwt.verify(
         auth.substring(7), process.env.JWT_SECRET
       )
       const currentUser = await User.findById(decodedToken.id)
-      // console.log(currentUser);
       return { currentUser }
     }
   }
