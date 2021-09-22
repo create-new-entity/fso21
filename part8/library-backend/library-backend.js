@@ -99,7 +99,7 @@ const resolvers = {
       let savedAuthor;
 
       let author = await Author.find({ name: newBook.author });
-      if(!author) {
+      if(!author.length) {
         const newAuthor = {
           name: args.author
         };
@@ -111,10 +111,10 @@ const resolvers = {
       return new Book(newBook).save();
     },
 
-    editAuthor: (root, args) => {
-      const author = authors.find(author => author.name === args.name);
+    editAuthor: async (root, args) => {
+      const author = await Author.findOne({ name: args.name })
       author.born = args.setBornTo;
-      return author;
+      return author.save();
     }
   }
 }
