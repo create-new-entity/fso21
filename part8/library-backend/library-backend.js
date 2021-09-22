@@ -1,10 +1,37 @@
+require('dotenv').config();
 const { ApolloServer, gql } = require('apollo-server');
-const { v1: uuid } = require('uuid');
+const mongoose = require('mongoose');
 
+
+const Author = require('./models/author');
+const Book = require('./models/book');
 const dummyData = require('./dummyData');
 
 let authors = dummyData.authors;
 let books = dummyData.books;
+
+mongoose.connect(process.env.MONGODB_URI)
+  .then(() => console.log('DB Connected'))
+  .catch(() => console.log('DB Connection failed'));
+
+const initializeDB = async () => {
+  let author, newAuthor, filteredBooks, newBook;
+
+  await Author.deleteMany({});
+  await Book.deleteMany({});
+
+  for await (author of authors) {
+    newAuthor = await new Author(author).save();
+    filteredBooks = books.filter(book => book.author === newAuthor.name);
+    filteredBooks.forEach(book => book.author = newAuthor.id);
+    let promises = filteredBooks.map(book => new Book(book).save());
+    await Promise.all(promises);
+  }
+};
+
+initializeDB();
+
+
 
 
 const typeDefs = gql`
@@ -17,11 +44,11 @@ const typeDefs = gql`
   }
 
   type Book {
-    title: String!,
-    published: Int!,
-    author: String!,
-    id: ID!,
+    title: String!
+    published: Int!
+    author: Author!
     genres: [String!]!
+    id: ID!
   }
 
   type Query {
@@ -55,40 +82,33 @@ const resolvers = {
   },
 
   Query: {
-    bookCount: () => books.length,
-    authorCount: () => authors.length,
-    allBooks: (_, args) => {
-      let filteredBooks;
-
-      filteredBooks = books;
-      if(args && args.author) filteredBooks = filteredBooks.filter(book => book.author === args.author);
-      if(args && args.genre) {
-        filteredBooks = filteredBooks.filter(book => book.genres.includes(args.genre));
-      };
-      
-      return filteredBooks;
-    },
-    allAuthors: () => authors
+    bookCount: () => Book.collection.countDocuments(),
+    authorCount: () => Author.collection.countDocuments(),
+    allBooks: async (_, args) => Book.find(),
+    allAuthors: async () => Author.find()
   },
 
 
 
   Mutation: {
 
-    addBook: (root, args) => {
-      const newBook = {
-        ...args, id: uuid()
+    addBook: async (root, args) => {
+      let newBook = {
+        ...args
       };
-      
-      books.push(newBook);
-      const found = authors.find(author => author.name === args.author);
-      if(!found) {
+      let savedAuthor;
+
+      let author = await Author.find({ name: newBook.author });
+      if(!author) {
         const newAuthor = {
           name: args.author
         };
-        authors.push(newAuthor);
+        savedAuthor = new Author(newAuthor).save();
       }
-      return newBook;
+      else savedAuthor = author;
+      
+      newBook.author = savedAuthor.id;
+      return new Book(newBook).save();
     },
 
     editAuthor: (root, args) => {
