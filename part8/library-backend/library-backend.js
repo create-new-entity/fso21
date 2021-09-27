@@ -41,7 +41,7 @@ const initialize = async () => {
 
   await new User({
     username: 'vadur_jadu',
-    favoriteGenre: 'RPG'
+    favoriteGenre: 'refactoring'
   }).save();
 
   console.log('Initialized');
