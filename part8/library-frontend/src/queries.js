@@ -21,6 +21,7 @@ export const GET_ALL_BOOKS_WITHOUT_GENRES = gql`
       author {
         name
       },
+      genres,
       id
     }
   }
