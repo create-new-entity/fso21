@@ -5,6 +5,7 @@ import Authors from "./components/Authors";
 import Books from "./components/Books";
 import NewBook from "./components/NewBook";
 import Login from "./components/Login";
+import Recommendations from "./components/Recommendations";
 
 
 const App = () => {
@@ -30,10 +31,14 @@ const App = () => {
         <button onClick={() => setPage("authors")}>authors</button>
         <button onClick={() => setPage("books")}>books</button>
         {
-          token ?
-          <button onClick={() => setPage("add")}>add book</button>
+          token
+          ?
+            <React.Fragment>
+              <button onClick={() => setPage("add")}>add book</button>
+              <button onClick={() => setPage("recommendations")}>recommended</button>
+            </React.Fragment>
           :
-          null
+            null
         }
         {
           token ? 
@@ -49,6 +54,8 @@ const App = () => {
       <Books show={page === "books"} />
 
       <NewBook show={page === "add"} setPage={setPage}/>
+
+      <Recommendations show={page === "recommendations"}/>
 
       {
         !token && page === 'login' ?

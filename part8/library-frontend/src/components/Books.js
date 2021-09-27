@@ -5,10 +5,10 @@ import {
   useQuery
 } from "@apollo/client";
 
-import { GET_ALL_BOOKS_WITHOUT_GENRES } from '../queries';
+import { GET_ALL_BOOKS } from '../queries';
 
 const Books = (props) => {
-  const { loading, error, data } = useQuery(GET_ALL_BOOKS_WITHOUT_GENRES);
+  const { loading, error, data } = useQuery(GET_ALL_BOOKS);
   const [ selectedGenres, setSelectedGenres ] = useState([]);
 
   const genreSelected = {
@@ -53,7 +53,6 @@ const Books = (props) => {
   const books = data.allBooks;
   const genres = books.reduce((genres, currBook) => genres.concat(currBook.genres), []);
   const uniqueGenres = genres.filter((genre, index, genres) => genres.indexOf(genre) === index);
-  console.log(uniqueGenres);
 
   const genresContent = () => {
     const genreButtons = uniqueGenres.map(genre => {

@@ -13,7 +13,7 @@ export const GET_ALL_AUTHORS = gql`
   }
 `;
 
-export const GET_ALL_BOOKS_WITHOUT_GENRES = gql`
+export const GET_ALL_BOOKS = gql`
   query {
     allBooks {
       title,
@@ -73,6 +73,16 @@ export const LOGIN = gql`
   ) {
     login(username: $username, password: $password) {
       value
+    }
+  }
+`;
+
+export const GET_LOGGED_IN_USER = gql`
+  query {
+    me {
+      favoriteGenre
+      username
+      id
     }
   }
 `;
