@@ -40,6 +40,7 @@ const NewBirthYearForm = ({ authors }) => {
     editAuthorBirthYear({ variables });
     
     setBorn('')
+    setSelectedOption(null);
   }
 
 
@@ -49,6 +50,7 @@ const NewBirthYearForm = ({ authors }) => {
       <form onSubmit={submit}>
         <div>
           <Select
+            value={selectedOption}
             defaultValue={selectedOption}
             onChange={setSelectedOption}
             options={options}

@@ -12,8 +12,6 @@ const Books = (props) => {
   if (!props.show) {
     return null
   }
-
-  // console.log(error);
   
   if(loading) return <div>Loading...</div>;
   if(error) return <div>ERROR!!</div>;
