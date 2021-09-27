@@ -21,7 +21,7 @@ mongoose.connect(process.env.MONGODB_URI)
   .then(() => console.log('DB Connected'))
   .catch(() => console.log('DB Connection failed'));
 
-const initializeDB = async () => {
+const initialize = async () => {
   let author, newAuthor, filteredBooks, newBook;
 
   await Author.deleteMany();
@@ -38,9 +38,16 @@ const initializeDB = async () => {
     let promises = filteredBooks.map(book => new Book(book).save());
     await Promise.all(promises);
   }
+
+  await new User({
+    username: 'vadur_jadu',
+    favoriteGenre: 'RPG'
+  }).save();
+
+  console.log('Initialized');
 };
 
-initializeDB();
+initialize();
 
 
 
@@ -147,10 +154,12 @@ const resolvers = {
           };
           savedAuthor = await new Author(newAuthor).save();
         }
-        else savedAuthor = author;
+        else savedAuthor = author[0];
         
         newBook.author = savedAuthor.id;
-        return new Book(newBook).save();
+        newBook = await new Book(newBook).save();
+        const res = await newBook.populate('author');
+        return newBook.populate('author');
       }
       catch(err) {
         throw new UserInputError(err.message, {
@@ -194,7 +203,6 @@ const resolvers = {
     login: async (root, args) => {
       try {
         const user = await User.findOne({ username: args.username });
-        
         if ( !user || args.password !== 'secret' ) {
           throw new UserInputError("wrong credentials")
         }
