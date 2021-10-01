@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useMutation } from '@apollo/client';
 
-import { LOGIN } from '../queries';
+import { LOGIN, GET_LOGGED_IN_USER } from '../queries';
 
 
 const Login = ({ setToken }) => {
@@ -10,14 +10,17 @@ const Login = ({ setToken }) => {
   const [login, result] = useMutation(LOGIN, {
     onError: (error) => {
       console.log(error);
-    }
+    },
+    refetchQueries: [
+      GET_LOGGED_IN_USER
+    ]
   });
 
   useEffect(() => {
     if(result.data) {
       const token = result.data.login.value;
       setToken(token);
-      localStorage.setItem('phonebook_graphql_token', JSON.stringify(token));
+      localStorage.setItem('phonebook_graphql_token', token);
     }
   }, [result.data, setToken])
 
