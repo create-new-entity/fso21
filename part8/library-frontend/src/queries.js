@@ -3,7 +3,7 @@ import {
 } from "@apollo/client";
 
 export const GET_ALL_AUTHORS = gql`
-  query {
+  query Query {
     allAuthors {
       name
       born
@@ -14,7 +14,7 @@ export const GET_ALL_AUTHORS = gql`
 `;
 
 export const GET_ALL_BOOKS = gql`
-  query {
+  query Query {
     allBooks {
       title,
       published,
@@ -78,10 +78,10 @@ export const LOGIN = gql`
 `;
 
 export const GET_LOGGED_IN_USER = gql`
-  query {
+  query Query {
     me {
-      favoriteGenre
       username
+      favoriteGenre
       id
     }
   }
