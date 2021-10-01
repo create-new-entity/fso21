@@ -14,7 +14,7 @@ const App = () => {
   const client = useApolloClient();
 
   useEffect(() => {
-    const storedToken = JSON.parse(localStorage.getItem('phonebook_graphql_token'));
+    const storedToken = localStorage.getItem('phonebook_graphql_token');
     if(storedToken) setToken(storedToken);
   }, []);
 
