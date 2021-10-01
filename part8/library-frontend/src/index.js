@@ -11,7 +11,7 @@ import { setContext } from '@apollo/client/link/context'
 import App from './App';
 
 const authLink = setContext((_, { headers }) => {
-  const token = localStorage.getItem('phonebook_graphql_token')
+  const token = JSON.parse(localStorage.getItem('phonebook_graphql_token'));
   return {
     headers: {
       ...headers,

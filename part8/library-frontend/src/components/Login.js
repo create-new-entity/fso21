@@ -17,7 +17,7 @@ const Login = ({ setToken }) => {
     if(result.data) {
       const token = result.data.login.value;
       setToken(token);
-      localStorage.setItem('phonebook_graphql_token', token);
+      localStorage.setItem('phonebook_graphql_token', JSON.stringify(token));
     }
   }, [result.data, setToken])
 
