@@ -17,41 +17,6 @@ const dummyData = require('./dummyData');
 let authors = dummyData.authors;
 let books = dummyData.books;
 
-mongoose.connect(process.env.MONGODB_URI)
-  .then(() => console.log('DB Connected'))
-  .catch(() => console.log('DB Connection failed'));
-
-const initialize = async () => {
-  let author, newAuthor, filteredBooks, newBook;
-
-  await Author.deleteMany();
-  await Book.deleteMany();
-  await User.deleteMany();
-
-  for await (author of authors) {
-    newAuthor = await new Author(author).save();
-    filteredBooks = books.filter(book => book.author === newAuthor.name);
-    filteredBooks = filteredBooks.map(book => {
-      book.author = newAuthor.id;
-      return book;
-    });
-    let promises = filteredBooks.map(book => new Book(book).save());
-    await Promise.all(promises);
-  }
-
-  await new User({
-    username: 'vadur_jadu',
-    favoriteGenre: 'refactoring'
-  }).save();
-
-  console.log('Initialized');
-};
-
-initialize();
-
-
-
-
 const typeDefs = gql`
 
   type User {
@@ -226,21 +191,60 @@ const resolvers = {
 }
 
 
-const server = new ApolloServer({
-  typeDefs,
-  resolvers,
-  context: async ({ req }) => {
-    const auth = req ? req.headers.authorization : null
-    if (auth && auth.toLowerCase().startsWith('bearer ')) {
-      const decodedToken = jwt.verify(
-        auth.substring(7), process.env.JWT_SECRET
-      )
-      const currentUser = await User.findById(decodedToken.id)
-      return { currentUser }
-    }
-  }
-})
 
-server.listen().then(({ url }) => {
-  console.log(`Server ready at ${url}`)
-})
+
+const initialize = async () => {
+  let author, newAuthor, filteredBooks, newBook;
+
+  await Author.deleteMany();
+  await Book.deleteMany();
+  await User.deleteMany();
+
+  for await (author of authors) {
+    newAuthor = await new Author(author).save();
+    filteredBooks = books.filter(book => book.author === newAuthor.name);
+    filteredBooks = filteredBooks.map(book => {
+      book.author = newAuthor.id;
+      return book;
+    });
+    let promises = filteredBooks.map(book => new Book(book).save());
+    await Promise.all(promises);
+  }
+
+  await new User({
+    username: 'vadur_jadu',
+    favoriteGenre: 'refactoring'
+  }).save();
+
+  console.log('Initialized');
+};
+
+
+
+const setUp = async () => {
+  await mongoose.connect(process.env.MONGODB_URI);
+  console.log('DB Connected');
+  await initialize();
+
+  const server = new ApolloServer({
+    typeDefs,
+    resolvers,
+    context: async ({ req }) => {
+      const auth = req ? req.headers.authorization : null
+      if (auth && auth.toLowerCase().startsWith('bearer ')) {
+        const decodedToken = jwt.verify(
+          auth.substring(7), process.env.JWT_SECRET
+        )
+        const currentUser = await User.findById(decodedToken.id)
+        return { currentUser }
+      }
+    }
+  })
+
+  const { url } = await server.listen();
+  console.log(`Server ready at ${url}`);
+};
+
+
+
+setUp();
