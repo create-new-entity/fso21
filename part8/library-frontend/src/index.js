@@ -12,11 +12,9 @@ import App from './App';
 
 
 const authLink = new ApolloLink((operation, forward) => {
-  console.log(operation);
-  operation.setContext((_, prevContext) => {
 
-    console.log('prevContext', prevContext);
-    const token = JSON.parse(localStorage.getItem('phonebook_graphql_token'));
+  operation.setContext((_, prevContext) => {
+    const token = localStorage.getItem('phonebook_graphql_token');
     console.log('token', token);
 
     if(prevContext && prevContext.headers) {
