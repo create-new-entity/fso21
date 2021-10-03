@@ -15,9 +15,21 @@ const NewBook = (props) => {
   const [genres, setGenres] = useState([])
   const [ addBook ] = useMutation(ADD_NEW_BOOK, {
     refetchQueries: [
-      GET_ALL_AUTHORS,
-      GET_ALL_BOOKS
-    ]
+      GET_ALL_AUTHORS
+    ],
+    update: (cache, response) => {
+      const dataInStore = cache.readQuery({
+        query: GET_ALL_BOOKS
+      });
+      // console.log(dataInStore);
+      cache.writeQuery({
+        query: GET_ALL_BOOKS,
+        data: {
+          ...dataInStore,
+          allBooks: [ ...dataInStore.allBooks, response.data.addBook ]
+        }
+      });
+    }
   });
   
 
