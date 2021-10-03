@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useMutation } from '@apollo/client';
 
-import { LOGIN, GET_LOGGED_IN_USER } from '../queries';
+import { LOGIN } from '../queries';
 
 
 const Login = ({ setToken }) => {
@@ -10,10 +10,7 @@ const Login = ({ setToken }) => {
   const [login, result] = useMutation(LOGIN, {
     onError: (error) => {
       console.log(error);
-    },
-    refetchQueries: [
-      GET_LOGGED_IN_USER
-    ]
+    }
   });
 
   useEffect(() => {

@@ -8,12 +8,8 @@ import {
 import { GET_ALL_AUTHORS } from '../queries';
 import NewBirthYearForm from './NewBirthYearForm';
 
-const Authors = (props) => {
+const Authors = () => {
   const { loading, error, data } = useQuery(GET_ALL_AUTHORS);
-
-  if (!props.show) {
-    return null
-  }
 
   if(loading) return <div>Loading...</div>;
   if(error) return <div>ERROR!!</div>;

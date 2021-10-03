@@ -15,7 +15,6 @@ const authLink = new ApolloLink((operation, forward) => {
 
   operation.setContext((_, prevContext) => {
     const token = localStorage.getItem('phonebook_graphql_token');
-    console.log('token', token);
 
     if(prevContext && prevContext.headers) {
       return {

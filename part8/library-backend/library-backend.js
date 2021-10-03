@@ -93,7 +93,11 @@ const resolvers = {
     authorCount: () => Author.collection.countDocuments(),
     allBooks: async (_, args) => Book.find().populate('author'),
     allAuthors: async () => Author.find(),
-    me: (root, args, { currentUser }) => currentUser 
+    me: (root, args, { currentUser }) => {
+      console.log('here');
+      console.log(`returning ${currentUser}`);
+      return currentUser;
+    } 
   },
 
 
@@ -230,7 +234,10 @@ const setUp = async () => {
     typeDefs,
     resolvers,
     context: async ({ req }) => {
-      const auth = req ? req.headers.authorization : null
+      console.clear();
+      console.log(`Coming for ${JSON.stringify(req.query)}`);
+      const auth = req ? req.headers.authorization : null;
+      console.log(`auth from front end ${auth}`);
       if (auth && auth.toLowerCase().startsWith('bearer ')) {
         const decodedToken = jwt.verify(
           auth.substring(7), process.env.JWT_SECRET

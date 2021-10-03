@@ -7,7 +7,7 @@ import {
 
 import { GET_ALL_BOOKS } from '../queries';
 
-const Books = (props) => {
+const Books = () => {
   const { loading, error, data } = useQuery(GET_ALL_BOOKS);
   const [ selectedGenres, setSelectedGenres ] = useState([]);
 
@@ -43,10 +43,6 @@ const Books = (props) => {
   };
 
   const noGenreSelected = () => selectedGenres.length === 0;
-
-  if (!props.show) {
-    return null;
-  }
   
   if(loading) return <div>Loading...</div>;
   if(error) return <div>ERROR!!</div>;

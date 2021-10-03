@@ -8,7 +8,7 @@ import {
 } from '../queries';
 
 
-const Recommendations = ({ show }) => {
+const Recommendations = () => {
   const printErr = (err) => {
     console.log(err);
   };
@@ -20,8 +20,7 @@ const Recommendations = ({ show }) => {
   const books = useQuery(GET_ALL_BOOKS, {
     onError: printErr
   });
-  
-  if(!show) return null;
+
   if(loggedInUser.loading || books.loading) return <div>Loading...</div>
   if(!loggedInUser.data || !books.data) return <div>Error</div>
   const userGenre = loggedInUser.data.me.favoriteGenre;

@@ -25,8 +25,17 @@ const App = () => {
     client.resetStore();
   };
 
-  return (
-    <div>
+  const pageContent = () => {
+    if(page === "authors") return <Authors/>;
+    if(page === "books") return <Books/>;
+    if(page === "add") return <NewBook setPage={setPage}/>;
+    if(page === "recommendations") return <Recommendations/>;
+    if(!token && page === 'login') return <Login setToken={(token) => { setPage('authors'); setToken(token);}}/>;
+    return null;
+  };
+
+  const navigationContent = () => {
+    return (
       <div>
         <button onClick={() => setPage("authors")}>authors</button>
         <button onClick={() => setPage("books")}>books</button>
@@ -48,20 +57,16 @@ const App = () => {
         }
         
       </div>
+    );
+  };
 
-      <Authors show={page === "authors"} />
-
-      <Books show={page === "books"} />
-
-      <NewBook show={page === "add"} setPage={setPage}/>
-
-      <Recommendations show={page === "recommendations"}/>
-
+  return (
+    <div>
       {
-        !token && page === 'login' ?
-        <Login setToken={(token) => { setPage('authors'); setToken(token);}}/>
-        :
-        null
+        navigationContent()
+      }
+      {
+        pageContent()
       }
     </div>
   );

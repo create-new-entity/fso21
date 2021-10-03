@@ -19,10 +19,7 @@ const NewBook = (props) => {
       GET_ALL_BOOKS
     ]
   });
-
-  if (!props.show) {
-    return null
-  }
+  
 
   const submit = async (event) => {
     event.preventDefault()
