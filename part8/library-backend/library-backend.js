@@ -90,14 +90,25 @@ const resolvers = {
 
   Query: {
     bookCount: () => Book.collection.countDocuments(),
+
     authorCount: () => Author.collection.countDocuments(),
-    allBooks: async (_, args) => Book.find().populate('author'),
+
+    allBooks: async (_, args) => {
+      let books = await Book.find().populate('author');
+      let filteredBooks;
+      filteredBooks = books;
+
+      if(args && args.author) filteredBooks = filteredBooks.filter(book => book.author === args.author);
+      if(args && args.genre) {
+        filteredBooks = filteredBooks.filter(book => book.genres.includes(args.genre));
+      };
+
+      return filteredBooks;
+    },
+
     allAuthors: async () => Author.find(),
-    me: (root, args, { currentUser }) => {
-      console.log('here');
-      console.log(`returning ${currentUser}`);
-      return currentUser;
-    } 
+    
+    me: (root, args, { currentUser }) => currentUser
   },
 
 
