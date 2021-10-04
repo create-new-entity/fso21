@@ -21,7 +21,6 @@ const NewBook = (props) => {
       const dataInStore = cache.readQuery({
         query: GET_ALL_BOOKS
       });
-      // console.log(dataInStore);
       cache.writeQuery({
         query: GET_ALL_BOOKS,
         data: {
