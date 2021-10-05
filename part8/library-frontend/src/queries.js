@@ -44,6 +44,9 @@ export const ADD_NEW_BOOK = gql`
           published
           author {
             name
+            born
+            bookCount
+            id
           }
           id
           genres
@@ -85,4 +88,26 @@ export const GET_LOGGED_IN_USER = gql`
       id
     }
   }
+`;
+
+const BOOK_DETAILS = gql`
+  fragment BookDetails on Book {
+    id
+    title
+    published
+    author {
+      name
+    }
+    id
+    genres
+  }
+`
+
+export const BOOK_ADDED = gql`
+  subscription {
+    bookAdded {
+      ...BookDetails
+    }
+  }
+  ${BOOK_DETAILS}
 `;

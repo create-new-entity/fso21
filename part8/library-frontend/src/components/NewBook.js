@@ -3,8 +3,7 @@ import { useMutation } from '@apollo/client'
 
 import {
   ADD_NEW_BOOK,
-  GET_ALL_AUTHORS,
-  GET_ALL_BOOKS
+  GET_ALL_AUTHORS
 } from '../queries'
 
 const NewBook = (props) => {
@@ -18,16 +17,7 @@ const NewBook = (props) => {
       GET_ALL_AUTHORS
     ],
     update: (cache, response) => {
-      const dataInStore = cache.readQuery({
-        query: GET_ALL_BOOKS
-      });
-      cache.writeQuery({
-        query: GET_ALL_BOOKS,
-        data: {
-          ...dataInStore,
-          allBooks: [ ...dataInStore.allBooks, response.data.addBook ]
-        }
-      });
+      props.updateCacheWith(response.data.addBook);
     }
   });
   

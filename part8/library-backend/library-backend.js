@@ -226,7 +226,7 @@ const resolvers = {
 
 
 const initialize = async () => {
-  let author, newAuthor, filteredBooks, newBook;
+  let author, newAuthor, filteredBooks;
 
   await Author.deleteMany();
   await Book.deleteMany();
@@ -262,10 +262,7 @@ const setUp = async () => {
     typeDefs,
     resolvers,
     context: async ({ req }) => {
-      console.clear();
-      console.log(`Coming for ${JSON.stringify(req.query)}`);
       const auth = req ? req.headers.authorization : null;
-      console.log(`auth from front end ${auth}`);
       if (auth && auth.toLowerCase().startsWith('bearer ')) {
         const decodedToken = jwt.verify(
           auth.substring(7), process.env.JWT_SECRET

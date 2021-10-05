@@ -14,6 +14,7 @@ const Authors = () => {
   if(loading) return <div>Loading...</div>;
   if(error) return <div>ERROR!!</div>;
   const authors = data.allAuthors;
+  
 
   return (
     <div>
