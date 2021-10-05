@@ -93,7 +93,7 @@ const typeDefs = gql`
 const resolvers = {
 
   Author: {
-    bookCount: async (root) => (await Book.find({ author: root.id })).length
+    bookCount: (root) => root.books.length
   },
 
   Query: {
@@ -138,7 +138,8 @@ const resolvers = {
       try {
         if(!author.length) {
           const newAuthor = {
-            name: args.author
+            name: args.author,
+            books: []
           };
           savedAuthor = await new Author(newAuthor).save();
         }
@@ -146,6 +147,8 @@ const resolvers = {
         
         newBook.author = savedAuthor.id;
         newBook = await new Book(newBook).save();
+        savedAuthor.books.push(newBook.id);
+        await savedAuthor.save();
         newBook = await newBook.populate('author');
 
         pubsub.publish('BOOK_ADDED', { bookAdded: newBook })
@@ -226,7 +229,7 @@ const resolvers = {
 
 
 const initialize = async () => {
-  let author, newAuthor, filteredBooks;
+  let author, newAuthor, filteredBooks, savedBooks, savedBookIds;
 
   await Author.deleteMany();
   await Book.deleteMany();
@@ -240,7 +243,10 @@ const initialize = async () => {
       return book;
     });
     let promises = filteredBooks.map(book => new Book(book).save());
-    await Promise.all(promises);
+    savedBooks = await Promise.all(promises);
+    savedBookIds = savedBooks.map(book => book.id);
+    newAuthor.books = savedBookIds;
+    await newAuthor.save();
   }
 
   await new User({
