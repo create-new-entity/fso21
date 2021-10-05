@@ -5,6 +5,7 @@ const {
   AuthenticationError,
   gql
 } = require('apollo-server');
+const { PubSub } = require('graphql-subscriptions')
 const mongoose = require('mongoose');
 const jwt = require('jsonwebtoken');
 
@@ -13,6 +14,8 @@ const Author = require('./models/author');
 const Book = require('./models/book');
 const User = require('./models/user');
 const dummyData = require('./dummyData');
+
+const pubsub = new PubSub();
 
 let authors = dummyData.authors;
 let books = dummyData.books;
@@ -80,6 +83,11 @@ const typeDefs = gql`
       password: String!
     ): Token
   }
+
+
+  type Subscription {
+    bookAdded: Book!
+  }
 `
 
 const resolvers = {
@@ -138,8 +146,11 @@ const resolvers = {
         
         newBook.author = savedAuthor.id;
         newBook = await new Book(newBook).save();
-        const res = await newBook.populate('author');
-        return newBook.populate('author');
+        newBook = await newBook.populate('author');
+
+        pubsub.publish('BOOK_ADDED', { bookAdded: newBook })
+
+        return newBook;
       }
       catch(err) {
         throw new UserInputError(err.message, {
@@ -202,6 +213,12 @@ const resolvers = {
         })
       }
     }
+  },
+
+  Subscription: {
+    bookAdded: {
+      subscribe: () => pubsub.asyncIterator(['BOOK_ADDED'])
+    },
   }
 }
 
@@ -259,8 +276,9 @@ const setUp = async () => {
     }
   })
 
-  const { url } = await server.listen();
+  const { url, subscriptionsUrl  } = await server.listen();
   console.log(`Server ready at ${url}`);
+  console.log(`Subscriptions ready at ${subscriptionsUrl}`)
 };
 
 
