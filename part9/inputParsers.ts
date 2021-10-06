@@ -1,7 +1,7 @@
 import { BMI_INPUT_DATA } from "./bmiCalculator";
 import { EXERCISE_INPUT_DATA } from "./exerciseCalculator";
 
-const someInputsAreNotNumbers = (input:any) => isNaN(input);
+const someInputsAreNotNumbers = (input: string): boolean => isNaN(Number(input));
 
 const parseInputFor_exerciseCalculator = (args: Array<string>): EXERCISE_INPUT_DATA => {
   if(isNaN(Number(args[2])) || args.slice(3).some(someInputsAreNotNumbers)) throw new Error('One or more provided values were not numbers!');
@@ -9,8 +9,8 @@ const parseInputFor_exerciseCalculator = (args: Array<string>): EXERCISE_INPUT_D
   return {
     target: Number(args[2]),
     exerciseHours: args.slice(3).map(strNumber => Number(strNumber))
-  }
-}
+  };
+};
 
 const parseInputFor_bmiCalculator = (args: Array<string>): BMI_INPUT_DATA => {
   if(args.slice(2).length !== 2) throw new Error('Invalid number of parameters given.');
@@ -19,7 +19,7 @@ const parseInputFor_bmiCalculator = (args: Array<string>): BMI_INPUT_DATA => {
   return {
     height: Number(args[2]),
     weight: Number(args[3])
-  }
+  };
 };
 
 const parseArgs = (args: Array<string>): (EXERCISE_INPUT_DATA | BMI_INPUT_DATA) => {

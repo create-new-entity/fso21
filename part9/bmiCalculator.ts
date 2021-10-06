@@ -24,6 +24,7 @@ try {
   console.log(calculateBmi(args as BMI_INPUT_DATA));
 }
 catch(err) {
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
   console.log(`Found ERROR!!: ${err.message}`);
 }
 
