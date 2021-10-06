@@ -28,9 +28,7 @@ const parseArgs = (args: Array<string>): (EXERCISE_INPUT_DATA | BMI_INPUT_DATA) 
   if(runningScript === 'bmiCalculator') {
     return parseInputFor_bmiCalculator(args);
   }
-  if(runningScript === 'exerciseCalculator') {
-    return parseInputFor_exerciseCalculator(args);
-  }
+  return parseInputFor_exerciseCalculator(args);
 };
 
 export default parseArgs;
