@@ -1,9 +1,16 @@
+import parseArgs from './inputParsers';
 
-const calculateBmi = (height: number, weight: number): string => {
+export interface BMI_INPUT_DATA {
+  height: number,
+  weight: number
+}
 
-  if(height === 0) throw new Error('Can\'t divide by 0!');
 
-  const bmi = weight / ((height * 0.01) * (height * 0.01));
+const calculateBmi = (bmiData: BMI_INPUT_DATA): string => {
+
+  if(bmiData.height === 0) throw new Error('Can\'t divide by 0!');
+
+  const bmi = bmiData.weight / ((bmiData.height * 0.01) * (bmiData.height * 0.01));
   
   if(bmi < 18.5) return 'Underweight';
   if(bmi >= 18.5 && bmi < 25) return 'Normal (healthy weight)';
@@ -13,8 +20,9 @@ const calculateBmi = (height: number, weight: number): string => {
 
 
 try {
-  console.log(calculateBmi(180, 74));
+  const args = parseArgs(process.argv);
+  console.log(calculateBmi(args as BMI_INPUT_DATA));
 }
 catch(err) {
-  console.log(err);
+  console.log(`Found ERROR!!: ${err.message}`);
 }

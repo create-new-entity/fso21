@@ -1,3 +1,5 @@
+import parseArgs from './inputParsers';
+
 interface ExerciseData {
   periodLength: number,
   trainingDays: number,
@@ -8,41 +10,49 @@ interface ExerciseData {
   average: number
 }
 
+export interface EXERCISE_INPUT_DATA {
+  target: number,
+  exerciseHours: Array<number>
+}
 
-const calculateExercises = (exerciseHours: Array<number>, target: number): ExerciseData => {
-  const trainingDays = exerciseHours.filter(hour => hour !== 0).length;
-  const totalHours = exerciseHours.reduce((prev, curr) => prev + curr);
-  const average = (totalHours && exerciseHours.length) ? (totalHours / exerciseHours.length) : 0;
-  const successOrFail = average > target ? true : false;
+
+const calculateExercises = (inputData: EXERCISE_INPUT_DATA): ExerciseData => {
   const getRating = () => {
-    if(trainingDays === 7) return 3;
-    if(trainingDays > 3) return 2;
+    if(success) return 3;
+    if(inputData.target - average <= 0.5) return 2;
     return 1;
   };
   const getRatingDescription = () => {
-    if(trainingDays === 7) {
-      if(successOrFail) return 'Great!! You are working out consistently and hitting target.';
-      return 'Almost there try a bit harder.';
-    }
-    if(trainingDays > 3) {
-      if(successOrFail) return 'Good job!! You are working out consistently and hitting target.';
-      return 'Try to be a bit more consistent';
-    }
-    if(successOrFail) return 'You\'ve hit target, that\'s all that matters.';
-    return 'Not good.';
+    if(rating === 3) return 'Perfect!!';
+    if(rating === 2) return 'OK. Can be better.';
+    return 'Not Good.';
   }
+
+  const trainingDays = inputData.exerciseHours.filter(hour => hour !== 0).length;
+  const totalHours = inputData.exerciseHours.reduce((prev, curr) => prev + curr);
+  
+  const average = (totalHours && inputData.exerciseHours.length) ? (totalHours / inputData.exerciseHours.length) : 0;
+  const success = average > inputData.target ? true : false;
+  const rating = getRating();
+  const ratingDescription = getRatingDescription();
+  
   
 
   return {
-    periodLength: exerciseHours.length,
+    periodLength: inputData.exerciseHours.length,
     trainingDays,
-    success: successOrFail,
-    rating: getRating(),
-    ratingDescription: getRatingDescription(),
-    target,
+    success,
+    rating,
+    ratingDescription,
+    target: inputData.target,
     average
   }
 };
 
-
-console.log(calculateExercises([3, 0, 2, 4.5, 0, 3, 1], 2));
+try {
+  const args = parseArgs(process.argv);
+  console.log(calculateExercises(args as EXERCISE_INPUT_DATA));
+}
+catch(err) {
+  console.log(`Found ERROR!!: ${err.message}`);
+}
