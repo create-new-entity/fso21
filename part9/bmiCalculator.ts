@@ -26,3 +26,5 @@ try {
 catch(err) {
   console.log(`Found ERROR!!: ${err.message}`);
 }
+
+export default calculateBmi;
