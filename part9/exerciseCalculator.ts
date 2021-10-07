@@ -26,7 +26,7 @@ const calculateExercises = (inputData: EXERCISE_INPUT_DATA): ExerciseData => {
     if(rating === 3) return 'Perfect!!';
     if(rating === 2) return 'OK. Can be better.';
     return 'Not Good.';
-  }
+  };
 
   const trainingDays = inputData.exerciseHours.filter(hour => hour !== 0).length;
   const totalHours = inputData.exerciseHours.reduce((prev, curr) => prev + curr);
@@ -36,8 +36,6 @@ const calculateExercises = (inputData: EXERCISE_INPUT_DATA): ExerciseData => {
   const rating = getRating();
   const ratingDescription = getRatingDescription();
   
-  
-
   return {
     periodLength: inputData.exerciseHours.length,
     trainingDays,
@@ -46,7 +44,7 @@ const calculateExercises = (inputData: EXERCISE_INPUT_DATA): ExerciseData => {
     ratingDescription,
     target: inputData.target,
     average
-  }
+  };
 };
 
 try {
@@ -54,5 +52,8 @@ try {
   console.log(calculateExercises(args as EXERCISE_INPUT_DATA));
 }
 catch(err) {
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
   console.log(`Found ERROR!!: ${err.message}`);
 }
+
+export default calculateExercises;
