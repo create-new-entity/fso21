@@ -5,7 +5,7 @@ interface Header {
 }
 
 const Header = ({ header }: Header) => {
-  return <h1>{header}</h1>
+  return <strong><h1>{header}</h1></strong>
 };
 
 export default Header;

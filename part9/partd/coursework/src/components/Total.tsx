@@ -1,14 +1,17 @@
 import React from 'react';
 
-import { Course, Courses } from '../types';
+import { CoursePart } from '../types';
 
-const Total = ({ courses }: Courses) => {
-  const total = courses.reduce((prev: number, curr: Course): number => {
+import './Total.css';
+
+
+const Total = ({ courses }: { courses: CoursePart[] }) => {
+  const total = courses.reduce((prev: number, curr: CoursePart): number => {
     return prev + curr.exerciseCount;
   }, 0);
 
   return (
-    <div>
+    <div className='total'>
       Number of exercises { total }
     </div>
   );

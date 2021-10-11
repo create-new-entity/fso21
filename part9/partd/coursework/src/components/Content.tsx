@@ -1,15 +1,16 @@
 import React from 'react';
 import { v4 as uuidv4 } from 'uuid';
 
-import { Course, Courses } from './../types';
+import { CoursePart } from '../types';
+import Part from './Part';
 
 
-const Content = ({ courses }: Courses) => {
+const Content = ({ courses }: { courses: CoursePart[] }) => {
   return (
     <div>
       {
-        courses.map((course: Course) => {
-          return <div key={uuidv4()}>{course.name} -- {course.exerciseCount}</div>
+        courses.map((course: CoursePart) => {
+          return <Part key={uuidv4()} course={course} />
         })
       }
     </div>
