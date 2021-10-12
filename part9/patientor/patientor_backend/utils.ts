@@ -67,5 +67,6 @@ export const toNewPatientEntry = ({
     ssn: parsedSSN,
     gender: parseGender(gender),
     occupation: parseOccupation(occupation),
+    entries: []
   };
 };

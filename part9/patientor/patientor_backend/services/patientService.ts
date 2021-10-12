@@ -10,9 +10,14 @@ const getNonSensitivePatients = (): NonSensitivePatient[] => {
       name: patient.name,
       dateOfBirth: patient.dateOfBirth,
       gender: patient.gender,
-      occupation: patient.occupation
+      occupation: patient.occupation,
+      entries: []
     };
   });
+};
+
+const getSinglePatient = (id: string): (Patient | undefined) => {
+  return patients.find((patient: Patient) => patient.id === id);
 };
 
 const addNewPatient = (newPatientEntry: NewPatientEntry): Patient => {
@@ -26,5 +31,6 @@ const addNewPatient = (newPatientEntry: NewPatientEntry): Patient => {
 
 export default {
   getNonSensitivePatients,
-  addNewPatient
+  addNewPatient,
+  getSinglePatient
 };
