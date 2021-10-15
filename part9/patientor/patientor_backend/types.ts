@@ -60,8 +60,6 @@ export interface Diagnosis {
   latin?: string
 }
 
-
-
 export type PublicPatient = Omit<Patient, 'ssn' | 'entries'>;
 
 export type NonSensitivePatient = Omit<Patient, 'ssn'>;

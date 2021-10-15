@@ -1,6 +1,8 @@
 import React, { useEffect } from 'react';
 import { Icon } from 'semantic-ui-react';
+import * as uuid from 'uuid';
 
+import { Entry } from '../types';
 import services from '../services';
 import { useStateValue, create_savePatientAction } from '../state';
 
@@ -25,6 +27,26 @@ const PatientPage = ({ id }: { id: string }) => {
 
   if(!patient) return null;
 
+  const getEntryContent = (entry: Entry) => {
+    let dCodes = null;
+    if(entry.diagnosisCodes) dCodes = entry.diagnosisCodes.map(dCode => {
+      const id: string = uuid.v4();
+      return <li key={id}>{dCode}</li>;
+    });
+    const content = `${entry.date} ${entry.description}`;
+    const id: string = uuid.v4();
+    return (
+      <div key={id}>
+        <p>{content}</p>
+        <ul>
+          {
+            dCodes
+          }
+        </ul>
+      </div>
+    );
+  };
+
   return (
     <React.Fragment>
       <div >
@@ -35,6 +57,12 @@ const PatientPage = ({ id }: { id: string }) => {
         <p>ssn: { patient.ssn }</p>
         <p>occupation: { patient.occupation }</p>
       </div>
+      <br/>
+      <br/>
+      <strong><p>entries</p></strong>
+      {
+        patient.entries.map(entry => getEntryContent(entry))
+      }
     </React.Fragment>
   );
 };
