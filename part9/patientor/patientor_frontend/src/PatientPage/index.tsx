@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import { Icon } from 'semantic-ui-react';
 
 import services from '../services';
-import { useStateValue } from '../state';
+import { useStateValue, create_savePatientAction } from '../state';
 
 const PatientPage = ({ id }: { id: string }) => {
   const [{ patient }, dispatch] = useStateValue();
@@ -14,10 +14,7 @@ const PatientPage = ({ id }: { id: string }) => {
           if(patient && patient.id === id) return;
 
           const newPatient = await services.getSinglePatientDetails(id);
-          dispatch({
-            type: "SAVE_PATIENT",
-            payload: newPatient
-          });
+          dispatch(create_savePatientAction(newPatient));
         }
         catch(err) {
           console.log(err);

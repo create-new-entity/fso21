@@ -55,9 +55,6 @@ export const toNewPatientEntry = ({
 }: Fields): NewPatientEntry => {
   let parsedSSN, parsedDateOfBirth;
 
-  console.log('ssn', ssn);
-  console.log('dateOfBirth', dateOfBirth);
-
   if(ssn) parsedSSN = parseSSN(ssn);
   if(dateOfBirth) parsedDateOfBirth = parseDate(dateOfBirth);
 
