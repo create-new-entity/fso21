@@ -8,18 +8,19 @@ import { useStateValue } from "./state";
 import { Patient } from "./types";
 import PatientListPage from "./PatientListPage";
 import PatientPage from "./PatientPage";
-import { create_setPatientListAction } from "./state";
+import { create_setPatientListAction, create_setDiagnosisListAction } from "./state";
+import services from './services';
 
 const App = () => {
-  const [, dispatch] = useStateValue();
+  const [{ diagnosis }, dispatch] = useStateValue();
   const match = useRouteMatch< { id: string } | null >('/patients/:id');
   let id = '';
+  console.log(diagnosis);
 
   
   if(match && match.params) id = match.params.id;
   
   React.useEffect(() => {
-    void axios.get<void>(`${apiBaseUrl}/ping`);
 
     const fetchPatientList = async () => {
       try {
@@ -31,6 +32,19 @@ const App = () => {
         console.error(e);
       }
     };
+
+    const fetchDiagnosisList = async () => {
+      try {
+        const diagnosisList = await services.getDiagnosisList();
+        dispatch(create_setDiagnosisListAction(diagnosisList));
+      }
+      catch(e) {
+        console.log(e);
+      }
+    };
+
+    if(!diagnosis.length) void fetchDiagnosisList();
+
     void fetchPatientList();
   }, [dispatch]);
 

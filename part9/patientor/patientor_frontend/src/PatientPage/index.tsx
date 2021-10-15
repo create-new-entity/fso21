@@ -7,7 +7,7 @@ import services from '../services';
 import { useStateValue, create_savePatientAction } from '../state';
 
 const PatientPage = ({ id }: { id: string }) => {
-  const [{ patient }, dispatch] = useStateValue();
+  const [{ patient, diagnosis }, dispatch] = useStateValue();
 
   useEffect(() => {
      void (
@@ -31,7 +31,8 @@ const PatientPage = ({ id }: { id: string }) => {
     let dCodes = null;
     if(entry.diagnosisCodes) dCodes = entry.diagnosisCodes.map(dCode => {
       const id: string = uuid.v4();
-      return <li key={id}>{dCode}</li>;
+      const name: string | undefined = diagnosis.find(d => d.code === dCode)?.name;
+      return <li key={id}>{dCode} {name}</li>;
     });
     const content = `${entry.date} ${entry.description}`;
     const id: string = uuid.v4();
