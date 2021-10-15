@@ -1,6 +1,6 @@
-import { Diagnose } from './../types';
+import { Diagnosis } from './../types';
 
-export const diagnoses: Diagnose[] = 
+export const diagnoses: Diagnosis[] = 
 [
   {
     "code": "M24.2",
