@@ -15,7 +15,6 @@ const App = () => {
   const [{ diagnosis }, dispatch] = useStateValue();
   const match = useRouteMatch< { id: string } | null >('/patients/:id');
   let id = '';
-  console.log(diagnosis);
 
   
   if(match && match.params) id = match.params.id;

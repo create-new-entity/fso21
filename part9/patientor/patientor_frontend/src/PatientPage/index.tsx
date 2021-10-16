@@ -5,6 +5,9 @@ import * as uuid from 'uuid';
 import { Entry } from '../types';
 import services from '../services';
 import { useStateValue, create_savePatientAction } from '../state';
+import HospitalEntryComponent from './HospitalEntryComponent';
+import HealthCheckEntryComponent from './HealthCheckEntryComponent';
+import OccupationalHealthcareEntryComponent from './OccupationalHealthcareEntry';
 
 const PatientPage = ({ id }: { id: string }) => {
   const [{ patient, diagnosis }, dispatch] = useStateValue();
@@ -27,18 +30,15 @@ const PatientPage = ({ id }: { id: string }) => {
 
   if(!patient) return null;
 
-  const getEntryContent = (entry: Entry) => {
+  const getDiagnosisCodesContent = (entry: Entry) => {
     let dCodes = null;
     if(entry.diagnosisCodes) dCodes = entry.diagnosisCodes.map(dCode => {
       const id: string = uuid.v4();
       const name: string | undefined = diagnosis.find(d => d.code === dCode)?.name;
       return <li key={id}>{dCode} {name}</li>;
     });
-    const content = `${entry.date} ${entry.description}`;
-    const id: string = uuid.v4();
     return (
-      <div key={id}>
-        <p>{content}</p>
+      <div>
         <ul>
           {
             dCodes
@@ -46,6 +46,41 @@ const PatientPage = ({ id }: { id: string }) => {
         </ul>
       </div>
     );
+  };
+
+  const filterEntry = (entry: Entry) => {
+    const assertUnreachable = (_entry: never): never => {
+      throw new Error(`Unknown 'Entry' type.`);
+    };
+
+    const id = uuid.v4();
+
+    switch(entry.type) {
+
+      case 'Hospital':
+        return <HospitalEntryComponent
+          key={id}
+          entry={entry}
+          getDiagnosisCodesContent={getDiagnosisCodesContent}
+          />;
+
+      case 'HealthCheck':
+        return <HealthCheckEntryComponent
+          key={id}
+          entry={entry}
+          getDiagnosisCodesContent={getDiagnosisCodesContent}
+          />;
+
+      case 'OccupationalHealthcare':
+        return <OccupationalHealthcareEntryComponent
+          key={id}
+          entry={entry}
+          getDiagnosisCodesContent={getDiagnosisCodesContent}
+          />;
+
+      default:
+        assertUnreachable(entry);
+    }
   };
 
   return (
@@ -60,9 +95,11 @@ const PatientPage = ({ id }: { id: string }) => {
       </div>
       <br/>
       <br/>
-      <strong><p>entries</p></strong>
+      <br/>
+      <strong><p>Entries:</p></strong>
+      <hr/>
       {
-        patient.entries.map(entry => getEntryContent(entry))
+        patient.entries.map(entry => filterEntry(entry))
       }
     </React.Fragment>
   );
