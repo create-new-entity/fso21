@@ -39,7 +39,7 @@ interface OccupationalHealthcareEntry extends BaseEntry {
   sickLeave?: DateRange
 }
 
-interface Discharge {
+export interface Discharge {
   date: string,
   criteria: string
 }
@@ -78,4 +78,18 @@ export enum Gender {
   MALE = 'male',
   FEMALE = 'female',
   OTHER = 'other'
+}
+
+export interface DischargeFields {
+  date: unknown;
+  criteria: unknown;
+}
+
+export interface HospitalEntryFields {
+  type: unknown;
+  description: unknown;
+  date: unknown;
+  specialist: unknown;
+  diagnosisCodes?: unknown;
+  discharge: unknown;
 }
