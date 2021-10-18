@@ -28,7 +28,7 @@ interface HealthCheckEntry extends BaseEntry {
   healthCheckRating: HealthCheckRating;
 }
 
-interface DateRange {
+export interface DateRange {
   startDate: string,
   endDate: string
 }
@@ -66,6 +66,10 @@ export type NonSensitivePatient = Omit<Patient, 'ssn'>;
 
 export type NewPatientEntry = Omit<Patient, 'id'>;
 
+export type NewHospitalEntry = Omit<HospitalEntry, 'id'>;
+
+export type NewOccupationalHealthcareEntry = Omit<OccupationalHealthcareEntry, 'id'>;
+
 export type Fields = {
   name: unknown,
   dateOfBirth?: unknown,
@@ -85,11 +89,24 @@ export interface DischargeFields {
   criteria: unknown;
 }
 
-export interface HospitalEntryFields {
-  type: unknown;
+export interface HospitalEntryFieldsExceptType {
   description: unknown;
   date: unknown;
   specialist: unknown;
   diagnosisCodes?: unknown;
   discharge: unknown;
+}
+
+export interface DateRangeFields {
+  startDate: unknown,
+  endDate: unknown
+}
+
+export interface OccupationalHealthcareEntryFieldsExceptType {
+  description: unknown;
+  date: unknown;
+  specialist: unknown;
+  diagnosisCodes?: unknown;
+  employerName: unknown;
+  sickLeave?: unknown;
 }
