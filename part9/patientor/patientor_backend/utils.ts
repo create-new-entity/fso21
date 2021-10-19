@@ -145,15 +145,12 @@ const parseType = (type: unknown): string => {
   return type;
 };
 
-const isHealthCheckRatingEnum = (healthCheckRating: unknown): healthCheckRating is HealthCheckRating => {
-  if(!healthCheckRating || !isString(healthCheckRating)) throw new Error("Incorrect or missing healthCheckRating");
-  return healthCheckRating in HealthCheckRating;
-};
 
-const parseHealthCheckRating = (healthCheckRating: unknown): HealthCheckRating => {
-  if(!isHealthCheckRatingEnum(healthCheckRating)) throw new Error("Incorrect value of healthCheckRating");
-  
-  return healthCheckRating;
+const parseHealthCheckRating = (healthCheckRating: unknown): number => {
+  if(!healthCheckRating || !isString(healthCheckRating) || !(healthCheckRating in HealthCheckRating)) throw new Error("Incorrect or missing healthCheckRating");
+
+  const index = Object.values(HealthCheckRating).indexOf(healthCheckRating);
+  return Number(Object.keys(HealthCheckRating)[index]);
 };
 
 export const toNewPatientEntry = ({
