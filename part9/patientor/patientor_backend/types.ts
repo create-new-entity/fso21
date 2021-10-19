@@ -67,8 +67,9 @@ export type NonSensitivePatient = Omit<Patient, 'ssn'>;
 export type NewPatientEntry = Omit<Patient, 'id'>;
 
 export type NewHospitalEntry = Omit<HospitalEntry, 'id'>;
-
 export type NewOccupationalHealthcareEntry = Omit<OccupationalHealthcareEntry, 'id'>;
+export type NewHealthCheckEntry = Omit<HealthCheckEntry, 'id'>;
+export type NewEntryForPatient = NewHospitalEntry | NewOccupationalHealthcareEntry | NewHealthCheckEntry;
 
 export type Fields = {
   name: unknown,
@@ -89,7 +90,8 @@ export interface DischargeFields {
   criteria: unknown;
 }
 
-export interface HospitalEntryFieldsExceptType {
+export interface HospitalEntryFields {
+  type: 'Hospital';
   description: unknown;
   date: unknown;
   specialist: unknown;
@@ -102,7 +104,8 @@ export interface DateRangeFields {
   endDate: unknown
 }
 
-export interface OccupationalHealthcareEntryFieldsExceptType {
+export interface OccupationalHealthcareEntryFields {
+  type: 'OccupationalHealthcare';
   description: unknown;
   date: unknown;
   specialist: unknown;
@@ -110,3 +113,13 @@ export interface OccupationalHealthcareEntryFieldsExceptType {
   employerName: unknown;
   sickLeave?: unknown;
 }
+
+export interface HealthCheckEntryFields {
+  type: 'HealthCheck';
+  description: unknown;
+  date: unknown;
+  specialist: unknown;
+  diagnosisCodes?: unknown;
+  healthCheckRating: unknown;
+}
+

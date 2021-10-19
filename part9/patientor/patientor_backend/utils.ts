@@ -5,13 +5,18 @@ import {
 
   Discharge,
   DischargeFields,
-  HospitalEntryFieldsExceptType,
   NewHospitalEntry,
 
   DateRange,
   DateRangeFields,
-  OccupationalHealthcareEntryFieldsExceptType,
-  NewOccupationalHealthcareEntry
+  NewOccupationalHealthcareEntry,
+
+  HealthCheckRating,
+  NewHealthCheckEntry,
+
+  HospitalEntryFields,
+  OccupationalHealthcareEntryFields,
+  HealthCheckEntryFields
 } from "./types";
 
 const isString = (text: unknown): text is string => {
@@ -140,6 +145,17 @@ const parseType = (type: unknown): string => {
   return type;
 };
 
+const isHealthCheckRatingEnum = (healthCheckRating: unknown): healthCheckRating is HealthCheckRating => {
+  if(!healthCheckRating || !isString(healthCheckRating)) throw new Error("Incorrect or missing healthCheckRating");
+  return healthCheckRating in HealthCheckRating;
+};
+
+const parseHealthCheckRating = (healthCheckRating: unknown): HealthCheckRating => {
+  if(!isHealthCheckRatingEnum(healthCheckRating)) throw new Error("Incorrect value of healthCheckRating");
+  
+  return healthCheckRating;
+};
+
 export const toNewPatientEntry = ({
   name,
   dateOfBirth,
@@ -174,15 +190,16 @@ const toNewDischarge = ({ date, criteria }: DischargeFields): Discharge => {
 };
 
 const toNewHospitalEntry = ({
+  type,
   description,
   date,
   specialist,
   diagnosisCodes,
   discharge,
-}: HospitalEntryFieldsExceptType): NewHospitalEntry => {
+}: HospitalEntryFields): NewHospitalEntry => {
   
   const newHospitalEntry = {
-    type: 'Hospital' as const,
+    type,
     description: parseDescription(description),
     date: parseDate(date),
     specialist: parseSpecialist(specialist),
@@ -198,22 +215,24 @@ const toNewHospitalEntry = ({
 
 const toNewOccupationalHealthcare = (
   {
+    type,
     description,
     date,
     specialist,
     diagnosisCodes,
     employerName,
     sickLeave
-  }: OccupationalHealthcareEntryFieldsExceptType
+  }: OccupationalHealthcareEntryFields
 ): NewOccupationalHealthcareEntry => {
 
   const newOccupationalHealthCareEntry = {
+    type,
     description: parseDescription(description),
     date: parseDate(date),
     specialist: parseSpecialist(specialist),
     diagnosisCodes: diagnosisCodes ? parseDiagnosisCodes(diagnosisCodes) : undefined,
     employerName: parseEmployerName(employerName),
-    sickLeave: sickLeave ? parseSickLeave(sickLeave) : undefined
+    sickLeave: sickLeave ? parseSickLeave(sickLeave as DateRangeFields) : undefined
   };
 
   // diagnosisCodes and sickLeave are optional, so remove if they don't exist.
@@ -223,40 +242,63 @@ const toNewOccupationalHealthcare = (
   return newOccupationalHealthCareEntry;
 };
 
+const toNewHealthCheckEntry = (
+  {
+    type,
+    description,
+    date,
+    specialist,
+    diagnosisCodes,
+    healthCheckRating
+  }: HealthCheckEntryFields): NewHealthCheckEntry => {
 
-const getNewEntryTypeOfPatient = (
-  type,
-  
-  description,
-  date,
-  specialist,
-  diagnosisCodes,
+    const newHealthCheckEntry =  {
+      type,
+      description: parseDescription(description),
+      date: parseDate(date),
+      specialist: parseSpecialist(specialist),
+      diagnosisCodes: diagnosisCodes ? parseDiagnosisCodes(diagnosisCodes) : undefined,
+      healthCheckRating: parseHealthCheckRating(healthCheckRating)
+    };
 
-  discharge,
-  
-  employerName,
-  sickLeave,
+    // diagnosisCodes is optional
+    if(!diagnosisCodes) delete newHealthCheckEntry.diagnosisCodes;
 
-  healthCheckRating
-): (NewHospitalEntry | NewOccupationalHealthcareEntry) => {
+    return newHealthCheckEntry;
+};
 
-  const assertUnreachable = (_type: string): never => {
-    throw new Error('Invalid type value of the entry');
-  };
 
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-  const hospitalEntryFieldsExceptType_UnknownValues = { description, date, specialist, diagnosisCodes, discharge } as HospitalEntryFieldsExceptType;
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-  const occupationalHealthcareEntryFieldsExceptType_UnknownValues = { description, date, specialist, diagnosisCodes, employerName, sickLeave } as OccupationalHealthcareEntryFieldsExceptType;
+export const getNewEntryTypeOfPatient = (
+  type: unknown,
+  description: unknown,
+  date: unknown,
+  specialist: unknown,
+  diagnosisCodes: unknown,
+  discharge: unknown,
+  employerName: unknown,
+  sickLeave: unknown,
+  healthCheckRating: unknown
+): (NewHospitalEntry | NewOccupationalHealthcareEntry | NewHealthCheckEntry) => {
+
   const parsedType = parseType(type);
   
-  switch(parsedType) {
-    case 'Hospital':
-      return toNewHospitalEntry(hospitalEntryFieldsExceptType_UnknownValues);
-    case 'OccupationalHealthcare':
-      return toNewOccupationalHealthcare(occupationalHealthcareEntryFieldsExceptType_UnknownValues);
-    case 'HealthCheck':
-    default:
-      assertUnreachable(parsedType);
+  if(parsedType === 'Hospital') {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+    const hospitalEntryFields_UnknownValues = { type: parsedType, description, date, specialist, diagnosisCodes, discharge } as HospitalEntryFields;
+    return toNewHospitalEntry(hospitalEntryFields_UnknownValues);
   }
+  
+  if(parsedType === 'OccupationalHealthcare') {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+    const occupationalHealthcareEntryFields_UnknownValues = { type: parsedType, description, date, specialist, diagnosisCodes, employerName, sickLeave } as OccupationalHealthcareEntryFields;
+    return toNewOccupationalHealthcare(occupationalHealthcareEntryFields_UnknownValues);
+  }
+  
+  if(parsedType === 'HealthCheck') {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+    const healthCheckEntryFields_UnknownValues = { type: parsedType, description, date, specialist, diagnosisCodes, healthCheckRating } as HealthCheckEntryFields;
+    return toNewHealthCheckEntry(healthCheckEntryFields_UnknownValues);
+  }
+
+  throw new Error('Invalid type value of the entry');
 };
