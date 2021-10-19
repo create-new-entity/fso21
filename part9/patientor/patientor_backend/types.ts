@@ -28,7 +28,7 @@ interface HealthCheckEntry extends BaseEntry {
   healthCheckRating: HealthCheckRating;
 }
 
-interface DateRange {
+export interface DateRange {
   startDate: string,
   endDate: string
 }
@@ -39,7 +39,7 @@ interface OccupationalHealthcareEntry extends BaseEntry {
   sickLeave?: DateRange
 }
 
-interface Discharge {
+export interface Discharge {
   date: string,
   criteria: string
 }
@@ -66,6 +66,11 @@ export type NonSensitivePatient = Omit<Patient, 'ssn'>;
 
 export type NewPatientEntry = Omit<Patient, 'id'>;
 
+export type NewHospitalEntry = Omit<HospitalEntry, 'id'>;
+export type NewOccupationalHealthcareEntry = Omit<OccupationalHealthcareEntry, 'id'>;
+export type NewHealthCheckEntry = Omit<HealthCheckEntry, 'id'>;
+export type NewEntryForPatient = NewHospitalEntry | NewOccupationalHealthcareEntry | NewHealthCheckEntry;
+
 export type Fields = {
   name: unknown,
   dateOfBirth?: unknown,
@@ -79,3 +84,42 @@ export enum Gender {
   FEMALE = 'female',
   OTHER = 'other'
 }
+
+export interface DischargeFields {
+  date: unknown;
+  criteria: unknown;
+}
+
+export interface HospitalEntryFields {
+  type: 'Hospital';
+  description: unknown;
+  date: unknown;
+  specialist: unknown;
+  diagnosisCodes?: unknown;
+  discharge: unknown;
+}
+
+export interface DateRangeFields {
+  startDate: unknown,
+  endDate: unknown
+}
+
+export interface OccupationalHealthcareEntryFields {
+  type: 'OccupationalHealthcare';
+  description: unknown;
+  date: unknown;
+  specialist: unknown;
+  diagnosisCodes?: unknown;
+  employerName: unknown;
+  sickLeave?: unknown;
+}
+
+export interface HealthCheckEntryFields {
+  type: 'HealthCheck';
+  description: unknown;
+  date: unknown;
+  specialist: unknown;
+  diagnosisCodes?: unknown;
+  healthCheckRating: unknown;
+}
+

@@ -1,0 +1,149 @@
+POST http://localhost:3001/api/patients/d2773336-f723-11e9-8f0b-362b9e155667/entries
+Content-Type: application/json
+
+{
+  "type": "HealthCheck",
+  "description": "Patient is a bloody maniac",
+  "date": "2019-08-05",
+  "specialist": "Vadu",
+  "diagnosisCodes": ["M24.2", "M51.2", "S03.5"],
+  "healthCheckRating": "CriticalRisk"
+}
+
+###
+
+POST http://localhost:3001/api/patients/d2773336-f723-11e9-8f0b-362b9e155667/entries
+Content-Type: application/json
+
+{
+  "type": "WRONG_TYPE",
+  "description": "Patient is a bloody maniac",
+  "date": "2019-08-05",
+  "specialist": "Vadu",
+  "diagnosisCodes": ["M24.2", "M51.2", "S03.5"],
+  "healthCheckRating": "CriticalRisk"
+}
+
+
+####
+
+POST http://localhost:3001/api/patients/d2773336-f723-11e9-8f0b-362b9e155667/entries
+Content-Type: application/json
+
+{
+  "type": "HealthCheck",
+  // description missing
+  "date": "2019-08-05",
+  "specialist": "Vadu",
+  "diagnosisCodes": ["M24.2", "M51.2", "S03.5"],
+  "healthCheckRating": "CriticalRisk"
+}
+
+
+####
+
+POST http://localhost:3001/api/patients/d2773336-f723-11e9-8f0b-362b9e155667/entries
+Content-Type: application/json
+
+{
+  "type": "HealthCheck",
+  "description": "Patient is a bloody maniac",
+  "date": "2019-08-05",
+  "specialist": "Vadu",
+  // Skipping diagnosiscodes
+  "healthCheckRating": "CriticalRisk"
+}
+
+
+####
+
+POST http://localhost:3001/api/patients/d2773336-f723-11e9-8f0b-362b9e155667/entries
+Content-Type: application/json
+
+{
+  "type": "HealthCheck",
+  "description": "Patient is a bloody maniac",
+  "date": "2019-08-05",
+  "specialist": "Vadu",
+  "diagnosisCodes": ["M24.2", "M51.2", "S03.5"],
+  "healthCheckRating": "WRONGGGGGGGGG______RATING"
+}
+
+
+
+####
+
+POST http://localhost:3001/api/patients/d2773336-f723-11e9-8f0b-362b9e155667/entries
+Content-Type: application/json
+
+{
+  "type": "OccupationalHealthcare",
+  "description": "Patient is a bloody maniac",
+  "date": "2019-08-05",
+  "specialist": "Vadu",
+  "diagnosisCodes": ["M24.2", "M51.2", "S03.5"],
+  "employerName": "HyPD",
+  "sickLeave": {
+    "startDate": "2021-01-01",
+    "endDate": "2021-01-08"
+  }
+}
+
+
+####
+
+POST http://localhost:3001/api/patients/d2773336-f723-11e9-8f0b-362b9e155667/entries
+Content-Type: application/json
+
+{
+  "type": "OccupationalHealthcare",
+  "description": "Patient is a bloody maniac",
+  "date": "2019-08-05",
+  "specialist": "Vadu",
+  "diagnosisCodes": ["M24.2", "M51.2", "S03.5"],
+  "employerName": "HyPD",
+  "sickLeave": {
+    // startDate missing
+    "endDate": "2021-01-08"
+  }
+}
+
+
+####
+
+POST http://localhost:3001/api/patients/d2773336-f723-11e9-8f0b-362b9e155667/entries
+Content-Type: application/json
+
+{
+  "type": "INVALID___________TYPE",
+  "description": "Patient is a bloody maniac",
+  "date": "2019-08-05",
+  "specialist": "Vadu",
+  "diagnosisCodes": ["M24.2", "M51.2", "S03.5"],
+  "employerName": "HyPD",
+  "sickLeave": {
+    "startDate": "2021-01-01",
+    "endDate": "2021-01-08"
+  }
+}
+
+
+
+####
+
+POST http://localhost:3001/api/patients/d2773336-f723-11e9-8f0b-362b9e155667/entries
+Content-Type: application/json
+
+{
+  "type": "Hospital",
+  "description": "Patient is a bloody maniac",
+  "date": "2019-08-05",
+  "specialist": "Vadu",
+  "diagnosisCodes": ["M51.2", "S03.5"],
+  "discharge": {
+    "date": "2015-01-16",
+    "criteria": "Thumb has healed."
+  }
+}
+
+
