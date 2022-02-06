@@ -48,7 +48,6 @@ const AddEntryForm = ({ onSubmit, onCancel }: Props) => {
       onSubmit={onSubmit}
     >
       {({ dirty, setFieldValue, setFieldTouched }) => {
-        console.log(dirty);
         return (
           <Form className="form ui">
             <Field
