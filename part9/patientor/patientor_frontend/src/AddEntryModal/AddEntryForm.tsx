@@ -3,7 +3,7 @@ import React from 'react';
 import { Formik, Form } from 'formik';
 import { HealthCheckRating } from './../types';
 
-import { DropDownField } from './FormField';
+import { DropDownField, TextField } from './FormField';
 import { Button } from 'semantic-ui-react';
 
 interface Props {
@@ -25,6 +25,8 @@ const AddEntryForm = ({ onSubmit, onCancel } : Props) => {
     <Formik
       initialValues={
           {
+            description: '',
+            specialist: '',
             healthCheckRating: HealthCheckRating.Healthy
         }
       }
@@ -35,6 +37,19 @@ const AddEntryForm = ({ onSubmit, onCancel } : Props) => {
           return (
             <Form>
               { isValid && dirty }
+
+              <TextField
+                name='description'
+                label='Description'
+                placeholder='Description'
+              />
+
+              <TextField
+                name='specialist'
+                label='Specialist'
+                placeholder='Specialist'
+              />
+              
               <DropDownField
                 name='healthCheckRating'
                 label='Health Check Rating'
