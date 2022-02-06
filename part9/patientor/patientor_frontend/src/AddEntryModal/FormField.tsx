@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { Field } from 'formik';
+import { FieldProps } from 'formik';
 import { Dropdown, Form, Input } from 'semantic-ui-react';
 
 interface DropDownProps {
@@ -15,30 +15,31 @@ interface DropDownProps {
   multiple?: boolean,
   search?: boolean,
   selection?: boolean
-  inline?: boolean
+  inline?: boolean,
+  field: FieldProps
 }
 
 interface TextFieldProps {
   name: string,
   label: string,
   placeholder: string,
-  fluid?: boolean
+  field: FieldProps
 }
 
-export const DropDownField = ({ name, label, ...props }: DropDownProps) => {
+export const DropDownField = ({ label, field, ...props }: DropDownProps) => {
   return (
     <Form.Field>
       <label>{label}</label>
-      <Field name={name} component={Dropdown} {...props}/>
+      <Dropdown {...field} {...props}/>
     </Form.Field>
   );
 };
 
-export const TextField = ({ name, label, placeholder, ...props }: TextFieldProps) => {
+export const TextField = ({ label, field, ...props }: TextFieldProps) => {
   return (
     <Form.Field>
       <label>{label}</label>
-      <Field name={name} placeholder={placeholder} component={Input} {...props}/>
+      <Input {...field} {...props} fluid/>
     </Form.Field>
   );
 };
