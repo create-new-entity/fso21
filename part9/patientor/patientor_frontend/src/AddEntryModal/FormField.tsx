@@ -15,6 +15,7 @@ interface DropDownProps {
   multiple?: boolean,
   search?: boolean,
   selection?: boolean
+  inline?: boolean
 }
 
 interface TextFieldProps {

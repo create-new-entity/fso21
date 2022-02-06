@@ -1,5 +1,5 @@
 import React from 'react';
-import { Button, Modal } from 'semantic-ui-react';
+import { Modal } from 'semantic-ui-react';
 
 import AddEntryForm from './AddEntryForm';
 
@@ -14,7 +14,6 @@ const AddEntryModal = ({ modalOpen, onClose }: Props) => {
       <Modal.Header>Top Mofiz</Modal.Header>
       <Modal.Content>
         <AddEntryForm onSubmit={() => { console.log('hum'); }} onCancel={() => {console.log('ham');}}/>
-        <Button onClick={onClose}>Close</Button>
       </Modal.Content>
     </Modal>
   );

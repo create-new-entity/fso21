@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Formik, Form } from 'formik';
-import { Button } from 'semantic-ui-react';
+import { Button, Grid } from 'semantic-ui-react';
 
 import { Diagnosis, HealthCheckRating } from './../types';
 import { DropDownField, TextField } from './FormField';
@@ -49,7 +49,9 @@ const AddEntryForm = ({ onSubmit, onCancel } : Props) => {
     <Formik
       initialValues={
           {
+            type: 'HealthCheck',
             description: '',
+            date: '',
             specialist: '',
             healthCheckRating: HealthCheckRating.Healthy,
             diagnosisCodes: []
@@ -60,7 +62,7 @@ const AddEntryForm = ({ onSubmit, onCancel } : Props) => {
       {
         ({ isValid, dirty }) => {
           return (
-            <Form>
+            <Form className='form ui'>
               { isValid && dirty }
 
               <TextField
@@ -71,19 +73,19 @@ const AddEntryForm = ({ onSubmit, onCancel } : Props) => {
               />
 
               <TextField
+                name='date'
+                label='Date'
+                placeholder='Date'
+                fluid
+              />
+
+              <TextField
                 name='specialist'
                 label='Specialist'
                 placeholder='Specialist'
                 fluid
               />
-
-              <DropDownField
-                name='healthCheckRating'
-                label='Health Check Rating'
-                options={healthCheckDropDownOptions}
-                placeholder={HealthCheckRating[HealthCheckRating.Healthy]}
-              />
-
+              
               <DropDownField
                 name='diagnosisCodes'
                 label='Diagnoses'
@@ -95,7 +97,24 @@ const AddEntryForm = ({ onSubmit, onCancel } : Props) => {
                 selection
               />
 
-              <Button onClick={onCancel}>Cancel</Button>
+              <DropDownField
+                name='healthCheckRating'
+                label='Health Check Rating'
+                options={healthCheckDropDownOptions}
+                placeholder={HealthCheckRating[HealthCheckRating.Healthy]}
+                fluid
+                search
+                selection
+              />
+              
+              <Grid>
+                <Grid.Column width={6} floated='left'>
+                  <Button onClick={onCancel} color='red'>Cancel</Button>
+                </Grid.Column>
+                <Grid.Column width={6} floated='right'>
+                  <Button onClick={onSubmit} color='green' floated='right'>Submit</Button>
+                </Grid.Column>
+              </Grid>
             </Form>
           );
         }
