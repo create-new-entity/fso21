@@ -1,6 +1,6 @@
 import axios from "axios";
 
-import { Patient, Diagnosis } from "./types";
+import { Patient, Diagnosis, NewEntryData, HealthCheckEntry } from "./types";
 
 const baseURL ='http://localhost:3001';
 const patientEndPoint = baseURL + '/api/patients';
@@ -17,7 +17,14 @@ const getDiagnosisList = async () => {
   return res.data;
 };
 
+const addNewEntryOfPatient = async (patientId: string, newEntry: NewEntryData) => {
+  const addNewEntryEndPoint = `${patientEndPoint}/${patientId}/entries`;
+  const res = await axios.post<HealthCheckEntry>(addNewEntryEndPoint, newEntry);
+  return res.data;
+};
+
 export default {
   getSinglePatientDetails,
-  getDiagnosisList
+  getDiagnosisList,
+  addNewEntryOfPatient
 };

@@ -41,6 +41,8 @@ export interface HealthCheckEntry extends BaseEntry {
   healthCheckRating: HealthCheckRating;
 }
 
+export type NewEntryData = Omit<HealthCheckEntry, 'id'>;
+
 interface DateRange {
   startDate: string,
   endDate: string

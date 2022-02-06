@@ -1,5 +1,7 @@
+import * as _ from "lodash";
+
 import { State } from "./state";
-import { Diagnosis, Patient } from "../types";
+import { Diagnosis, HealthCheckEntry, Patient } from "../types";
 
 export type Action =
   | {
@@ -17,7 +19,24 @@ export type Action =
   | {
       type: "SET_DIAGNOSIS_LIST";
       payload: Diagnosis[]
+    }
+  | {
+      type: "ADD_NEW_ENTRY_FOR_PATIENT",
+      payload: {
+        id: string,
+        newEntry: HealthCheckEntry
+      }
     };
+
+export const create_setAddNewEntryOfPatientAction = (id: string, newEntry: HealthCheckEntry): Action => {
+  return {
+    type: "ADD_NEW_ENTRY_FOR_PATIENT",
+    payload: {
+      id,
+      newEntry
+    }
+  };
+};
 
 export const create_setPatientListAction = (patientList: Patient[]): Action => {
   return {
@@ -85,6 +104,14 @@ export const reducer = (state: State, action: Action): State => {
         },
         patient: state.patient,
         diagnosis: action.payload
+      };
+    case "ADD_NEW_ENTRY_FOR_PATIENT":
+      const newState = _.cloneDeep(state);
+      newState.patients[action.payload.id].entries = [...state.patients[action.payload.id].entries, action.payload.newEntry];
+      return {
+        patients: newState.patients,
+        patient: newState.patients[action.payload.id],
+        diagnosis: newState.diagnosis
       };
     default:
       return state;
