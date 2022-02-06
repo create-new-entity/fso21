@@ -4,7 +4,7 @@ import * as uuid from "uuid";
 
 import { Entry, NewEntryData } from "../types";
 import services from "../services";
-import { useStateValue, create_savePatientAction } from "../state";
+import { useStateValue, create_savePatientAction, create_setAddNewEntryOfPatientAction } from "../state";
 import HospitalEntryComponent from "./HospitalEntryComponent";
 import HealthCheckEntryComponent from "./HealthCheckEntryComponent";
 import OccupationalHealthcareEntryComponent from "./OccupationalHealthcareEntry";
@@ -90,8 +90,15 @@ const PatientPage = ({ id }: { id: string }) => {
     }
   };
 
-  const handleNewEntrySubmission = (newEntryData: NewEntryData) => {
-    console.log(newEntryData);
+  const handleNewEntrySubmission = async (newEntryData: NewEntryData) => {
+    try {
+      const entriedData = await services.addNewEntryOfPatient(patient.id, newEntryData);
+      dispatch(create_setAddNewEntryOfPatientAction(patient.id, entriedData));
+      setShowEntryModal(false);
+    }
+    catch (e) {
+      console.log(e);
+    }
   };
 
   return (
