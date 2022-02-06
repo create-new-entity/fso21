@@ -1,23 +1,8 @@
 import React from 'react';
 
-import { FieldProps } from 'formik';
-import { Dropdown, Form, Input } from 'semantic-ui-react';
+import { ErrorMessage, FieldProps, FormikProps } from 'formik';
+import { Dropdown, DropdownProps, Form, Input } from 'semantic-ui-react';
 
-interface DropDownProps {
-  name: string,
-  label: string,
-  options: {
-    text: string,
-    value: string
-  }[],
-  placeholder: string,
-  fluid?: boolean,
-  multiple?: boolean,
-  search?: boolean,
-  selection?: boolean
-  inline?: boolean,
-  field: FieldProps
-}
 
 interface TextFieldProps {
   name: string,
@@ -26,20 +11,48 @@ interface TextFieldProps {
   field: FieldProps
 }
 
-export const DropDownField = ({ label, field, ...props }: DropDownProps) => {
-  return (
-    <Form.Field>
-      <label>{label}</label>
-      <Dropdown {...field} {...props}/>
-    </Form.Field>
-  );
-};
-
 export const TextField = ({ label, field, ...props }: TextFieldProps) => {
   return (
     <Form.Field>
       <label>{label}</label>
       <Input {...field} {...props} fluid/>
+    </Form.Field>
+  );
+};
+
+export const HealthCheckSelection = ({
+  healthCheckOptions,
+  setFieldValue,
+  setFieldTouched
+}: {
+  healthCheckOptions: {
+    text: string,
+    value: string
+  }[];
+  setFieldValue: FormikProps<{ healthCheckRating: string }>["setFieldValue"];
+  setFieldTouched: FormikProps<{ healthCheckRating: string }>["setFieldTouched"];
+}) => {
+  const field = "healthCheckRating";
+  const onChange = (
+    _event: React.SyntheticEvent<HTMLElement, Event>,
+    data: DropdownProps
+  ) => {
+    setFieldTouched(field, true);
+    setFieldValue(field, data.value);
+  };
+
+
+  return (
+    <Form.Field>
+      <label>Health Check Rating</label>
+      <Dropdown
+        fluid
+        search
+        selection
+        options={healthCheckOptions}
+        onChange={onChange}
+      />
+      <ErrorMessage name={field} />
     </Form.Field>
   );
 };

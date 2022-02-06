@@ -3,7 +3,7 @@ import { Formik, Form, Field } from "formik";
 import { Button, Grid } from "semantic-ui-react";
 
 import { Diagnosis, HealthCheckRating, NewEntryData } from "./../types";
-import { DropDownField, TextField } from "./FormField";
+import { HealthCheckSelection, TextField } from "./FormField";
 import { DiagnosisSelection } from "../AddPatientModal/FormField";
 import serviceFns from "./../services";
 
@@ -78,15 +78,10 @@ const AddEntryForm = ({ onSubmit, onCancel }: Props) => {
               setFieldTouched={setFieldTouched}
             />
 
-            <Field
-              name="healthCheckRating"
-              label="Health Check Rating"
-              options={healthCheckDropDownOptions}
-              placeholder={HealthCheckRating[HealthCheckRating.Healthy]}
-              fluid
-              search
-              selection
-              component={DropDownField}
+            <HealthCheckSelection
+              healthCheckOptions={healthCheckDropDownOptions}
+              setFieldValue={setFieldValue}
+              setFieldTouched={setFieldTouched}
             />
 
             <Grid>
