@@ -1,6 +1,7 @@
-import React, { useEffect } from 'react';
-import { Icon } from 'semantic-ui-react';
+import React, { useEffect, useState } from 'react';
+import { Icon, Button } from 'semantic-ui-react';
 import * as uuid from 'uuid';
+
 
 import { Entry } from '../types';
 import services from '../services';
@@ -8,8 +9,10 @@ import { useStateValue, create_savePatientAction } from '../state';
 import HospitalEntryComponent from './HospitalEntryComponent';
 import HealthCheckEntryComponent from './HealthCheckEntryComponent';
 import OccupationalHealthcareEntryComponent from './OccupationalHealthcareEntry';
+import AddEntryModal from '../AddEntryModal';
 
 const PatientPage = ({ id }: { id: string }) => {
+  const [showEntryModal, setShowEntryModal] = useState<boolean>(false);
   const [{ patient, diagnosis }, dispatch] = useStateValue();
 
   useEffect(() => {
@@ -94,6 +97,8 @@ const PatientPage = ({ id }: { id: string }) => {
         <p>occupation: { patient.occupation }</p>
       </div>
       <br/>
+      <AddEntryModal modalOpen={showEntryModal} onClose={() => setShowEntryModal(false)}/>
+      <Button color='green' onClick={() => setShowEntryModal(true)}>New Entry</Button>
       <br/>
       <br/>
       <strong><p>Entries:</p></strong>
