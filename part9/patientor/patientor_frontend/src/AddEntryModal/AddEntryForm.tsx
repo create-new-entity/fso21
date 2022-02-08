@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Formik, Form, Field } from "formik";
+import * as Yup from 'yup';
 import { Button, Grid } from "semantic-ui-react";
 
 import { Diagnosis, HealthCheckRating, NewEntryData } from "./../types";
@@ -35,6 +36,18 @@ const AddEntryForm = ({ onSubmit, onCancel }: Props) => {
     value: healthCheckEnumValues[index],
   }));
 
+  const requiredErrorMsg = 'Field Required!!';
+  const invalidDateErrorMsg = 'Invalid Date Format!! Should be YYYY-MM-DD.';
+  const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
+
+  const newEntrySchema = Yup.object().shape({
+    description: Yup.string().required(requiredErrorMsg),
+    date: Yup.string().required(requiredErrorMsg).trim().matches(dateRegex, invalidDateErrorMsg),
+    specialist: Yup.string().required(requiredErrorMsg),
+    healthCheckRating: Yup.string().required(requiredErrorMsg)
+  });
+
+
   return (
     <Formik
       initialValues={{
@@ -46,8 +59,9 @@ const AddEntryForm = ({ onSubmit, onCancel }: Props) => {
         diagnosisCodes: []
       }}
       onSubmit={onSubmit}
+      validationSchema={newEntrySchema}
     >
-      {({ dirty, setFieldValue, setFieldTouched }) => {
+      {({ dirty, errors, touched, setFieldValue, setFieldTouched }) => {
         return (
           <Form className="form ui">
             <Field
@@ -57,6 +71,12 @@ const AddEntryForm = ({ onSubmit, onCancel }: Props) => {
               component={TextField}
             />
 
+            {
+              errors.description && touched.description ? (
+                <div>{errors.description}</div>
+              ) : null
+            }
+
             <Field
               name="date"
               label="Date"
@@ -64,12 +84,24 @@ const AddEntryForm = ({ onSubmit, onCancel }: Props) => {
               component={TextField}
             />
 
+            {
+              errors.date && touched.date ? (
+                <div>{errors.date}</div>
+              ) : null
+            }
+
             <Field
               name="specialist"
               label="Specialist"
               placeholder="Specialist"
               component={TextField}
             />
+
+            {
+              errors.specialist && touched.specialist ? (
+                <div>{errors.specialist}</div>
+              ) : null
+            }
 
             <DiagnosisSelection
               diagnoses={diagnosisList}
@@ -82,6 +114,12 @@ const AddEntryForm = ({ onSubmit, onCancel }: Props) => {
               setFieldValue={setFieldValue}
               setFieldTouched={setFieldTouched}
             />
+            
+            {
+              errors.healthCheckRating && touched.healthCheckRating ? (
+                <div>{errors.healthCheckRating}</div>
+              ) : null
+            }
 
             <Grid>
               <Grid.Column width={6} floated="left">
