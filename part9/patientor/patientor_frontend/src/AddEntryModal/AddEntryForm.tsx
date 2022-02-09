@@ -3,17 +3,18 @@ import { Formik, Form, Field } from "formik";
 import * as Yup from 'yup';
 import { Button, Grid, Segment } from "semantic-ui-react";
 
-import { Diagnosis, HealthCheckRating, NewEntryData } from "./../types";
-import { EntryTypeSelection, HealthCheckSelection, TextField } from "./FormField";
+import { Diagnosis, NewEntryData } from "./../types";
+import { EntryTypeSelection, TextField } from "./FormField";
 import { DiagnosisSelection } from "../AddPatientModal/FormField";
 import serviceFns from "./../services";
 import { getInitialValue } from "./util";
+import HealthCheckEntryFields from "./HealthCheckEntryFields";
 
 interface Props {
   onSubmit: (newEntryData: NewEntryData) => void;
   onCancel: () => void;
   selectedEntryType: string;
-  handleEntryTypeChange: (newSelectedEntry: string | undefined) => void;
+  handleEntryTypeChange: (newSelectedEntry: string) => void;
 }
 
 const AddEntryForm = ({ onSubmit, onCancel, selectedEntryType, handleEntryTypeChange }: Props) => {
@@ -26,20 +27,7 @@ const AddEntryForm = ({ onSubmit, onCancel, selectedEntryType, handleEntryTypeCh
       setDiagnosisList(newDiagnosisList);
     })();
   }, []);
-
-  const healthCheckEnumStuffs = Object.keys(HealthCheckRating);
-  const healthCheckEnumValues = healthCheckEnumStuffs.slice(
-    0,
-    healthCheckEnumStuffs.length / 2
-  );
-  const healthCheckEnumKeys = healthCheckEnumStuffs.slice(
-    healthCheckEnumStuffs.length / 2
-  );
-  const healthCheckDropDownOptions = healthCheckEnumKeys.map((key, index) => ({
-    text: key,
-    value: healthCheckEnumValues[index],
-  }));
-
+  
   const requiredErrorMsg = 'Field Required!!';
   const invalidDateErrorMsg = 'Invalid Date Format!! Should be YYYY-MM-DD.';
   const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
@@ -81,7 +69,7 @@ const AddEntryForm = ({ onSubmit, onCancel, selectedEntryType, handleEntryTypeCh
               entryTypeOptions={entryTypeOptions}
               setFieldValue={setFieldValue}
               setFieldTouched={setFieldTouched}
-              setSelectedEntryType={setSelectedEntryType}
+              handleEntryTypeChange={handleEntryTypeChange}
               placeholder={selectedEntryType}
             />
             
@@ -130,18 +118,18 @@ const AddEntryForm = ({ onSubmit, onCancel, selectedEntryType, handleEntryTypeCh
                 setFieldValue={setFieldValue}
                 setFieldTouched={setFieldTouched}
               />
-
-              <HealthCheckSelection
-                healthCheckOptions={healthCheckDropDownOptions}
-                setFieldValue={setFieldValue}
-                setFieldTouched={setFieldTouched}
-              />
               
               {
-                errors.healthCheckRating && touched.healthCheckRating ? (
-                  <div>{errors.healthCheckRating}</div>
-                ) : null
+                selectedEntryType === 'HealthCheck' ? 
+                <HealthCheckEntryFields
+                  setFieldValue={setFieldValue}
+                  setFieldTouched={setFieldTouched}
+                  touched={touched}
+                  errors={errors}
+                /> : null
               }
+              
+              
             </Segment>
 
             <Grid>

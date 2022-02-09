@@ -12,9 +12,9 @@ interface Props {
 
 const AddEntryModal = ({ modalOpen, onSubmit, onClose }: Props) => {
   const initialEntryType = "HealthCheck";
-  const [selectedEntryType, setSelectedEntryType] = useState<string | undefined>(initialEntryType);
+  const [selectedEntryType, setSelectedEntryType] = useState<string>(initialEntryType);
 
-  const handleEntryTypeChange = (newEntryType: string | undefined) => {
+  const handleEntryTypeChange = (newEntryType: string) => {
     if(newEntryType) setSelectedEntryType(newEntryType);
   };
 

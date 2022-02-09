@@ -1,62 +1,33 @@
 import React from "react";
-import { Field, FormikErrors } from "formik";
-import { Segment } from "semantic-ui-react";
-import { TextField } from "./FormField";
-import { NewEntryData } from "../types";
+import { FormikErrors, FormikProps, FormikTouched } from "formik";
+import { HealthCheckSelection } from "./FormField";
+import { HealthCheckRating, NewHealthCheckEntry } from "../types";
 
-interface {
-  errors: FormikErrors<NewEntryData>['errors']
+interface Props {
+  errors: FormikErrors<NewHealthCheckEntry>;
+  touched: FormikTouched<NewHealthCheckEntry>;
+  setFieldValue: FormikProps<{ healthCheckRating: string }>["setFieldValue"];
+  setFieldTouched: FormikProps<{ healthCheckRating: string }>["setFieldTouched"];
 }
 
-
-const HealthCheckEntryFields = () => {
+const HealthCheckEntryFields = ({
+  errors, touched, setFieldValue, setFieldTouched
+}: Props) => {
+  const healthCheckEnumStuffs = Object.keys(HealthCheckRating);
+  const healthCheckEnumValues = healthCheckEnumStuffs.slice(
+    0,
+    healthCheckEnumStuffs.length / 2
+  );
+  const healthCheckEnumKeys = healthCheckEnumStuffs.slice(
+    healthCheckEnumStuffs.length / 2
+  );
+  const healthCheckDropDownOptions = healthCheckEnumKeys.map((key, index) => ({
+    text: key,
+    value: healthCheckEnumValues[index],
+  }));
+  
   return (
-    <Segment>
-      <Field
-        name="description"
-        label="Description"
-        placeholder="Description"
-        component={TextField}
-      />
-
-      {
-        errors.description && touched.description ? (
-          <div>{errors.description}</div>
-        ) : null
-      }
-
-      <Field
-        name="date"
-        label="Date"
-        placeholder="Date"
-        component={TextField}
-      />
-
-      {
-        errors.date && touched.date ? (
-          <div>{errors.date}</div>
-        ) : null
-      }
-
-      <Field
-        name="specialist"
-        label="Specialist"
-        placeholder="Specialist"
-        component={TextField}
-      />
-
-      {
-        errors.specialist && touched.specialist ? (
-          <div>{errors.specialist}</div>
-        ) : null
-      }
-
-      <DiagnosisSelection
-        diagnoses={diagnosisList}
-        setFieldValue={setFieldValue}
-        setFieldTouched={setFieldTouched}
-      />
-
+    <>
       <HealthCheckSelection
         healthCheckOptions={healthCheckDropDownOptions}
         setFieldValue={setFieldValue}
@@ -68,6 +39,8 @@ const HealthCheckEntryFields = () => {
           <div>{errors.healthCheckRating}</div>
         ) : null
       }
-    </Segment>
+    </>
   );
 };
+
+export default HealthCheckEntryFields;

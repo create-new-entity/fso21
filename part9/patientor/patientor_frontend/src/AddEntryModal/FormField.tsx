@@ -62,7 +62,7 @@ export const EntryTypeSelection = ({
   entryTypeOptions,
   setFieldValue,
   setFieldTouched,
-  setSelectedEntryType,
+  handleEntryTypeChange,
   placeholder
 }: {
   entryTypeOptions: {
@@ -71,7 +71,7 @@ export const EntryTypeSelection = ({
   }[];
   setFieldValue: FormikProps<{ selectedEntryType: string }>["setFieldValue"];
   setFieldTouched: FormikProps<{ selectedEntryType: string }>["setFieldTouched"];
-  setSelectedEntryType: (entry: string | undefined) => void;
+  handleEntryTypeChange: (entry: string) => void;
   placeholder: string | undefined
 }) => {
   const field = "selectedEntryType";
@@ -81,7 +81,7 @@ export const EntryTypeSelection = ({
   ) => {
     setFieldTouched(field, true);
     setFieldValue(field, data.value);
-    setSelectedEntryType(data.text);
+    if(data.value && typeof data.value === 'string') handleEntryTypeChange(data.value);
   };
 
 
