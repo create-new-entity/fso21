@@ -1,20 +1,24 @@
 import React, { useEffect, useState } from "react";
 import { Formik, Form, Field } from "formik";
 import * as Yup from 'yup';
-import { Button, Grid } from "semantic-ui-react";
+import { Button, Grid, Segment } from "semantic-ui-react";
 
 import { Diagnosis, HealthCheckRating, NewEntryData } from "./../types";
-import { HealthCheckSelection, TextField } from "./FormField";
+import { EntryTypeSelection, HealthCheckSelection, TextField } from "./FormField";
 import { DiagnosisSelection } from "../AddPatientModal/FormField";
 import serviceFns from "./../services";
+import { getInitialValue } from "./util";
 
 interface Props {
   onSubmit: (newEntryData: NewEntryData) => void;
   onCancel: () => void;
+  selectedEntryType: string;
+  handleEntryTypeChange: (newSelectedEntry: string | undefined) => void;
 }
 
-const AddEntryForm = ({ onSubmit, onCancel }: Props) => {
+const AddEntryForm = ({ onSubmit, onCancel, selectedEntryType, handleEntryTypeChange }: Props) => {
   const [diagnosisList, setDiagnosisList] = useState<Diagnosis[]>([]);
+  
 
   useEffect(() => {
     void (async () => {
@@ -47,79 +51,98 @@ const AddEntryForm = ({ onSubmit, onCancel }: Props) => {
     healthCheckRating: Yup.string().required(requiredErrorMsg)
   });
 
+  const entryTypeOptions = [
+    {
+      text: "HealthCheck",
+      value: "HealthCheck"
+    }, {
+      text: "OccupationalHealthcare",
+      value: "OccupationalHealthcare"
+    }
+  ];
+
+  // , {
+  //   text: "Hospital",
+  //   value: "Hospital"
+  // }
+
 
   return (
     <Formik
-      initialValues={{
-        type: "HealthCheck",
-        description: "",
-        date: "",
-        specialist: "",
-        healthCheckRating: HealthCheckRating.Healthy,
-        diagnosisCodes: []
-      }}
+      initialValues={getInitialValue(selectedEntryType)}
       onSubmit={onSubmit}
       validationSchema={newEntrySchema}
     >
       {({ dirty, errors, touched, setFieldValue, setFieldTouched }) => {
         return (
           <Form className="form ui">
-            <Field
-              name="description"
-              label="Description"
-              placeholder="Description"
-              component={TextField}
-            />
-
-            {
-              errors.description && touched.description ? (
-                <div>{errors.description}</div>
-              ) : null
-            }
-
-            <Field
-              name="date"
-              label="Date"
-              placeholder="Date"
-              component={TextField}
-            />
-
-            {
-              errors.date && touched.date ? (
-                <div>{errors.date}</div>
-              ) : null
-            }
-
-            <Field
-              name="specialist"
-              label="Specialist"
-              placeholder="Specialist"
-              component={TextField}
-            />
-
-            {
-              errors.specialist && touched.specialist ? (
-                <div>{errors.specialist}</div>
-              ) : null
-            }
-
-            <DiagnosisSelection
-              diagnoses={diagnosisList}
+            <div>{selectedEntryType}</div>
+            <EntryTypeSelection
+              entryTypeOptions={entryTypeOptions}
               setFieldValue={setFieldValue}
               setFieldTouched={setFieldTouched}
-            />
-
-            <HealthCheckSelection
-              healthCheckOptions={healthCheckDropDownOptions}
-              setFieldValue={setFieldValue}
-              setFieldTouched={setFieldTouched}
+              setSelectedEntryType={setSelectedEntryType}
+              placeholder={selectedEntryType}
             />
             
-            {
-              errors.healthCheckRating && touched.healthCheckRating ? (
-                <div>{errors.healthCheckRating}</div>
-              ) : null
-            }
+            <Segment>
+              <Field
+                name="description"
+                label="Description"
+                placeholder="Description"
+                component={TextField}
+              />
+
+              {
+                errors.description && touched.description ? (
+                  <div>{errors.description}</div>
+                ) : null
+              }
+
+              <Field
+                name="date"
+                label="Date"
+                placeholder="Date"
+                component={TextField}
+              />
+
+              {
+                errors.date && touched.date ? (
+                  <div>{errors.date}</div>
+                ) : null
+              }
+
+              <Field
+                name="specialist"
+                label="Specialist"
+                placeholder="Specialist"
+                component={TextField}
+              />
+
+              {
+                errors.specialist && touched.specialist ? (
+                  <div>{errors.specialist}</div>
+                ) : null
+              }
+
+              <DiagnosisSelection
+                diagnoses={diagnosisList}
+                setFieldValue={setFieldValue}
+                setFieldTouched={setFieldTouched}
+              />
+
+              <HealthCheckSelection
+                healthCheckOptions={healthCheckDropDownOptions}
+                setFieldValue={setFieldValue}
+                setFieldTouched={setFieldTouched}
+              />
+              
+              {
+                errors.healthCheckRating && touched.healthCheckRating ? (
+                  <div>{errors.healthCheckRating}</div>
+                ) : null
+              }
+            </Segment>
 
             <Grid>
               <Grid.Column width={6} floated="left">

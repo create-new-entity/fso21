@@ -56,3 +56,47 @@ export const HealthCheckSelection = ({
     </Form.Field>
   );
 };
+
+
+export const EntryTypeSelection = ({
+  entryTypeOptions,
+  setFieldValue,
+  setFieldTouched,
+  setSelectedEntryType,
+  placeholder
+}: {
+  entryTypeOptions: {
+    text: string,
+    value: string
+  }[];
+  setFieldValue: FormikProps<{ selectedEntryType: string }>["setFieldValue"];
+  setFieldTouched: FormikProps<{ selectedEntryType: string }>["setFieldTouched"];
+  setSelectedEntryType: (entry: string | undefined) => void;
+  placeholder: string | undefined
+}) => {
+  const field = "selectedEntryType";
+  const onChange = (
+    _event: React.SyntheticEvent<HTMLElement, Event>,
+    data: DropdownProps
+  ) => {
+    setFieldTouched(field, true);
+    setFieldValue(field, data.value);
+    setSelectedEntryType(data.text);
+  };
+
+
+  return (
+    <Form.Field>
+      <label>Select Entry Type</label>
+      <Dropdown
+        fluid
+        search
+        selection
+        options={entryTypeOptions}
+        onChange={onChange}
+        placeholder={placeholder}
+      />
+      <ErrorMessage name={field} />
+    </Form.Field>
+  );
+};

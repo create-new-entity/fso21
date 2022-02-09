@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Modal } from 'semantic-ui-react';
 
 import AddEntryForm from './AddEntryForm';
@@ -11,11 +11,25 @@ interface Props {
 }
 
 const AddEntryModal = ({ modalOpen, onSubmit, onClose }: Props) => {
+  const initialEntryType = "HealthCheck";
+  const [selectedEntryType, setSelectedEntryType] = useState<string | undefined>(initialEntryType);
+
+  const handleEntryTypeChange = (newEntryType: string | undefined) => {
+    if(newEntryType) setSelectedEntryType(newEntryType);
+  };
+
+
+  
   return (
     <Modal open={modalOpen} onClose={onClose} centered={false} closeIcon>
       <Modal.Header>New Entry</Modal.Header>
       <Modal.Content>
-        <AddEntryForm onSubmit={onSubmit} onCancel={onClose}/>
+        <AddEntryForm
+          onSubmit={onSubmit}
+          onCancel={onClose}
+          selectedEntryType={selectedEntryType}
+          handleEntryTypeChange={handleEntryTypeChange}
+        />
       </Modal.Content>
     </Modal>
   );
