@@ -29,7 +29,7 @@ const AddEntryForm = ({ onSubmit, onCancel }: Props) => {
   
   const requiredErrorMsg = 'Field Required!!';
   const invalidDateErrorMsg = 'Invalid Date Format!! Should be YYYY-MM-DD.';
-  const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
+  const dateRegex = /^\d{4}-\d{1,2}-\d{1,2}$/;
 
   const newEntrySchema = Yup.object().shape({
     type: Yup.string().required(requiredErrorMsg),
@@ -90,12 +90,7 @@ const AddEntryForm = ({ onSubmit, onCancel }: Props) => {
                 placeholder="Description"
                 component={TextField}
               />
-
-              {
-                errors.description && touched.description ? (
-                  <ErrorMessage name='description'/>
-                ) : null
-              }
+              <ErrorMessage name='description'/>
 
               <Field
                 name="date"
@@ -103,12 +98,7 @@ const AddEntryForm = ({ onSubmit, onCancel }: Props) => {
                 placeholder="Date"
                 component={TextField}
               />
-
-              {
-                errors.date && touched.date ? (
-                  <ErrorMessage name='date'/>
-                ) : null
-              }
+              <ErrorMessage name='date'/>
 
               <Field
                 name="specialist"
@@ -116,12 +106,7 @@ const AddEntryForm = ({ onSubmit, onCancel }: Props) => {
                 placeholder="Specialist"
                 component={TextField}
               />
-
-              {
-                errors.specialist && touched.specialist ? (
-                  <ErrorMessage name='specialist'/>
-                ) : null
-              }
+              <ErrorMessage name='specialist'/>
 
               <DiagnosisSelection
                 diagnoses={diagnosisList}
