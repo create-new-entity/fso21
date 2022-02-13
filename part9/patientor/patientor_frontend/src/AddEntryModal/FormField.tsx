@@ -71,10 +71,7 @@ export const EntryTypeSelection = ({
   resetForm,
   placeholder
 }: {
-  entryTypeOptions: {
-    text: string,
-    value: string
-  }[];
+  entryTypeOptions: { text: string, value: string }[];
   setFieldValue: FormikProps<{ selectedEntryType: string }>["setFieldValue"];
   setFieldTouched: FormikProps<{ selectedEntryType: string }>["setFieldTouched"];
   resetForm: (nextState?: Partial<FormikState<{ values: NewEntryData }["values"]>>) => void;

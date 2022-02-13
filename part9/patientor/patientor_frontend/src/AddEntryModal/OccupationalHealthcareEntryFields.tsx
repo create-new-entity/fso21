@@ -4,7 +4,7 @@ import { Segment, Form } from "semantic-ui-react";
 import { TextField } from "./FormField";
 
 
-const OccupationalHealthcareEntry = () => {
+const OccupationalHealthcareEntryFields = () => {
   return (
     <>
       <Field
@@ -43,4 +43,4 @@ const OccupationalHealthcareEntry = () => {
   );
 };
 
-export default OccupationalHealthcareEntry;
+export default OccupationalHealthcareEntryFields;

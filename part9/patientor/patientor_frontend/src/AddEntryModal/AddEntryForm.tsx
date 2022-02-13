@@ -9,7 +9,8 @@ import { DiagnosisSelection } from "../AddPatientModal/FormField";
 import serviceFns from "./../services";
 import { getInitialValue } from "./util";
 import HealthCheckEntryFields from "./HealthCheckEntryFields";
-import OccupationalHealthcareEntry from "./OccupationalHealthcareEntry";
+import OccupationalHealthcareEntryFields from "./OccupationalHealthcareEntryFields";
+import HospitalEntryFields from "./HospitalEntryFields";
 
 interface Props {
   onSubmit: (newEntryData: NewEntryData) => void;
@@ -46,6 +47,14 @@ const AddEntryForm = ({ onSubmit, onCancel }: Props) => {
         startDate: Yup.string().trim().matches(dateRegex, invalidDateErrorMsg),
         endDate: Yup.string().trim().matches(dateRegex, invalidDateErrorMsg)
       })
+    }),
+
+    discharge: Yup.object().when('type', {
+      is: 'Hospital',
+      then: Yup.object().shape({
+        date: Yup.string().trim().matches(dateRegex, invalidDateErrorMsg).required(requiredErrorMsg),
+        criteria: Yup.string().trim().required(requiredErrorMsg)
+      })
     })
   });
 
@@ -53,16 +62,16 @@ const AddEntryForm = ({ onSubmit, onCancel }: Props) => {
     {
       text: "HealthCheck",
       value: "HealthCheck"
-    }, {
+    },
+    {
       text: "OccupationalHealthcare",
       value: "OccupationalHealthcare"
+    },
+    {
+      text: "Hospital",
+      value: "Hospital"
     }
   ];
-
-  // , {
-  //   text: "Hospital",
-  //   value: "Hospital"
-  // }
 
 
   return (
@@ -125,7 +134,12 @@ const AddEntryForm = ({ onSubmit, onCancel }: Props) => {
 
               {
                 values.type === 'OccupationalHealthcare' ?
-                <OccupationalHealthcareEntry/> : null
+                <OccupationalHealthcareEntryFields/> : null
+              }
+
+              {
+                values.type === 'Hospital' ?
+                <HospitalEntryFields/> : null
               }
               
             </Segment>
