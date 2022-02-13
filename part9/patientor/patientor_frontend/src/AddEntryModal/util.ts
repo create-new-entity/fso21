@@ -25,6 +25,18 @@ export const getInitialValue = (newEntryType: string): NewEntryData => {
           endDate: ""
         }
       };
+    case 'Hospital':
+      return {
+        type: 'Hospital',
+        description: '',
+        date: '',
+        specialist: '',
+        diagnosisCodes: [],
+        discharge: {
+          date: '',
+          criteria: ''
+        }
+      };
     default:
       throw new Error('Invalid entry type.');
   }

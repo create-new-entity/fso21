@@ -41,11 +41,6 @@ export interface HealthCheckEntry extends BaseEntry {
   healthCheckRating: HealthCheckRating;
 }
 
-export type NewHealthCheckEntry = Omit<HealthCheckEntry, 'id'>;
-export type NewOccupationalHealthcareEntry = Omit<OccupationalHealthcareEntry, 'id'>;
-
-export type NewEntryData = NewHealthCheckEntry | NewOccupationalHealthcareEntry;
-
 interface DateRange {
   startDate: string,
   endDate: string
@@ -77,3 +72,11 @@ export interface Diagnosis {
   name: string,
   latin?: string
 }
+
+
+export type NewHealthCheckEntry = Omit<HealthCheckEntry, 'id'>;
+export type NewOccupationalHealthcareEntry = Omit<OccupationalHealthcareEntry, 'id'>;
+export type NewHospitalEntry = Omit<HospitalEntry, 'id'>;
+
+export type NewEntryData = NewHealthCheckEntry | NewOccupationalHealthcareEntry | NewHospitalEntry;
+
