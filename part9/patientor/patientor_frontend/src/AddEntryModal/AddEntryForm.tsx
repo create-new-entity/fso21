@@ -72,7 +72,6 @@ const AddEntryForm = ({ onSubmit, onCancel }: Props) => {
       validationSchema={newEntrySchema}
     >
       {({ dirty, errors, touched, values, resetForm, setFieldValue, setFieldTouched }) => {
-        console.log(values);
         return (
           <Form className="form ui">
             <EntryTypeSelection
