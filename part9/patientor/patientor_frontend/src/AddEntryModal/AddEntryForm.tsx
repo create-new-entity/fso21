@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Formik, Form, Field } from "formik";
+import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from 'yup';
 import { Button, Grid, Segment } from "semantic-ui-react";
 
@@ -9,15 +9,14 @@ import { DiagnosisSelection } from "../AddPatientModal/FormField";
 import serviceFns from "./../services";
 import { getInitialValue } from "./util";
 import HealthCheckEntryFields from "./HealthCheckEntryFields";
+import OccupationalHealthcareEntry from "./OccupationalHealthcareEntry";
 
 interface Props {
   onSubmit: (newEntryData: NewEntryData) => void;
   onCancel: () => void;
-  selectedEntryType: string;
-  handleEntryTypeChange: (newSelectedEntry: string) => void;
 }
 
-const AddEntryForm = ({ onSubmit, onCancel, selectedEntryType, handleEntryTypeChange }: Props) => {
+const AddEntryForm = ({ onSubmit, onCancel }: Props) => {
   const [diagnosisList, setDiagnosisList] = useState<Diagnosis[]>([]);
   
 
@@ -33,10 +32,21 @@ const AddEntryForm = ({ onSubmit, onCancel, selectedEntryType, handleEntryTypeCh
   const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
 
   const newEntrySchema = Yup.object().shape({
+    type: Yup.string().required(requiredErrorMsg),
     description: Yup.string().required(requiredErrorMsg),
     date: Yup.string().required(requiredErrorMsg).trim().matches(dateRegex, invalidDateErrorMsg),
     specialist: Yup.string().required(requiredErrorMsg),
-    healthCheckRating: Yup.string().required(requiredErrorMsg)
+
+    healthCheckRating: Yup.string().when('type', { is: 'HealthCheck', then: Yup.string().required(requiredErrorMsg) }),
+
+    employerName: Yup.string().when('type', { is: 'OccupationalHealthcare', then: Yup.string().required(requiredErrorMsg) }),
+    sickLeave: Yup.object().when('type', {
+      is: 'OccupationalHealthcare',
+      then: Yup.object().shape({
+        startDate: Yup.string().trim().matches(dateRegex, invalidDateErrorMsg),
+        endDate: Yup.string().trim().matches(dateRegex, invalidDateErrorMsg)
+      })
+    })
   });
 
   const entryTypeOptions = [
@@ -57,20 +67,20 @@ const AddEntryForm = ({ onSubmit, onCancel, selectedEntryType, handleEntryTypeCh
 
   return (
     <Formik
-      initialValues={getInitialValue(selectedEntryType)}
+      initialValues={getInitialValue('HealthCheck')}
       onSubmit={onSubmit}
       validationSchema={newEntrySchema}
     >
-      {({ dirty, errors, touched, setFieldValue, setFieldTouched }) => {
+      {({ dirty, errors, touched, values, resetForm, setFieldValue, setFieldTouched }) => {
+        console.log(values);
         return (
           <Form className="form ui">
-            <div>{selectedEntryType}</div>
             <EntryTypeSelection
               entryTypeOptions={entryTypeOptions}
               setFieldValue={setFieldValue}
               setFieldTouched={setFieldTouched}
-              handleEntryTypeChange={handleEntryTypeChange}
-              placeholder={selectedEntryType}
+              resetForm={resetForm}
+              placeholder={values.type}
             />
             
             <Segment>
@@ -83,7 +93,7 @@ const AddEntryForm = ({ onSubmit, onCancel, selectedEntryType, handleEntryTypeCh
 
               {
                 errors.description && touched.description ? (
-                  <div>{errors.description}</div>
+                  <ErrorMessage name='description'/>
                 ) : null
               }
 
@@ -96,7 +106,7 @@ const AddEntryForm = ({ onSubmit, onCancel, selectedEntryType, handleEntryTypeCh
 
               {
                 errors.date && touched.date ? (
-                  <div>{errors.date}</div>
+                  <ErrorMessage name='date'/>
                 ) : null
               }
 
@@ -109,7 +119,7 @@ const AddEntryForm = ({ onSubmit, onCancel, selectedEntryType, handleEntryTypeCh
 
               {
                 errors.specialist && touched.specialist ? (
-                  <div>{errors.specialist}</div>
+                  <ErrorMessage name='specialist'/>
                 ) : null
               }
 
@@ -120,7 +130,7 @@ const AddEntryForm = ({ onSubmit, onCancel, selectedEntryType, handleEntryTypeCh
               />
               
               {
-                selectedEntryType === 'HealthCheck' ? 
+                values.type === 'HealthCheck' ? 
                 <HealthCheckEntryFields
                   setFieldValue={setFieldValue}
                   setFieldTouched={setFieldTouched}
@@ -128,7 +138,11 @@ const AddEntryForm = ({ onSubmit, onCancel, selectedEntryType, handleEntryTypeCh
                   errors={errors}
                 /> : null
               }
-              
+
+              {
+                values.type === 'OccupationalHealthcare' ?
+                <OccupationalHealthcareEntry/> : null
+              }
               
             </Segment>
 
