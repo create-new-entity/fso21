@@ -1,7 +1,9 @@
 import React from 'react';
 
-import { ErrorMessage, FieldProps, FormikProps } from 'formik';
+import { ErrorMessage, FieldProps, FormikProps, FormikState } from 'formik';
 import { Dropdown, DropdownProps, Form, Input } from 'semantic-ui-react';
+import { NewEntryData } from '../types';
+import { getInitialValue } from './util';
 
 
 interface TextFieldProps {
@@ -19,6 +21,10 @@ export const TextField = ({ label, field, ...props }: TextFieldProps) => {
     </Form.Field>
   );
 };
+
+// export const SickLeaveField = () => {
+
+// };
 
 export const HealthCheckSelection = ({
   healthCheckOptions,
@@ -62,7 +68,7 @@ export const EntryTypeSelection = ({
   entryTypeOptions,
   setFieldValue,
   setFieldTouched,
-  handleEntryTypeChange,
+  resetForm,
   placeholder
 }: {
   entryTypeOptions: {
@@ -71,7 +77,7 @@ export const EntryTypeSelection = ({
   }[];
   setFieldValue: FormikProps<{ selectedEntryType: string }>["setFieldValue"];
   setFieldTouched: FormikProps<{ selectedEntryType: string }>["setFieldTouched"];
-  handleEntryTypeChange: (entry: string) => void;
+  resetForm: (nextState?: Partial<FormikState<{ values: NewEntryData }["values"]>>) => void;
   placeholder: string | undefined
 }) => {
   const field = "selectedEntryType";
@@ -81,7 +87,12 @@ export const EntryTypeSelection = ({
   ) => {
     setFieldTouched(field, true);
     setFieldValue(field, data.value);
-    if(data.value && typeof data.value === 'string') handleEntryTypeChange(data.value);
+    if(data.value && typeof data.value === 'string') {
+      const newInitialValue = getInitialValue(data.value);
+      resetForm({
+        values: newInitialValue
+      });
+    }
   };
 
 
